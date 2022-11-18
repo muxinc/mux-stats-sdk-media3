@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-  namespace 'com.example.muxdatasdkformedia3'
+  namespace 'com.mux.stats.muxdatasdkformedia3'
   compileSdk 32
 
   defaultConfig {
