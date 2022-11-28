@@ -8,6 +8,6 @@ plugins {
 
 allprojects {
   project.ext {
-    media3Version = '1.0.0-beta02'
+    media3Version = '1.0.0-beta03'
   }
 }
