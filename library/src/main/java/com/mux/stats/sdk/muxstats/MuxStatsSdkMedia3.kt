@@ -5,7 +5,7 @@ import android.view.View
 import androidx.media3.common.Player
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.model.CustomerData
-import com.mux.stats.sdk.muxstats.internal.Media3PlayerBinding
+import com.mux.stats.sdk.muxstats.internal.media3GenericBinding
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
 
 class MuxStatsSdkMedia3(
@@ -23,7 +23,7 @@ class MuxStatsSdkMedia3(
   customerData = customerData,
   customOptions = customOptions ?: CustomOptions(),
   trackFirstFrame = true,
-  playerBinding = Media3PlayerBinding(),
+  playerBinding = media3GenericBinding(),
   device = AndroidDevice(
     ctx = context,
     playerVersion = BuildConfig.MEDIA3_VERSION, /* TODO: Dynamic would be better if possible*/
@@ -32,4 +32,5 @@ class MuxStatsSdkMedia3(
     playerSoftware = "media3",
   )
 ) {
+
 }
