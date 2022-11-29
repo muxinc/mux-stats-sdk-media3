@@ -1,6 +1,7 @@
 package com.mux.stats.sdk.muxstats.internal
 
 import androidx.media3.common.Player
+import androidx.media3.common.Tracks
 import com.mux.stats.sdk.muxstats.MuxPlayerState
 import com.mux.stats.sdk.muxstats.MuxStateCollector
 import java.lang.ref.WeakReference
@@ -38,6 +39,17 @@ internal fun watchPlayerPos(player: WeakReference<Player>, collector: MuxStateCo
 }
 
 // -- Media3 Utils
+
+/**
+ * Returns true if any media track in the given [Tracks] object had a video MIME type
+ */
+internal fun Tracks.hasAtLeastOneVideoTrack(): Boolean {
+  return groups.map { it.mediaTrackGroup }
+    .filter { trackGroup -> trackGroup.length > 0 }
+    .map { trackGroup -> trackGroup.getFormat(0) }
+    .find { format -> format.sampleMimeType?.contains("video") ?: false }
+    .let { foundVideoTrack -> foundVideoTrack != null }
+}
 
 /**
  * Handles an ExoPlayer position discontinuity
