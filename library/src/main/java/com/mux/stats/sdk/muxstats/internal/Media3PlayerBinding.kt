@@ -21,7 +21,7 @@ private class Media3PlayerBinding : MuxPlayerAdapter.PlayerBinding<Player> {
   private var listener: MuxPlayerListener? = null
 
   override fun bindPlayer(player: Player, collector: MuxStateCollector) {
-    player.addListener(MuxPlayerListener(player, collector))
+    listener = MuxPlayerListener(player, collector).also { player.addListener(it) }
   }
 
   override fun unbindPlayer(player: Player, collector: MuxStateCollector) {
