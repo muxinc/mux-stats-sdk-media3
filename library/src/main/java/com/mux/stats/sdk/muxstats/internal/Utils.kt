@@ -3,9 +3,11 @@ package com.mux.stats.sdk.muxstats.internal
 import androidx.media3.common.Player
 import com.mux.stats.sdk.muxstats.MuxPlayerState
 import com.mux.stats.sdk.muxstats.MuxStateCollector
-
+import java.lang.ref.WeakReference
 
 // -- General Utils --
+
+internal const val PLAYER_STATE_POLL_MS = 150L
 
 /**
  * Returns true if the object is one of any of the parameters supplied
@@ -26,6 +28,14 @@ internal fun Any.noneOf(vararg accept: Any) = !accept.contains(this)
 @Suppress("unused")
 internal inline fun <reified T> T.logTag() = T::class.java.simpleName
 
+internal fun watchPlayerPos(player: WeakReference<Player>, collector: MuxStateCollector) {
+  collector.playerWatcher = MuxStateCollector.PlayerWatcher(
+    PLAYER_STATE_POLL_MS,
+    collector,
+    player
+  ) { it, _ -> it.currentPosition }
+  collector.playerWatcher?.start()
+}
 
 // -- Media3 Utils
 
