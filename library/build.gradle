@@ -51,8 +51,12 @@ muxDistribution {
 }
 
 dependencies {
-  api 'com.mux.stats.sdk.muxstats:android:0.5.1'
+  api 'com.mux.stats.sdk.muxstats:android:0.6.0'
   api "androidx.media3:media3-common:${media3Version}"
+
+  // implementation is used so it doesn't pollute customers namespace
+  //noinspection GradleDynamicVersion
+  implementation "com.mux:utils-kt:+"
 
   testImplementation 'junit:junit:4.13.2'
   androidTestImplementation 'androidx.test.ext:junit:1.1.3'

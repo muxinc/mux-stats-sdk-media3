@@ -31,6 +31,4 @@ class MuxStatsSdkMedia3(
     muxPluginVersion = BuildConfig.LIB_VERSION,
     playerSoftware = "media3",
   )
-) {
-
-}
+)

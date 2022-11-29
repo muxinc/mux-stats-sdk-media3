@@ -5,6 +5,7 @@ import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
 import com.mux.stats.sdk.muxstats.MuxPlayerAdapter
 import com.mux.stats.sdk.muxstats.MuxStateCollector
+import com.mux.stats.sdk.muxstats.util.weak
 import java.lang.ref.WeakReference
 
 /**
