@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-  namespace 'com.example.muxdatasdkformedia3'
-  compileSdk 32
+  namespace 'com.mux.stats.muxdatasdkformedia3'
+  compileSdk 33
 
   defaultConfig {
     applicationId "com.example.muxdatasdkformedia3"
-    minSdk 16
-    targetSdk 32
+    minSdk 21
+    targetSdk 33
     versionCode 1
     versionName "1.0"
 
@@ -33,6 +33,11 @@ android {
 }
 
 dependencies {
+  implementation "androidx.media3:media3-exoplayer:${media3Version}"
+  implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"
+  implementation "androidx.media3:media3-exoplayer-hls:${media3Version}"
+  implementation "androidx.media3:media3-exoplayer-rtsp:${media3Version}"
+  implementation "androidx.media3:media3-ui:${media3Version}"
 
   implementation 'androidx.core:core-ktx:1.7.0'
   implementation 'androidx.appcompat:appcompat:1.4.1'

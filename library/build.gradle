@@ -1,10 +1,11 @@
 plugins {
   id 'com.android.library'
   id 'org.jetbrains.kotlin.android'
+  id 'com.mux.gradle.android.mux-android-distribution'
 }
 
 android {
-  namespace 'com.mux.stats.media3'
+  namespace 'com.mux.stats.sdk.muxstats.media3'
   compileSdk 33
 
   defaultConfig {
@@ -13,6 +14,8 @@ android {
 
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles "consumer-rules.pro"
+
+    buildConfigField "String", "MEDIA3_VERSION", "\"${media3Version}\""
   }
 
   buildTypes {
@@ -30,7 +33,26 @@ android {
   }
 }
 
+muxDistribution {
+  devVersion versionFromCommitHash('dev-')
+  releaseVersion versionFromTag()
+  artifactIds just("android")
+  groupIds just("com.mux.stats.sdk.muxstats")
+  publicReleaseIf releaseOnTag()
+
+  // TODO: This is kinda clumsy, packageJavadocs should be a function not a property probably
+  packageJavadocs = releaseOnTag().call()
+  publishIf { it.containsIgnoreCase("release") }
+  artifactoryConfig {
+    contextUrl = "https://muxinc.jfrog.io/artifactory/"
+    releaseRepoKey = 'default-maven-release-local'
+    devRepoKey = 'default-maven-local'
+  }
+}
+
 dependencies {
+  api 'com.mux.stats.sdk.muxstats:android:0.5.1'
+  api "androidx.media3:media3-common:${media3Version}"
 
   testImplementation 'junit:junit:4.13.2'
   androidTestImplementation 'androidx.test.ext:junit:1.1.3'
