@@ -4,30 +4,10 @@ import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import com.mux.stats.sdk.muxstats.MuxPlayerState
 import com.mux.stats.sdk.muxstats.MuxStateCollector
+import com.mux.stats.sdk.muxstats.util.oneOf
 import java.lang.ref.WeakReference
 
-// -- General Utils --
-
 internal const val PLAYER_STATE_POLL_MS = 150L
-
-/**
- * Returns true if the object is one of any of the parameters supplied
- */
-@JvmSynthetic // Hide from Java callers because all are external
-internal fun Any.oneOf(vararg accept: Any) = accept.contains(this)
-
-/**
- * Returns true if the object is not any of the parameters supplied
- */
-@JvmSynthetic // Hide from Java callers because all are external
-internal fun Any.noneOf(vararg accept: Any) = !accept.contains(this)
-
-/**
- * Gets a Log Tag from the name of the calling class. Can be used in any package that isn't
- * obfuscated (such as muxstats)
- */
-@Suppress("unused")
-internal inline fun <reified T> T.logTag() = T::class.java.simpleName
 
 internal fun watchPlayerPos(player: WeakReference<Player>, collector: MuxStateCollector) {
   collector.playerWatcher = MuxStateCollector.PlayerWatcher(
@@ -37,8 +17,6 @@ internal fun watchPlayerPos(player: WeakReference<Player>, collector: MuxStateCo
   ) { it, _ -> it.currentPosition }
   collector.playerWatcher?.start()
 }
-
-// -- Media3 Utils
 
 /**
  * Returns true if any media track in the given [Tracks] object had a video MIME type
