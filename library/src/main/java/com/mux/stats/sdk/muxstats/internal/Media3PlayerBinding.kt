@@ -32,9 +32,6 @@ private class Media3PlayerBinding : MuxPlayerAdapter.PlayerBinding<Player> {
 
 }
 
-/**
- *
- */
 private class MuxPlayerListener(player: Player, val collector: MuxStateCollector) :
   Player.Listener {
   val player by weak(player)
