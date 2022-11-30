@@ -27,7 +27,7 @@ class MuxStatsSdkMedia3(
   playerView: View? = null,
   customOptions: CustomOptions? = null,
 ) : MuxDataSdk<Player, View>(
-  context= context,
+  context = context,
   envKey = envKey,
   player = player,
   playerView = playerView,
@@ -38,7 +38,7 @@ class MuxStatsSdkMedia3(
   device = AndroidDevice(
     ctx = context,
     playerVersion = BuildConfig.MEDIA3_VERSION, /* TODO: Dynamic would be better if possible*/
-    muxPluginName = "mux-media3" ,
+    muxPluginName = "mux-media3",
     muxPluginVersion = BuildConfig.LIB_VERSION,
     playerSoftware = "media3",
   )
