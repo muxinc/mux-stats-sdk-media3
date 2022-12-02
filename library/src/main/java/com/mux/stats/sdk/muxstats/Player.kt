@@ -22,7 +22,7 @@ fun Player.monitorWithMuxData(
   customerData: CustomerData,
   playerView: View? = null,
   customOptions: CustomOptions? = null
-): MuxDataSdk<Player, View> = MuxStatsSdkMedia3(
+): MuxStatsSdkMedia3 = MuxStatsSdkMedia3(
   context = context,
   envKey = envKey,
   customerData = customerData,
@@ -30,4 +30,3 @@ fun Player.monitorWithMuxData(
   playerView = playerView,
   customOptions = customOptions
 )
-
