@@ -59,9 +59,9 @@ class PlayerActivity : AppCompatActivity() {
   private fun stopPlaying() {
     player?.let { oldPlayer ->
       oldPlayer.stop()
-      muxStats?.release()
       oldPlayer.release()
     }
+    muxStats?.release()
   }
 
   private fun monitorPlayer(player: Player): MuxStatsSdkMedia3 {
