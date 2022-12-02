@@ -2,7 +2,6 @@ package com.mux.stats.muxdatasdkformedia3
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.PlaybackException
@@ -13,7 +12,6 @@ import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
-import com.mux.stats.sdk.muxstats.MuxDataSdk
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
 import com.mux.stats.sdk.muxstats.util.logTag
@@ -23,7 +21,7 @@ class PlayerActivity : AppCompatActivity() {
   companion object {
     const val MUX_DATA_ENV_KEY = "rhhn9fph0nog346n4tqb6bqda" // TODO: YOUR KEY HERE
     const val VOD_TEST_URL_STEVE = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8"
-    const val VOD_TEST_URL_DRAGON_WOMAN =
+    const val VOD_TEST_URL_DRAGON_WARRIOR_LADY =
       "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
   }
 
@@ -39,13 +37,11 @@ class PlayerActivity : AppCompatActivity() {
 
   override fun onResume() {
     super.onResume()
-
-    startPlaying(VOD_TEST_URL_DRAGON_WOMAN)
+    startPlaying(VOD_TEST_URL_DRAGON_WARRIOR_LADY)
   }
 
   override fun onPause() {
     stopPlaying()
-
     super.onPause()
   }
 
