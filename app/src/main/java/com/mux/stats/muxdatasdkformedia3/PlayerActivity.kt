@@ -18,7 +18,7 @@ import com.mux.stats.sdk.muxstats.monitorWithMuxData
 class PlayerActivity : AppCompatActivity() {
 
   companion object {
-    const val MUX_DATA_ENV_KEY = "rhhn9fph0nog346n4tqb6bqda" // TODO: YOUR KEY HERE
+    const val MUX_DATA_ENV_KEY = "YOUR KEY HERE"
     const val VOD_TEST_URL_STEVE = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8"
     const val VOD_TEST_URL_DRAGON_WARRIOR_LADY =
       "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
