@@ -37,8 +37,6 @@ android {
 
 dependencies {
   implementation project(':library')
-  //noinspection GradleDynamicVersion
-  //implementation "com.mux:utils-kt:+"
 
   implementation "androidx.media3:media3-exoplayer:${media3Version}"
   implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"

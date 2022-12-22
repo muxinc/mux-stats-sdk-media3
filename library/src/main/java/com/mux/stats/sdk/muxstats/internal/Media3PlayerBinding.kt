@@ -1,12 +1,11 @@
 package com.mux.stats.sdk.muxstats.internal
 
+import android.util.Log
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
-import com.mux.android.util.weak
 import com.mux.stats.sdk.muxstats.MuxPlayerAdapter
 import com.mux.stats.sdk.muxstats.MuxStateCollector
-import java.lang.ref.WeakReference
 
 /**
  * Creates a new instance of the generic Media3 PlayerBinding. Will work with any [Player],
@@ -33,14 +32,14 @@ private class Media3PlayerBinding : MuxPlayerAdapter.PlayerBinding<Player> {
 
 }
 
-private class MuxPlayerListener(player: Player, val collector: MuxStateCollector) :
+private class MuxPlayerListener(val player: Player, val collector: MuxStateCollector) :
   Player.Listener {
-  val player by weak(player)
 
   override fun onPlaybackStateChanged(playbackState: Int) {
+    Log.d("STATE", "onPlaybackStateChanged: $playbackState /${player.playWhenReady}")
     // We rely on the player's playWhenReady because the order of this callback and its callback
     //  is not well-defined
-    player?.let { collector.handleExoPlaybackState(playbackState, it.playWhenReady) }
+    collector.handleExoPlaybackState(playbackState, player.playWhenReady)
   }
 
   override fun onPositionDiscontinuity(
@@ -48,6 +47,10 @@ private class MuxPlayerListener(player: Player, val collector: MuxStateCollector
     newPosition: Player.PositionInfo,
     reason: Int
   ) {
+    Log.d(
+      "STATE",
+      "onPositionDiscontinuity: reason $reason/ ${oldPosition.positionMs} - ${newPosition.positionMs}"
+    )
     collector.handlePositionDiscontinuity(reason)
   }
 
@@ -59,7 +62,7 @@ private class MuxPlayerListener(player: Player, val collector: MuxStateCollector
   }
 
   override fun onTracksChanged(tracks: Tracks) {
-    watchPlayerPos(WeakReference(player), collector)
+    watchPlayerPos(player, collector)
     collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
   }
 }

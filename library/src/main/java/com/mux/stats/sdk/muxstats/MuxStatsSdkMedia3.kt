@@ -5,6 +5,7 @@ import android.view.View
 import androidx.media3.common.Player
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.model.CustomerData
+import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.internal.media3GenericBinding
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
 
@@ -33,6 +34,7 @@ class MuxStatsSdkMedia3(
   playerView = playerView,
   customerData = customerData,
   customOptions = customOptions ?: CustomOptions(),
+  logLevel = LogcatLevel.VERBOSE,
   trackFirstFrame = true,
   playerBinding = media3GenericBinding(),
   device = AndroidDevice(
@@ -43,3 +45,4 @@ class MuxStatsSdkMedia3(
     playerSoftware = "media3",
   )
 )
+

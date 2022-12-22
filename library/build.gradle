@@ -51,12 +51,14 @@ muxDistribution {
 }
 
 dependencies {
-  api 'com.mux.stats.sdk.muxstats:android:dev-releases/v0.7.1-4e1a20a'
+  def coreVersion = 'dev-why-it-like-this-656d943'
+  api "com.mux.stats.sdk.muxstats:android:$coreVersion"
   api "androidx.media3:media3-common:${media3Version}"
 
   // implementation is used so it doesn't pollute customers namespace
   //noinspection GradleDynamicVersion
-  implementation "com.mux:utils-kt:dev-releases/v0.7.1-4e1a20a"
+  implementation "com.mux:utils-kt:$coreVersion"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.1"
 
   testImplementation 'junit:junit:4.13.2'
   androidTestImplementation 'androidx.test.ext:junit:1.1.3'

@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.muxstats.internal
 
+import android.util.Log
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import com.mux.android.util.oneOf
@@ -9,7 +10,7 @@ import java.lang.ref.WeakReference
 
 internal const val PLAYER_STATE_POLL_MS = 150L
 
-internal fun watchPlayerPos(player: WeakReference<Player>, collector: MuxStateCollector) {
+internal fun watchPlayerPos(player: Player, collector: MuxStateCollector) {
   collector.playerWatcher = MuxStateCollector.PlayerWatcher(
     PLAYER_STATE_POLL_MS,
     collector,
@@ -42,6 +43,9 @@ internal fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
         || !mediaHasVideoTrack!!
       ) {
         seeked(false)
+      } else {
+        // Video Case: A Seek Event started
+        seeking()
       }
     }
     else -> {} // ignored
@@ -72,6 +76,10 @@ internal fun MuxStateCollector.handleExoPlaybackState(
     }
     Player.STATE_READY -> {
       if (playWhenReady) {
+        if(muxPlayerState == MuxPlayerState.SEEKING) {
+          Log.d("STATE", "Was seeking, dispatch seeked")
+          seeked(false)
+        }
         playing()
       } else if (muxPlayerState != MuxPlayerState.PAUSED) {
         pause()
