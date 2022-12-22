@@ -2,9 +2,9 @@ package com.mux.stats.sdk.muxstats.internal
 
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
+import com.mux.android.util.oneOf
 import com.mux.stats.sdk.muxstats.MuxPlayerState
 import com.mux.stats.sdk.muxstats.MuxStateCollector
-import com.mux.stats.sdk.muxstats.util.oneOf
 import java.lang.ref.WeakReference
 
 internal const val PLAYER_STATE_POLL_MS = 150L

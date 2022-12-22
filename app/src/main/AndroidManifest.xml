@@ -20,9 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
+<!--            <meta-data-->
+<!--                android:name="android.app.lib_name"-->
+<!--                android:value="" />-->
         </activity>
     </application>
 

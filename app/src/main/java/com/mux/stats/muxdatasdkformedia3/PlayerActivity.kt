@@ -14,7 +14,6 @@ import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
-import com.mux.stats.sdk.muxstats.util.logTag
 
 class PlayerActivity : AppCompatActivity() {
 
@@ -86,7 +85,7 @@ class PlayerActivity : AppCompatActivity() {
       .build().apply {
         addListener(object : Player.Listener {
           override fun onPlayerError(error: PlaybackException) {
-            Log.e(logTag(), "player error!", error)
+            Log.e(javaClass.simpleName, "player error!", error)
             Toast.makeText(this@PlayerActivity, error.localizedMessage, Toast.LENGTH_SHORT).show()
           }
         })
