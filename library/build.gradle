@@ -51,7 +51,7 @@ muxDistribution {
 }
 
 dependencies {
-  def coreVersion = 'dev-why-it-like-this-656d943'
+  def coreVersion = '0.7.1'
   api "com.mux.stats.sdk.muxstats:android:$coreVersion"
   api "androidx.media3:media3-common:${media3Version}"
 
