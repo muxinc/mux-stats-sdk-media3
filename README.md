@@ -84,6 +84,14 @@ in `Media3PlayerBinding`, an internal class that observes a `Player` of any type
 and player state to a core library whose source code can be
 found [here](https://github.com/muxinc/stats-sdk-android).
 
+#### API Surface
+
+The surface of this API is contained in `MuxStatsSdkMeda3`, which extends a common `MuxDataSdk`
+object in a common core library. This is the class customers should interact with if/when they need
+to customize some aspect of SDK behavior. Internally, `MuxStatsSdkMeda3` manages player interaction
+with the underlying data tracking and reporting code in
+the [android core](https://github.com/muxinc/stats-sdk-android)
+
 #### Player Bindings
 
 `Meda3PlayerBinding` should handle all interaction with the `Player`. It, in turn, is managed by our
