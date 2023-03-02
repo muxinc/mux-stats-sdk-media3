@@ -60,10 +60,12 @@ class PlayerActivity : AppCompatActivity() {
       oldPlayer.stop()
       oldPlayer.release()
     }
+    // Make sure to release() your muxStats whenever the user is done with the player
     muxStats?.release()
   }
 
   private fun monitorPlayer(player: Player): MuxStatsSdkMedia3 {
+    // You can add your own data to a View, which will override any data we collect
     val customerData = CustomerData(
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
