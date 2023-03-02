@@ -115,3 +115,5 @@ This SDK is still in beta, and some gaps in functionality are known:
 * When used with Compose, screen and player dimensions cannot be detected even in UI components
 * Only minimal quality metrics are currently reported
 * Video metadata such as Title, Source URL, etc is not tracked automatically
+* Advanced features like CDN tracking, bandwidth metrics, HLS segment tracking, etc are not yet
+  supported
