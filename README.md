@@ -33,7 +33,7 @@ api 'com.mux.stats.sdk.muxstats:data-media3:0.5.0'
 After you create your `Player` instance, monitor it with `monitorWithMuxData()`.
 
 ```kotlin
-    // from (for example) a MediaSessionService
+// from (for example) a MediaSessionService
 override fun onCreate() {
   // ...
   player = createMyExoPlayer() // Whatever player init you do
