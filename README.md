@@ -8,7 +8,7 @@ are planned
 ## Usage
 
 To use this SDK, you must add it as a dependency to your Android project and then monitor it from
-whatever UI component or Service is managing your `Player`.
+the UI component or Service that manages your `Player`.
 
 ### Add dependencies
 
@@ -76,6 +76,14 @@ private fun stopPlaying() {
 
 ## Development
 
+### Contributing
+
+We welcome [pull requests](https://github.com/muxinc/mux-stats-sdk-media3/pulls)
+and [issues](https://github.com/muxinc/mux-stats-sdk-media3/issues)! Our codebase
+follows [Kotlin's standard coding conventions](https://kotlinlang.org/docs/coding-conventions.html),
+which Android Studio should already be configured for. Our only special rule is that we require an
+indent width of 2. Your IDE should pick this up automatically.
+
 ### Internal Structure
 
 The SDK for media3 is composed mostly of two objects: `MuxStatsSdkMedia3` is the public interface
@@ -98,14 +106,6 @@ the [android core](https://github.com/muxinc/stats-sdk-android)
 [core android library](https://github.com/muxinc/stats-sdk-android). The `PlayerBinding` is `bound`
 when
 the outer `MuxStatsSdkMeda3` object is created and `unbound` when that object is `release()`d.
-
-### Contributing
-
-We welcome [pull requests](https://github.com/muxinc/mux-stats-sdk-media3/pulls)
-and [issues](https://github.com/muxinc/mux-stats-sdk-media3/issues)! Our codebase
-follows [Kotlin's standard coding conventions](https://kotlinlang.org/docs/coding-conventions.html),
-which Android Studio should already be configured for. Our only special rule is that we require an
-indent width of 2. Your IDE should pick this up automatically.
 
 ## Known Issues
 
