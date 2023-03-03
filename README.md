@@ -103,9 +103,9 @@ the [android core](https://github.com/muxinc/stats-sdk-android)
 #### Player Bindings
 
 `Meda3PlayerBinding` should handle all interaction with the `Player`. It, in turn, is managed by our
-[core android library](https://github.com/muxinc/stats-sdk-android). The `PlayerBinding` is `bound`
+[core android library](https://github.com/muxinc/stats-sdk-android). The `PlayerBinding` is bound
 when
-the outer `MuxStatsSdkMeda3` object is created and `unbound` when that object is `release()`d.
+the outer `MuxStatsSdkMeda3` object is created and unbound when that object is released.
 
 ## Known Issues
 
