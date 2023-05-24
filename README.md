@@ -1,4 +1,4 @@
-# Mux Data SDK for media3
+# Mux Data SDK for media3 (Beta)
 
 Mux Data SDK for AndroidX Media3 is an SDK that can observe a media3 `Player` and report state and
 player metadata to [Mux Data](https://www.mux.com/data). This SDK is currently in beta, but reports
@@ -109,7 +109,7 @@ the outer `MuxStatsSdkMeda3` object is created and unbound when that object is r
 
 ## Known Issues
 
-This SDK is still in beta, and some gaps in functionality are known:
+This SDK is still in beta as we continue development on it, and some gaps in functionality are known:
 
 * When used from a `Service` or `ViewModel`, screen and player dimensions cannot be detected
 * When used with Compose, screen and player dimensions cannot be detected even in UI components
@@ -117,3 +117,4 @@ This SDK is still in beta, and some gaps in functionality are known:
 * Video metadata such as Title, Source URL, etc is not tracked automatically
 * Advanced features like CDN tracking, bandwidth metrics, HLS segment tracking, etc are not yet
   supported
+* IMA integration is not supported yet
