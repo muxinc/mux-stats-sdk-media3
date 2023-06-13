@@ -48,10 +48,27 @@ muxDistribution {
     releaseRepoKey = 'default-maven-release-local'
     devRepoKey = 'default-maven-local'
   }
+
+  pom {
+    description "The Mux Data SDK for Google's androidX media3 SDK"
+    inceptionYear = "2022"
+    url = "https://github.com/muxinc/mux-stats-sdk-media3"
+    organization {
+      name =  "Mux, Inc"
+      url = "https://www.mux.com"
+    }
+    developers {
+      developer {
+        email = "support@mux.com"
+        name = "The mobile sdk team @mux"
+        organization = "Mux, inc"
+      }
+    }
+  }
 }
 
 dependencies {
-  def coreVersion = '0.7.2'
+  def coreVersion = '0.7.3'
   api "com.mux.stats.sdk.muxstats:android:$coreVersion"
   api "androidx.media3:media3-common:${media3Version}"
 
