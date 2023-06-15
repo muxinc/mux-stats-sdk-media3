@@ -8,12 +8,10 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
-import com.mux.stats.sdk.core.CorePlayer
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
-import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
 
