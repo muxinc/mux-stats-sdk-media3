@@ -8,17 +8,20 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
+import com.mux.stats.sdk.core.CorePlayer
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
+import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
 
 class PlayerActivity : AppCompatActivity() {
 
   companion object {
-    const val MUX_DATA_ENV_KEY = "YOUR KEY HERE"
+    const val MUX_DATA_ENV_KEY = "gr9h3o2kmk9ms51agfgd68h3s"
+//    const val MUX_DATA_ENV_KEY = "rhhn9fph0nog346n4tqb6bqda"
     const val VOD_TEST_URL_STEVE = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8"
     const val VOD_TEST_URL_DRAGON_WARRIOR_LADY =
       "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
@@ -65,7 +68,6 @@ class PlayerActivity : AppCompatActivity() {
   }
 
   private fun monitorPlayer(player: Player): MuxStatsSdkMedia3 {
-    // You can add your own data to a View, which will override any data we collect
     val customerData = CustomerData(
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
