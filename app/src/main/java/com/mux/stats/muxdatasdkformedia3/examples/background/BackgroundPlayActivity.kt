@@ -51,7 +51,7 @@ class BackgroundPlayActivity : AppCompatActivity() {
   }
 
   private fun startPlaying(controller: MediaController) {
-    val mediaItem = MediaItem.Builder().setMediaId("durian").build()
+    val mediaItem = MediaItem.Builder().setMediaId("bunny").build()
     controller.setMediaItem(mediaItem)
     controller.prepare()
     controller.playWhenReady = true

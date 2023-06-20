@@ -73,13 +73,15 @@ class BackgroundPlayService : MediaSessionService() {
 
   data class PlayableVideo(
     val id: String,
-    val url: String
+    val url: String,
+    val title: String,
   )
 
   companion object {
     val VIDEO_IDS = listOf(
-      PlayableVideo("steve", Constants.VOD_TEST_URL_STEVE),
-      PlayableVideo("durian", Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY),
+      PlayableVideo("bunny", Constants.VOD_TEST_URL_BIG_BUCK_BUNNY, "Big Buck Bunny"),
+      PlayableVideo("steve", Constants.VOD_TEST_URL_STEVE, "Apple Keynote"),
+      PlayableVideo("durian", Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY, "Durian Open Movie Project"),
     )
   }
 }
