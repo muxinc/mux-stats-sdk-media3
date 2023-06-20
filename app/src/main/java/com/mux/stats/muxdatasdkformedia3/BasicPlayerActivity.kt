@@ -3,10 +3,13 @@ package com.mux.stats.muxdatasdkformedia3
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView.SHOW_BUFFERING_WHEN_PLAYING
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
@@ -15,10 +18,9 @@ import com.mux.stats.sdk.core.model.CustomerViewData
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
 
-class PlayerActivity : AppCompatActivity() {
+class BasicPlayerActivity : AppCompatActivity() {
 
   companion object {
-    const val MUX_DATA_ENV_KEY = "YOUR KEY HERE"
     const val VOD_TEST_URL_STEVE = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8"
     const val VOD_TEST_URL_DRAGON_WARRIOR_LADY =
       "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
@@ -28,10 +30,15 @@ class PlayerActivity : AppCompatActivity() {
   private var player: Player? = null
   private var muxStats: MuxStatsSdkMedia3? = null
 
+  @OptIn(UnstableApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     view = ActivityPlayerBinding.inflate(layoutInflater)
     setContentView(view.root)
+
+    view.playerView.apply {
+      setShowBuffering(SHOW_BUFFERING_WHEN_PLAYING)
+    }
   }
 
   override fun onResume() {
@@ -76,7 +83,7 @@ class PlayerActivity : AppCompatActivity() {
 
     return player.monitorWithMuxData(
       context = this,
-      envKey = MUX_DATA_ENV_KEY,
+      envKey = Constants.MUX_DATA_ENV_KEY,
       customerData = customerData,
       playerView = view.playerView
     )
@@ -88,7 +95,7 @@ class PlayerActivity : AppCompatActivity() {
         addListener(object : Player.Listener {
           override fun onPlayerError(error: PlaybackException) {
             Log.e(javaClass.simpleName, "player error!", error)
-            Toast.makeText(this@PlayerActivity, error.localizedMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@BasicPlayerActivity, error.localizedMessage, Toast.LENGTH_SHORT).show()
           }
         })
       }

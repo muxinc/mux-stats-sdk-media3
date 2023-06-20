@@ -1,4 +1,5 @@
 package com.mux.stats.muxdatasdkformedia3
 
-class Constants {
+object Constants {
+  const val MUX_DATA_ENV_KEY = "YOUR KEY HERE"
 }
