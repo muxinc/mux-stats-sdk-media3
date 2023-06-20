@@ -3,6 +3,7 @@ package com.mux.stats.muxdatasdkformedia3
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityMainBinding
 import com.mux.stats.muxdatasdkformedia3.databinding.ListitemExampleBinding
+import com.mux.stats.muxdatasdkformedia3.examples.background.BackgroundPlayActivity
 import com.mux.stats.muxdatasdkformedia3.examples.basic.BasicPlayerActivity
 
 class MainActivity : AppCompatActivity() {
@@ -23,12 +25,17 @@ class MainActivity : AppCompatActivity() {
     setContentView(view.root)
     view.recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     view.recycler.adapter = ExampleListAdapter(this, examples())
+    Log.d("ok", "ok")
   }
 
   private fun examples() = listOf(
     Example(
       title = "Basic playback",
       destination = Intent(this, BasicPlayerActivity::class.java)
+    ),
+    Example(
+      title = "Background playback",
+      destination = Intent(this, BackgroundPlayActivity::class.java)
     ),
   )
 }

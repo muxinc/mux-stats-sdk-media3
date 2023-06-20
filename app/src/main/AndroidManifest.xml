@@ -19,7 +19,7 @@
             android:exported="false" />
 
         <service
-            android:name=".examples.background.ExamplePlayerService"
+            android:name=".examples.background.BackgroundPlayService"
             android:enabled="true"
             android:exported="true"
             android:foregroundServiceType="mediaPlayback" >

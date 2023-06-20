@@ -30,7 +30,6 @@ private class Media3PlayerBinding : MuxPlayerAdapter.PlayerBinding<Player> {
     collector.playerWatcher?.stop("player unbound")
     listener = null
   }
-
 }
 
 private class MuxPlayerListener(player: Player, val collector: MuxStateCollector) :

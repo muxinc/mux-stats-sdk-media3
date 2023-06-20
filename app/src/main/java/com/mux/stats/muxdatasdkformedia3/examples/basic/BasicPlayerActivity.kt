@@ -54,6 +54,7 @@ class BasicPlayerActivity : AppCompatActivity() {
       muxStats = monitorPlayer(newPlayer)
       view.playerView.player = newPlayer
       newPlayer.setMediaItem(mediaUrl.toMediaItem())
+      newPlayer.prepare()
       newPlayer.playWhenReady = true
     }
   }

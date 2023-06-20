@@ -3,11 +3,12 @@ package com.mux.stats.muxdatasdkformedia3.examples.background
 import android.content.ComponentName
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
-import com.mux.stats.muxdatasdkformedia3.R
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityBackgroundPlayBinding
 
 class BackgroundPlayActivity : AppCompatActivity() {
@@ -25,23 +26,34 @@ class BackgroundPlayActivity : AppCompatActivity() {
   override fun onStart() {
     super.onStart()
 
-    val sessionToken = SessionToken(this, ComponentName(this, ExamplePlayerService::class.java))
+    val sessionToken = SessionToken(this, ComponentName(this, BackgroundPlayService::class.java))
     val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-    this.controllerFuture = controllerFuture
     controllerFuture.addListener(
       {
+        Log.i("BackgroundPlayExample", "new MediaController created!")
         val controller = controllerFuture.get()!!
         view.playerView.player = controller
+        if (!controller.playWhenReady) {
+          startPlaying(controller)
+        }
       },
       MoreExecutors.directExecutor()
     )
+    this.controllerFuture = controllerFuture
   }
 
   override fun onStop() {
-    // Also releases
+    // Also releases the controller
     controllerFuture?.let { MediaController.releaseFuture(it) }
+    controllerFuture = null
 
     super.onStop()
   }
 
+  private fun startPlaying(controller: MediaController) {
+    val mediaItem = MediaItem.Builder().setMediaId("durian").build()
+    controller.setMediaItem(mediaItem)
+    controller.prepare()
+    controller.playWhenReady = true
+  }
 }
