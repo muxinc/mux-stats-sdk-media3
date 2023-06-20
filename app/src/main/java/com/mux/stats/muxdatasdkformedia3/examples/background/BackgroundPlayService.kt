@@ -1,6 +1,5 @@
 package com.mux.stats.muxdatasdkformedia3.examples.background
 
-import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
@@ -19,6 +18,7 @@ class BackgroundPlayService : MediaSessionService() {
   override fun onCreate() {
     super.onCreate()
     val player = createPlayer()
+    muxStats = monitorPlayer(player)
     mediaSession = MediaSession.Builder(this, player)
       .setCallback(createMediaSessionCallback())
       .build()
@@ -41,7 +41,6 @@ class BackgroundPlayService : MediaSessionService() {
         controller: MediaSession.ControllerInfo,
         mediaItems: MutableList<MediaItem>
       ): ListenableFuture<MutableList<MediaItem>> {
-        Log.d("BackgroundPlayExample", "Adding media items: $mediaItems")
         val resolvedMediaItems = mediaItems
           .map { item ->
             item.buildUpon()
