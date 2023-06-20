@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityMainBinding
 import com.mux.stats.muxdatasdkformedia3.databinding.ListitemExampleBinding
+import com.mux.stats.muxdatasdkformedia3.examples.basic.BasicPlayerActivity
 
 class MainActivity : AppCompatActivity() {
 

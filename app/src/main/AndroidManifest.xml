@@ -20,7 +20,7 @@
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".BasicPlayerActivity">
+        <activity android:name=".examples.basic.BasicPlayerActivity">
         </activity>
     </application>
 

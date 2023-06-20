@@ -1,4 +1,4 @@
-package com.mux.stats.muxdatasdkformedia3
+package com.mux.stats.muxdatasdkformedia3.examples.basic
 
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +10,9 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView.SHOW_BUFFERING_WHEN_PLAYING
+import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
+import com.mux.stats.muxdatasdkformedia3.toMediaItem
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
@@ -19,12 +21,6 @@ import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
 
 class BasicPlayerActivity : AppCompatActivity() {
-
-  companion object {
-    const val VOD_TEST_URL_STEVE = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8"
-    const val VOD_TEST_URL_DRAGON_WARRIOR_LADY =
-      "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-  }
 
   private lateinit var view: ActivityPlayerBinding
   private var player: Player? = null
@@ -43,7 +39,7 @@ class BasicPlayerActivity : AppCompatActivity() {
 
   override fun onResume() {
     super.onResume()
-    startPlaying(VOD_TEST_URL_DRAGON_WARRIOR_LADY)
+    startPlaying(Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY)
   }
 
   override fun onPause() {
