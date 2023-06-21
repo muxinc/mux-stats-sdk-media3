@@ -3,6 +3,7 @@ package com.mux.stats.muxdatasdkformedia3.examples.background
 import android.content.ComponentName
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore.Audio.Media
 import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaController

@@ -33,6 +33,10 @@ class BackgroundPlayService : MediaSessionService() {
     super.onDestroy()
   }
 
+//  override fun onUpdateNotification(session: MediaSession) {
+//    super.onUpdateNotification(session)
+//    //TODO
+//  }
 
   private fun createMediaSessionCallback(): MediaSession.Callback {
     return object : MediaSession.Callback {
