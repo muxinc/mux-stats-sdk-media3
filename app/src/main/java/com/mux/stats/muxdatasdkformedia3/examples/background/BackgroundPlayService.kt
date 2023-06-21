@@ -1,5 +1,6 @@
 package com.mux.stats.muxdatasdkformedia3.examples.background
 
+import android.os.Bundle
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.MediaItem
@@ -11,6 +12,8 @@ import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.MediaStyleNotificationHelper
+import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.mux.stats.muxdatasdkformedia3.Constants
@@ -64,8 +67,18 @@ class BackgroundPlayService : MediaSessionService() {
           .toMutableList()
         player?.addMediaItems(resolvedMediaItems)
         return Futures.immediateFuture(resolvedMediaItems)
+      } // onAddMediaItems
+
+      override fun onCustomCommand(
+        session: MediaSession,
+        controller: MediaSession.ControllerInfo,
+        customCommand: SessionCommand,
+        args: Bundle
+      ): ListenableFuture<SessionResult> {
+        // TODO: Something here to parse these commands
+        return super.onCustomCommand(session, controller, customCommand, args)
       }
-    }
+    } // object : MediaSession.Callback
   }
 
   override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
