@@ -1,9 +1,16 @@
 package com.mux.stats.muxdatasdkformedia3.examples.background
 
+import androidx.annotation.OptIn
+import androidx.core.app.NotificationCompat
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.DefaultMediaNotificationProvider
+import androidx.media3.session.MediaNotification
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import androidx.media3.session.MediaStyleNotificationHelper
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import com.mux.stats.muxdatasdkformedia3.Constants
@@ -33,11 +40,6 @@ class BackgroundPlayService : MediaSessionService() {
     super.onDestroy()
   }
 
-//  override fun onUpdateNotification(session: MediaSession) {
-//    super.onUpdateNotification(session)
-//    //TODO
-//  }
-
   private fun createMediaSessionCallback(): MediaSession.Callback {
     return object : MediaSession.Callback {
       override fun onAddMediaItems(
@@ -47,8 +49,16 @@ class BackgroundPlayService : MediaSessionService() {
       ): ListenableFuture<MutableList<MediaItem>> {
         val resolvedMediaItems = mediaItems
           .map { item ->
+            val playableVideo = findUrl(item.mediaId)
+            val mediaMetadata = playableVideo?.let {
+              MediaMetadata.Builder()
+                .setTitle(it.title)
+                .setDisplayTitle(it.title)
+                .build()
+            } ?: MediaMetadata.EMPTY
             item.buildUpon()
-              .setUri(findUrl(item.mediaId))
+              .setUri(findUrl(item.mediaId)?.url)
+              .setMediaMetadata(mediaMetadata)
               .build()
           }
           .toMutableList()
@@ -62,8 +72,8 @@ class BackgroundPlayService : MediaSessionService() {
     return mediaSession
   }
 
-  private fun findUrl(videoId: String): String? {
-    return VIDEO_IDS.find { it.id == videoId }?.url
+  private fun findUrl(videoId: String): PlayableVideo? {
+    return VIDEO_IDS.find { it.id == videoId }
   }
 
   private fun monitorPlayer(player: ExoPlayer): MuxStatsSdkMedia3? {
