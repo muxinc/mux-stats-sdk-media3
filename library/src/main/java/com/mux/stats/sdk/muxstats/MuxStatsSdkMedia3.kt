@@ -20,16 +20,17 @@ import com.mux.stats.sdk.muxstats.media3.BuildConfig
  * @param playerView the View showing your video content
  * @param customOptions Options that affect the behavior of the SDK
  * @param playerBinding a [MuxPlayerAdapter.PlayerBinding] that can observe the state of your player
+ * @param P The type of player being monitored.
  */
-class MuxStatsSdkMedia3(
+class MuxStatsSdkMedia3<P : Player>(
   context: Context,
   envKey: String,
   customerData: CustomerData,
-  player: Player,
+  player: P,
   playerView: View? = null,
   customOptions: CustomOptions? = null,
-  playerBinding: MuxPlayerAdapter.PlayerBinding<Player> = media3GenericBinding()
-) : MuxDataSdk<Player, View>(
+  playerBinding: MuxPlayerAdapter.PlayerBinding<P> = media3GenericBinding()
+) : MuxDataSdk<P, View>(
   context = context,
   envKey = envKey,
   player = player,

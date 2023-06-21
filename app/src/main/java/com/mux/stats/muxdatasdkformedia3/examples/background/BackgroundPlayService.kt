@@ -23,7 +23,7 @@ class BackgroundPlayService : MediaSessionService() {
 
   private var mediaSession: MediaSession? = null
   private val player: ExoPlayer? get() = mediaSession?.player as? ExoPlayer
-  private var muxStats: MuxStatsSdkMedia3? = null
+  private var muxStats: MuxStatsSdkMedia3<ExoPlayer>? = null
 
   override fun onCreate() {
     super.onCreate()
@@ -89,7 +89,7 @@ class BackgroundPlayService : MediaSessionService() {
     return VIDEO_IDS.find { it.id == videoId }
   }
 
-  private fun monitorPlayer(player: ExoPlayer): MuxStatsSdkMedia3? {
+  private fun monitorPlayer(player: ExoPlayer): MuxStatsSdkMedia3<ExoPlayer>? {
     return null // TODO: not null
   }
 

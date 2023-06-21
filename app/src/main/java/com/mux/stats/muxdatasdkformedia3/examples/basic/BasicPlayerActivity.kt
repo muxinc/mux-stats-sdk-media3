@@ -24,7 +24,7 @@ class BasicPlayerActivity : AppCompatActivity() {
 
   private lateinit var view: ActivityPlayerBinding
   private var player: Player? = null
-  private var muxStats: MuxStatsSdkMedia3? = null
+  private var muxStats: MuxStatsSdkMedia3<Player>? = null
 
   @OptIn(UnstableApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +68,7 @@ class BasicPlayerActivity : AppCompatActivity() {
     muxStats?.release()
   }
 
-  private fun monitorPlayer(player: Player): MuxStatsSdkMedia3 {
+  private fun monitorPlayer(player: Player): MuxStatsSdkMedia3<Player> {
     // You can add your own data to a View, which will override any data we collect
     val customerData = CustomerData(
       CustomerPlayerData().apply { },

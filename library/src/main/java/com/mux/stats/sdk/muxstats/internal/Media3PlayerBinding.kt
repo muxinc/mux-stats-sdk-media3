@@ -9,24 +9,31 @@ import com.mux.android.util.weak
 import com.mux.stats.sdk.muxstats.MuxPlayerAdapter
 import com.mux.stats.sdk.muxstats.MuxStateCollector
 
+// TODO: Media3PlayerBinding -> open BasicMedia3Binding
+//  media3GenericBinding -> detectBinding: Uses Class.forName to decide which binding
+//  ... This is a lot.
+//  MuxStatsSdkMedia3<P : Player> is a start. Now we for sure only need one big facade
+//    What about Player.monitorWithMuxData? Easy! The base doesn't have one
+//    The extensions are only for the exo version, and they can be instance-aware
+
 /**
  * Creates a new instance of the generic Media3 PlayerBinding. Will work with any [Player],
  * including a MediaController
  */
-internal fun media3GenericBinding(): MuxPlayerAdapter.PlayerBinding<Player> = Media3PlayerBinding()
+internal fun media3GenericBinding(): MuxPlayerAdapter.PlayerBinding<in Player> = Media3PlayerBinding()
 
 /**
  * PlayerBinding for a generic Media3 [Player]
  */
-private class Media3PlayerBinding : MuxPlayerAdapter.PlayerBinding<Player> {
+private class Media3PlayerBinding<P: Player> : MuxPlayerAdapter.PlayerBinding<P> {
 
   private var listener: MuxPlayerListener? = null
 
-  override fun bindPlayer(player: Player, collector: MuxStateCollector) {
+  override fun bindPlayer(player: P, collector: MuxStateCollector) {
     listener = MuxPlayerListener(player, collector).also { player.addListener(it) }
   }
 
-  override fun unbindPlayer(player: Player, collector: MuxStateCollector) {
+  override fun unbindPlayer(player: P, collector: MuxStateCollector) {
     listener?.let { player.removeListener(it) }
     collector.playerWatcher?.stop("player unbound")
     listener = null
