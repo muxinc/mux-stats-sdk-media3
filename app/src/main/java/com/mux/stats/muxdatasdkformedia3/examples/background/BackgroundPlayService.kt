@@ -57,7 +57,7 @@ class BackgroundPlayService : MediaSessionService() {
                 .build()
             } ?: MediaMetadata.EMPTY
             item.buildUpon()
-              .setUri(findUrl(item.mediaId)?.url)
+              .setUri(playableVideo?.url)
               .setMediaMetadata(mediaMetadata)
               .build()
           }
