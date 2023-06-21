@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
+import androidx.media3.common.VideoSize
 import com.mux.android.util.weak
 import com.mux.stats.sdk.muxstats.MuxPlayerAdapter
 import com.mux.stats.sdk.muxstats.MuxStateCollector
@@ -38,7 +39,6 @@ private class MuxPlayerListener(player: Player, val collector: MuxStateCollector
   private val player by weak(player)
 
   override fun onPlaybackStateChanged(playbackState: Int) {
-    Log.d("STATE", "onPlaybackStateChanged: $playbackState /${player?.playWhenReady}")
     // We rely on the player's playWhenReady because the order of this callback and its callback
     //  is not well-defined
     player?.let { collector.handleExoPlaybackState(playbackState, it.playWhenReady) }
@@ -49,10 +49,6 @@ private class MuxPlayerListener(player: Player, val collector: MuxStateCollector
     newPosition: Player.PositionInfo,
     reason: Int
   ) {
-    Log.d(
-      "STATE",
-      "onPositionDiscontinuity: reason $reason/ ${oldPosition.positionMs} - ${newPosition.positionMs}"
-    )
     collector.handlePositionDiscontinuity(reason)
   }
 
@@ -60,6 +56,17 @@ private class MuxPlayerListener(player: Player, val collector: MuxStateCollector
     timeline.takeIf { it.windowCount > 0 }?.let { tl ->
       val window = Timeline.Window().apply { tl.getWindow(0, this) }
       collector.sourceDurationMs = window.durationMs
+    }
+  }
+
+  override fun onVideoSizeChanged(videoSize: VideoSize) {
+    if (videoSize.height > 0 && videoSize.width > 0) {
+      collector.renditionChange(
+        sourceHeight = videoSize.height,
+        sourceWidth = videoSize.width,
+        advertisedBitrate = 0, // The basic player does not provide this information
+        advertisedFrameRate = 0F, // The basic player does not provide this information
+      )
     }
   }
 
