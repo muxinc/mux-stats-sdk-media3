@@ -93,9 +93,7 @@ private class MuxAnalyticsListener(player: ExoPlayer, val collector: MuxStateCol
     droppedFrames: Int,
     elapsedMs: Long
   ) {
-    // TODO: Needs to be on the collector
-//    collector.numberOfDroppedFrames += droppedFrames
-    collector.muxStats.setDroppedFramesCount(droppedFrames.toLong())
+    collector.incrementDroppedFrames(droppedFrames)
   }
 
   override fun onVideoSizeChanged(
