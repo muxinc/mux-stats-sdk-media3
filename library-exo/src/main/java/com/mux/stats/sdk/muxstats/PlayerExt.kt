@@ -11,6 +11,8 @@ import com.mux.stats.sdk.core.model.CustomerData
  * Monitor this Player with Mux Data, reporting data about the View to the environment specified
  * by the env key
  *
+ * If the [Player] is an [ExoPlayer], exoplayer-specific will be collected
+ *
  * @param context a Context containing your player. If it's an Activity, screen size is obtained
  * @param envKey your Mux Data Environment Key
  * @param customerData data about you, your customer, and your video
