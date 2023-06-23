@@ -71,8 +71,8 @@ private class MuxPlayerListener(player: Player, val collector: MuxStateCollector
       collector.renditionChange(
         sourceHeight = videoSize.height,
         sourceWidth = videoSize.width,
-        advertisedBitrate = 0, // The basic player does not provide this information
-        advertisedFrameRate = 0F, // The basic player does not provide this information
+        advertisedBitrate = 0, // The base player does not provide this information
+        advertisedFrameRate = 0F, // The base player does not provide this information
       )
     }
   }
