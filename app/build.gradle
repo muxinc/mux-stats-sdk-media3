@@ -38,8 +38,6 @@ android {
 dependencies {
   implementation "com.mux.stats.sdk.muxstats:data-media3:${project.version}"
   implementation "com.mux.stats.sdk.muxstats:data-media3-exoplayer:${project.version}"
-//  implementation project(':library')
-//  implementation project(':library-exo')
 
   implementation "androidx.media3:media3-exoplayer:${media3Version}"
   implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"
