@@ -20,7 +20,7 @@ import com.mux.stats.sdk.muxstats.MuxStateCollector
  * Creates a new instance of the generic Media3 PlayerBinding. Will work with any [Player],
  * including a MediaController
  */
-internal fun media3GenericBinding(): MuxPlayerAdapter.PlayerBinding<in Player> = Media3PlayerBinding()
+internal fun media3GenericBinding(): MuxPlayerAdapter.PlayerBinding<Player> = Media3PlayerBinding()
 
 /**
  * PlayerBinding for a generic Media3 [Player]
