@@ -34,7 +34,7 @@ android {
 muxDistribution {
   devVersion versionFromCommitHash('dev-')
   releaseVersion versionFromTag()
-  artifactIds just("data-media3-exoplayer")
+  artifactIds just("data-media3")
   groupIds just("com.mux.stats.sdk.muxstats")
   publicReleaseIf releaseOnTag()
 
@@ -66,7 +66,7 @@ muxDistribution {
 }
 
 dependencies {
-  api "com.mux.stats.sdk.muxstats:data-media3:$project.version"
+  api "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
   api 'androidx.media3:media3-exoplayer:1.0.2' // TODO: Just base and hls
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
@@ -81,7 +81,7 @@ dependencies {
 
 configurations.all {
   resolutionStrategy.dependencySubstitution {
-    substitute module("com.mux.stats.sdk.muxstats:data-media3") using project(":library")\
+    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom") using project(":library")\
       because "In development, we build from src"
   }
 }
