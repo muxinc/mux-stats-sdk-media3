@@ -29,8 +29,8 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   customerData: CustomerData,
   player: P,
   playerView: View? = null,
+  playerBinding: MuxPlayerAdapter.PlayerBinding<P> = BaseMedia3Binding(),
   customOptions: CustomOptions? = null,
-  playerBinding: MuxPlayerAdapter.PlayerBinding<P> = BaseMedia3Binding()
 ) : MuxDataSdk<P, View>(
   context = context,
   envKey = envKey,
