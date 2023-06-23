@@ -1,30 +1,18 @@
-package com.mux.stats.sdk.muxstats.internal
+package com.mux.stats.sdk.muxstats
 
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import com.mux.android.util.weak
-import com.mux.stats.sdk.muxstats.MuxPlayerAdapter
-import com.mux.stats.sdk.muxstats.MuxStateCollector
-
-// TODO: Media3PlayerBinding -> open BasicMedia3Binding
-//  media3GenericBinding -> detectBinding: Uses Class.forName to decide which binding
-//  ... This is a lot.
-//  MuxStatsSdkMedia3<P : Player> is a start. Now we for sure only need one big facade
-//    What about Player.monitorWithMuxData? Easy! The base doesn't have one
-//    The extensions are only for the exo version, and they can be instance-aware
 
 /**
- * Creates a new instance of the generic Media3 PlayerBinding. Will work with any [Player],
- * including a MediaController
+ * PlayerBinding for a generic Media3 [Player]. It reports basic quality information, view timeline
+ * events, network and media metadata. More advanced metrics are available if you're using ExoPlayer
+ *
+ * // TODO: Link to integration docs for if you're using ExoPlayer
  */
-fun media3GenericBinding(): MuxPlayerAdapter.PlayerBinding<Player> = BaseMedia3Binding()
-
-/**
- * PlayerBinding for a generic Media3 [Player]
- */
-open class BaseMedia3Binding<P: Player> : MuxPlayerAdapter.PlayerBinding<P> {
+class BaseMedia3Binding<P: Player> : MuxPlayerAdapter.PlayerBinding<P> {
 
   private var listener: MuxPlayerListener? = null
 
@@ -78,7 +66,7 @@ private class MuxPlayerListener(player: Player, val collector: MuxStateCollector
 
   override fun onTracksChanged(tracks: Tracks) {
     player?.let {
-      watchPlayerPos(it, collector)
+      collector.watchPlayerPos(it)
       collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     }
   }

@@ -7,7 +7,7 @@ import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.muxstats.MuxPlayerAdapter
 import com.mux.stats.sdk.muxstats.MuxStateCollector
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
-import com.mux.stats.sdk.muxstats.internal.BaseMedia3Binding
+import com.mux.stats.sdk.muxstats.BaseMedia3Binding
 
 class SomeClass : Activity() {
   fun aFunction(c: MuxStateCollector) {

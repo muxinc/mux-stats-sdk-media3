@@ -5,11 +5,10 @@ import android.view.View
 import androidx.media3.common.Player
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.model.CustomerData
-import com.mux.stats.sdk.core.util.MuxLogger
-import com.mux.stats.sdk.muxstats.internal.BaseMedia3Binding
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
 
 /**
+ * TODO: doc out of date
  * Monitors a generic [Player] with Mux Data, reporting data about the View to the environment
  * specified by the env key.
  *
