@@ -1,5 +1,12 @@
 package com.mux.stats.sdk.muxstats
 
+import androidx.annotation.OptIn
+import androidx.media3.common.Format
+import androidx.media3.common.Player
+import androidx.media3.common.Timeline
+import androidx.media3.common.Tracks
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
 import com.mux.android.util.weak
@@ -19,8 +26,50 @@ class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
   }
 }
 
+@OptIn(UnstableApi::class)
 private class MuxAnalyticsListener(player: ExoPlayer, val collector: MuxStateCollector)
   : AnalyticsListener {
-
     private val player by weak(player)
+
+  override fun onPlaybackStateChanged(eventTime: AnalyticsListener.EventTime, state: Int) {
+    // We rely on the player's playWhenReady because the order of this callback and its callback
+    //  is not well-defined
+    player?.let { collector.handleExoPlaybackState(state, it.playWhenReady) }
+  }
+
+  override fun onPositionDiscontinuity(
+    eventTime: AnalyticsListener.EventTime,
+    oldPosition: Player.PositionInfo,
+    newPosition: Player.PositionInfo,
+    reason: Int
+  ) {
+    collector.handlePositionDiscontinuity(reason)
+  }
+
+  override fun onTimelineChanged(eventTime: AnalyticsListener.EventTime, reason: Int) {
+    eventTime.timeline.takeIf { it.windowCount > 0 }?.let { tl ->
+      val window = Timeline.Window().apply { tl.getWindow(0, this) }
+      collector.sourceDurationMs = window.durationMs
+    }
+  }
+
+  override fun onVideoInputFormatChanged(
+    eventTime: AnalyticsListener.EventTime,
+    format: Format,
+    decoderReuseEvaluation: DecoderReuseEvaluation?
+  ) {
+    collector.renditionChange(
+      advertisedBitrate = format.averageBitrate,
+      advertisedFrameRate = format.frameRate,
+      sourceWidth = format.width,
+      sourceHeight = format.height
+    )
+  }
+
+  override fun onTracksChanged(eventTime: AnalyticsListener.EventTime, tracks: Tracks) {
+    player?.let {
+      collector.watchPlayerPos(it)
+      collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
+    }
+  }
 }
