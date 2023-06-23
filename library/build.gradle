@@ -69,12 +69,9 @@ muxDistribution {
 
 dependencies {
 //  def coreVersion = 'dev-covariant-binding-9a3773e'
-  def coreVersion = '0.7.4'
   api "com.mux.stats.sdk.muxstats:android:$coreVersion"
-  api "androidx.media3:media3-common:${media3Version}"
-
+  api "androidx.media3:media3-common:$media3Version"
   // implementation is used so it doesn't pollute customers namespace
-  //noinspection GradleDynamicVersion
   implementation "com.mux:utils-kt:$coreVersion"
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1"
 
