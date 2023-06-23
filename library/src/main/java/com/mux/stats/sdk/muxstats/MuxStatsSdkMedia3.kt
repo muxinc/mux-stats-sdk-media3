@@ -22,7 +22,7 @@ import com.mux.stats.sdk.muxstats.media3.BuildConfig
  * @param playerBinding a [MuxPlayerAdapter.PlayerBinding] that can observe the state of your player
  * @param P The type of player being monitored.
  */
-class MuxStatsSdkMedia3<P : Player>(
+class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   context: Context,
   envKey: String,
   customerData: CustomerData,
