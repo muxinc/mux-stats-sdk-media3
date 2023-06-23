@@ -8,11 +8,14 @@ import com.mux.android.util.weak
 
 /**
  * PlayerBinding for a generic Media3 [Player]. It reports basic quality information, view timeline
- * events, network and media metadata. More advanced metrics are available if you're using ExoPlayer
+ * events, network and media metadata.
  *
- * // TODO: Link to integration docs for if you're using ExoPlayer
+ * You don't ordinarily need to work with this class directly, unless you are implementing your own
+ * [Player] with custom APIs, and you wish to observe it
+ *
+ * // TODO: Mention the normal ExoPlayer path & link docs, in case they are lost
  */
-class BaseMedia3Binding<P: Player> : MuxPlayerAdapter.PlayerBinding<P> {
+open class BaseMedia3Binding<P: Player> : MuxPlayerAdapter.PlayerBinding<P> {
 
   private var listener: MuxPlayerListener? = null
 

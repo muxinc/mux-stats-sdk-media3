@@ -7,6 +7,8 @@ import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
 
+// TODO: <em> Deprecate/Rename this to something like MuxStatsBasicPlayer
+
 /**
  * TODO: doc out of date
  * Monitors a generic [Player] with Mux Data, reporting data about the View to the environment
@@ -44,6 +46,6 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
     playerVersion = BuildConfig.MEDIA3_VERSION, /* TODO: Dynamic would be better if possible*/
     muxPluginName = "mux-media3",
     muxPluginVersion = BuildConfig.LIB_VERSION,
-    playerSoftware = "media3",
+    playerSoftware = "media3-generic",
   )
 )

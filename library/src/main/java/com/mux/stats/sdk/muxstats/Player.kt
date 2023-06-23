@@ -6,6 +6,9 @@ import androidx.media3.common.Player
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.model.CustomerData
 
+// TODO: The base package won't have this. You need to create the MuxStatsBasicPlayer yourself
+//    The exo package will have an extension that can figure out if you're calling from an exoplayer
+
 /**
  * Monitor this Player with Mux Data, reporting data about the View to the environment specified
  * by the env key
