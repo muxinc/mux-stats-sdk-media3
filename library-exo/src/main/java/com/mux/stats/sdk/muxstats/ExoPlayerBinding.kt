@@ -5,10 +5,12 @@ import androidx.media3.common.Format
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
+import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
+import androidx.media3.exoplayer.source.MediaLoadData
 import com.mux.android.util.weak
 
 class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
@@ -71,5 +73,36 @@ private class MuxAnalyticsListener(player: ExoPlayer, val collector: MuxStateCol
       collector.watchPlayerPos(it)
       collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     }
+  }
+
+  override fun onDownstreamFormatChanged(
+    eventTime: AnalyticsListener.EventTime,
+    mediaLoadData: MediaLoadData
+  ) {
+    if (collector.detectMimeType) {
+      mediaLoadData.trackFormat?.containerMimeType?.let { collector.mimeType = it }
+    }
+  }
+
+  override fun onRenderedFirstFrame(eventTime: AnalyticsListener.EventTime, output: Any, renderTimeMs: Long) {
+    collector.onFirstFrameRendered()
+  }
+
+  override fun onDroppedVideoFrames(
+    eventTime: AnalyticsListener.EventTime,
+    droppedFrames: Int,
+    elapsedMs: Long
+  ) {
+    // TODO: Needs to be on the collector
+//    collector.numberOfDroppedFrames += droppedFrames
+    collector.muxStats.setDroppedFramesCount(droppedFrames.toLong())
+  }
+
+  override fun onVideoSizeChanged(
+    eventTime: AnalyticsListener.EventTime,
+    videoSize: VideoSize
+  ) {
+    collector.sourceWidth = videoSize.width
+    collector.sourceHeight = videoSize.height
   }
 }
