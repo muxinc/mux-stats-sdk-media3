@@ -36,7 +36,10 @@ android {
 }
 
 dependencies {
-  implementation project(':library')
+  implementation "com.mux.stats.sdk.muxstats:data-media3:${project.version}"
+  implementation "com.mux.stats.sdk.muxstats:data-media3-exoplayer:${project.version}"
+//  implementation project(':library')
+//  implementation project(':library-exo')
 
   implementation "androidx.media3:media3-exoplayer:${media3Version}"
   implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"
@@ -52,4 +55,13 @@ dependencies {
   testImplementation 'junit:junit:4.13.2'
   androidTestImplementation 'androidx.test.ext:junit:1.1.5'
   androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+configurations.all {
+  resolutionStrategy.dependencySubstitution {
+    substitute module("com.mux.stats.sdk.muxstats:data-media3") using project(":library")\
+      because "In development, we build from src"
+    substitute module("com.mux.stats.sdk.muxstats:data-media3-exoplayer") using \
+      project(":library-exo") because "In development, we build from src"
+  }
 }
