@@ -34,8 +34,8 @@ private class MuxAnalyticsListener(player: ExoPlayer, val collector: MuxStateCol
     private val player by weak(player)
 
   override fun onPlaybackStateChanged(eventTime: AnalyticsListener.EventTime, state: Int) {
-    // We rely on the player's playWhenReady because the order of this callback and its callback
-    //  is not well-defined
+    // query playWhenReady for consistency. The order of execution between this callback and
+    //  onPlayWhenReadyChanged is not well-defined
     player?.let { collector.handleExoPlaybackState(state, it.playWhenReady) }
   }
 
