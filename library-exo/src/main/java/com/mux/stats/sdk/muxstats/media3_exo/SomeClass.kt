@@ -1,4 +1,4 @@
-package com.mux.stats.media3
+package com.mux.stats.sdk.muxstats.media3_exo
 
 import android.app.Activity
 import androidx.media3.common.Player
