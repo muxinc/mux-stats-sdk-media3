@@ -6,7 +6,7 @@ import androidx.media3.common.Player
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.util.MuxLogger
-import com.mux.stats.sdk.muxstats.internal.media3GenericBinding
+import com.mux.stats.sdk.muxstats.internal.BaseMedia3Binding
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
 
 /**
@@ -29,7 +29,7 @@ class MuxStatsSdkMedia3<P : Player>(
   player: P,
   playerView: View? = null,
   customOptions: CustomOptions? = null,
-  playerBinding: MuxPlayerAdapter.PlayerBinding<P> = media3GenericBinding()
+  playerBinding: MuxPlayerAdapter.PlayerBinding<P> = BaseMedia3Binding()
 ) : MuxDataSdk<P, View>(
   context = context,
   envKey = envKey,

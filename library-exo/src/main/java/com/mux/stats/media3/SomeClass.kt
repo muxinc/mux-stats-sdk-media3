@@ -7,9 +7,10 @@ import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.muxstats.MuxPlayerAdapter
 import com.mux.stats.sdk.muxstats.MuxStateCollector
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
+import com.mux.stats.sdk.muxstats.internal.BaseMedia3Binding
 
 class SomeClass : Activity() {
-  fun aFunction() {
+  fun aFunction(c: MuxStateCollector) {
     val s = MuxStatsSdkMedia3(
       this,
       envKey = "",
@@ -19,7 +20,19 @@ class SomeClass : Activity() {
       customOptions = null,
       playerBinding = PB()
     )
+
+    val binding = BaseMedia3Binding<Player>()
+    binding.bindPlayer(
+      ExoPlayer.Builder(this).build(),
+      c
+    )
   }
+
+  fun f(binding: MuxPlayerAdapter.PlayerBinding<in Player>) {
+
+  }
+
+  fun fill(dest: Array<in String>, value: String) { }
 
   class BPB : MuxPlayerAdapter.PlayerBinding<Player> {
     override fun bindPlayer(player: Player, collector: MuxStateCollector) {

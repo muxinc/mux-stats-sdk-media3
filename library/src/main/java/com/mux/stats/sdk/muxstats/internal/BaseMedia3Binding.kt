@@ -1,6 +1,5 @@
 package com.mux.stats.sdk.muxstats.internal
 
-import android.util.Log
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
@@ -20,12 +19,12 @@ import com.mux.stats.sdk.muxstats.MuxStateCollector
  * Creates a new instance of the generic Media3 PlayerBinding. Will work with any [Player],
  * including a MediaController
  */
-internal fun media3GenericBinding(): MuxPlayerAdapter.PlayerBinding<Player> = Media3PlayerBinding()
+fun media3GenericBinding(): MuxPlayerAdapter.PlayerBinding<Player> = BaseMedia3Binding()
 
 /**
  * PlayerBinding for a generic Media3 [Player]
  */
-private class Media3PlayerBinding<P: Player> : MuxPlayerAdapter.PlayerBinding<P> {
+open class BaseMedia3Binding<P: Player> : MuxPlayerAdapter.PlayerBinding<P> {
 
   private var listener: MuxPlayerListener? = null
 
