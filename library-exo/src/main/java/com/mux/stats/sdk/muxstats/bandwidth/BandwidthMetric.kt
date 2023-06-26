@@ -3,6 +3,7 @@ package com.mux.stats.sdk.muxstats.bandwidth
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
+import androidx.media3.common.Timeline
 import androidx.media3.common.TrackGroup
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -17,6 +18,7 @@ import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.MuxStateCollector
 import java.io.IOException
 import java.util.*
+import java.util.regex.Pattern
 
 /**
  * Calculate Bandwidth metrics of an HLS or DASH segment. {@link ExoPlayer} will trigger
@@ -33,6 +35,8 @@ internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxSta
    * The segment url is the key value of the map.
    */
   var loadedSegments: HashMap<Long, BandwidthMetricData> = HashMap<Long, BandwidthMetricData>()
+
+  private var currentTimelineWindow: Timeline.Window = Timeline.Window()
 
   /**
    * When the segment failed to load an error will be reported to the backend. This also
@@ -82,10 +86,10 @@ internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxSta
     segmentWidth: Int, segmentHeight: Int
   ): BandwidthMetricData {
     // Populate segment time details.
-    synchronized(collector.currentTimelineWindow) {
+    synchronized(currentTimelineWindow) {
       try {
         player.getCurrentTimeline()
-          .getWindow(player.getCurrentWindowIndex(), collector.currentTimelineWindow)
+          .getWindow(player.getCurrentWindowIndex(), currentTimelineWindow)
       } catch (e: Exception) {
         // Failed to obtrain data, ignore, we will get it on next call
       }
@@ -254,9 +258,11 @@ internal class BandwidthMetricHls(
  * Luckily logic for HLS parsing is same as logic for DASH parsing so for both streams we use
  * {@link BandwidthMetricHls}.
  */
+// TODO: Input list of allowed headers
 internal class BandwidthMetricDispatcher(
   player: ExoPlayer,
-  collector: MuxStateCollector
+  collector: MuxStateCollector,
+  private val trackedResponseHeaders: List<TrackedHeader> = listOf()
 ) {
   private val player: ExoPlayer? by weak(player)
   private val collector: MuxStateCollector? by weak(collector)
@@ -397,15 +403,15 @@ internal class BandwidthMetricDispatcher(
 
     val headers: Hashtable<String, String> = Hashtable<String, String>()
     for (headerName in responseHeaders.keys) {
-      var headerAllowed = false
+      var headerTracked = false
       synchronized(this) {
-        for (allowedHeader in collector!!.allowedHeaders) {
-          if (allowedHeader.isAllowed(headerName)) {
-            headerAllowed = true
+        for (trackedHeader in trackedResponseHeaders) {
+          if (trackedHeader.matches(headerName)) {
+            headerTracked = true
           }
         }
       }
-      if (!headerAllowed) {
+      if (!headerTracked) {
         // Pass this header, we do not need it
         continue
       }
@@ -493,5 +499,27 @@ internal class BandwidthMetricDispatcher(
       );
     }
     return true;
+  } // fun shouldDispatchEvent
+} // class BandwidthMetricDispatcher
+
+internal sealed class TrackedHeader {
+
+  abstract fun matches(headerName: String?): Boolean
+
+  class ExactlyIgnoreCase(private val name: String) : TrackedHeader() {
+    override fun matches(headerName: String?): Boolean {
+      return headerName.contentEquals(name, true)
+    }
+  }
+
+  class Matching(private val pattern: Pattern) : TrackedHeader() {
+    override fun matches(headerName: String?): Boolean {
+      return if (headerName != null) {
+        val matcher = pattern.matcher(headerName)
+        matcher.find()
+      } else {
+        false
+      }
+    }
   }
 }
