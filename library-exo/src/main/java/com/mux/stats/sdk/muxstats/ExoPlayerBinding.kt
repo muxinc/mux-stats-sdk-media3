@@ -12,13 +12,21 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.source.MediaLoadData
 import com.mux.android.util.weak
+import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 
 class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 
   private var listener: MuxAnalyticsListener? = null
 
   override fun bindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
-    listener = MuxAnalyticsListener(player, collector).also { player.addAnalyticsListener(it) }
+    listener = MuxAnalyticsListener(
+      player = player,
+      collector = collector,
+      bandwidthMetrics = BandwidthMetricDispatcher(
+        player = player,
+        collector = collector
+      )
+    ).also { player.addAnalyticsListener(it) }
   }
 
   override fun unbindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
@@ -29,9 +37,14 @@ class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 }
 
 @OptIn(UnstableApi::class)
-private class MuxAnalyticsListener(player: ExoPlayer, val collector: MuxStateCollector)
-  : AnalyticsListener {
-    private val player by weak(player)
+private class MuxAnalyticsListener(
+  player: ExoPlayer,
+  bandwidthMetrics: BandwidthMetricDispatcher,
+  val collector: MuxStateCollector,
+) : AnalyticsListener {
+
+  private val bandwidthMetrics by weak(bandwidthMetrics)
+  private val player by weak(player)
 
   override fun onPlaybackStateChanged(eventTime: AnalyticsListener.EventTime, state: Int) {
     // query playWhenReady for consistency. The order of execution between this callback and
@@ -84,7 +97,11 @@ private class MuxAnalyticsListener(player: ExoPlayer, val collector: MuxStateCol
     }
   }
 
-  override fun onRenderedFirstFrame(eventTime: AnalyticsListener.EventTime, output: Any, renderTimeMs: Long) {
+  override fun onRenderedFirstFrame(
+    eventTime: AnalyticsListener.EventTime,
+    output: Any,
+    renderTimeMs: Long
+  ) {
     collector.onFirstFrameRendered()
   }
 
