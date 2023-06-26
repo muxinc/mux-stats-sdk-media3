@@ -258,7 +258,6 @@ internal class BandwidthMetricHls(
  * Luckily logic for HLS parsing is same as logic for DASH parsing so for both streams we use
  * {@link BandwidthMetricHls}.
  */
-// TODO: Input list of allowed headers
 internal class BandwidthMetricDispatcher(
   player: ExoPlayer,
   collector: MuxStateCollector,

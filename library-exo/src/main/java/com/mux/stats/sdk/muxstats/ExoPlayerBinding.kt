@@ -10,9 +10,12 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
+import androidx.media3.exoplayer.source.LoadEventInfo
 import androidx.media3.exoplayer.source.MediaLoadData
+import androidx.media3.exoplayer.source.TrackGroupArray
 import com.mux.android.util.weak
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
+import java.io.IOException
 
 class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 
@@ -86,6 +89,11 @@ private class MuxAnalyticsListener(
       collector.watchPlayerPos(it)
       collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     }
+    bandwidthMetrics?.let { bwm ->
+      val mediaTrackGroups = tracks.groups.map { it.mediaTrackGroup }
+      val asArray = Array(mediaTrackGroups.size) { mediaTrackGroups[it] }
+      bwm.onTracksChanged(TrackGroupArray(*asArray))
+    }
   }
 
   override fun onDownstreamFormatChanged(
@@ -119,5 +127,69 @@ private class MuxAnalyticsListener(
   ) {
     collector.sourceWidth = videoSize.width
     collector.sourceHeight = videoSize.height
+  }
+
+  override fun onLoadError(
+    eventTime: AnalyticsListener.EventTime,
+    loadEventInfo: LoadEventInfo,
+    mediaLoadData: MediaLoadData,
+    error: IOException,
+    wasCanceled: Boolean
+  ) {
+    bandwidthMetrics?.onLoadError(
+      loadTaskId = loadEventInfo.loadTaskId,
+      segmentUrl = loadEventInfo.uri.toString(),
+      e = error
+    )
+  }
+
+  override fun onLoadCanceled(
+    eventTime: AnalyticsListener.EventTime,
+    loadEventInfo: LoadEventInfo,
+    mediaLoadData: MediaLoadData
+  ) {
+    bandwidthMetrics?.onLoadCanceled(
+      loadTaskId = loadEventInfo.loadTaskId,
+      segmentUrl = loadEventInfo.uri.toString(),
+      headers = loadEventInfo.responseHeaders
+    )
+  }
+
+  override fun onLoadStarted(
+    eventTime: AnalyticsListener.EventTime,
+    loadEventInfo: LoadEventInfo,
+    mediaLoadData: MediaLoadData
+  ) {
+    var segmentMimeType = "unknown"
+    var segmentWidth = 0
+    var segmentHeight = 0
+
+    mediaLoadData.trackFormat?.let { format ->
+      format.sampleMimeType?.let { segmentMimeType = it }
+      segmentWidth = format.width
+      segmentHeight = format.height
+    }
+    bandwidthMetrics?.onLoadStarted(
+      loadEventInfo.loadTaskId, mediaLoadData.mediaStartTimeMs,
+      mediaLoadData.mediaEndTimeMs, loadEventInfo.uri.path, mediaLoadData.dataType,
+      loadEventInfo.uri.host, segmentMimeType, segmentWidth, segmentHeight
+    )
+  }
+
+  override fun onLoadCompleted(
+    eventTime: AnalyticsListener.EventTime,
+    loadEventInfo: LoadEventInfo,
+    mediaLoadData: MediaLoadData
+  ) {
+    @Suppress("SENSELESS_COMPARISON")
+    if (loadEventInfo.uri != null) {
+      bandwidthMetrics?.onLoadCompleted(
+        loadEventInfo.loadTaskId,
+        loadEventInfo.uri.path,
+        loadEventInfo.bytesLoaded,
+        mediaLoadData.trackFormat,
+        loadEventInfo.responseHeaders
+      )
+    }
   }
 }
