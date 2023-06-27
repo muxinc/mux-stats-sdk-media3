@@ -222,14 +222,9 @@ internal class BandwidthMetricHls(
   collector: MuxStateCollector
 ) : BandwidthMetric(player, collector) {
 
-  override fun onLoadError(loadedSegments: Long, e: IOException): BandwidthMetricData {
-    val loadData: BandwidthMetricData = super.onLoadError(loadedSegments, e)
-    return loadData
-  }
-
   override fun onLoadCanceled(loadTaskId: Long): BandwidthMetricData {
     val loadData: BandwidthMetricData = super.onLoadCanceled(loadTaskId)
-    loadData.setRequestCancel("FragLoadEmergencyAborted")
+    loadData.requestCancel = "FragLoadEmergencyAborted"
     return loadData
   }
 
@@ -238,7 +233,7 @@ internal class BandwidthMetricHls(
     loadTaskId: Long, segmentUrl: String?, bytesLoaded: Long,
     trackFormat: Format?
   ): BandwidthMetricData? {
-    var loadData: BandwidthMetricData? =
+    val loadData: BandwidthMetricData? =
       super.onLoadCompleted(loadTaskId, segmentUrl, bytesLoaded, trackFormat)
     if (trackFormat != null && loadData != null) {
       MuxLogger.d(
@@ -280,6 +275,7 @@ internal class BandwidthMetricDispatcher(
     return bandwidthMetricHls
   }
 
+  @Suppress("UNUSED_PARAMETER")
   fun onLoadError(loadTaskId: Long, segmentUrl: String?, e: IOException) {
     if (player == null || collector == null) {
       return
@@ -288,6 +284,7 @@ internal class BandwidthMetricDispatcher(
     dispatch(data = loadData, event = RequestFailed(null))
   }
 
+  @Suppress("UNUSED_PARAMETER")
   fun onLoadCanceled(loadTaskId: Long, segmentUrl: String?, headers: Map<String, List<String>>) {
     if (player == null || collector == null) {
       return
@@ -358,10 +355,10 @@ internal class BandwidthMetricDispatcher(
           if (trackFormat.containerMimeType != null && trackFormat.containerMimeType!!
               .contains("video")
           ) {
-            var renditions: ArrayList<BandwidthMetricData.Rendition> = ArrayList()
+            val renditions: ArrayList<BandwidthMetricData.Rendition> = ArrayList()
             for (i in 0 until trackGroup.length) {
               trackFormat = trackGroup.getFormat(i)
-              var rendition: BandwidthMetricData.Rendition = BandwidthMetricData.Rendition()
+              val rendition: BandwidthMetricData.Rendition = BandwidthMetricData.Rendition()
               rendition.bitrate = trackFormat.bitrate.toLong()
               rendition.width = trackFormat.width
               rendition.height = trackFormat.height
