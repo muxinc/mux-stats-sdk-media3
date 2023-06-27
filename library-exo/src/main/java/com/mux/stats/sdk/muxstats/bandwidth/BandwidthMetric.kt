@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.muxstats.bandwidth
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
@@ -30,7 +31,7 @@ import java.util.regex.Pattern
 internal open class BandwidthMetric(
   private val player: ExoPlayer,
   private val collector: MuxStateCollector
-  ) {
+) {
   /** Available qualities. */
   var availableTracks: TrackGroupArray? = null
 
@@ -347,47 +348,56 @@ internal class BandwidthMetricDispatcher(
   }
 
   fun Tracks.toRenditionList(): List<Rendition> {
+    // TODO: Don't need
     return listOf()
   }
 
+  // TODO: Move this into a util some place
+  fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
+    val retList = mutableListOf<R>()
+    for (i in 0 until length) {
+      retList.add(block(getTrackFormat(i)))
+    }
+    return retList
+  }
+
+  fun <R> List<List<R>>.flattenNestedList(): List<R> {
+    return fold(mutableListOf<R>()) { acc, rs ->
+      acc.addAll(rs)
+      acc
+    }
+  }
+
   @OptIn(UnstableApi::class) // TODO: Investigate this usage
-  fun onTracksChanged(trackGroups: TrackGroupArray) {
-    MuxLogger.d("BandwidthMetrics", "onTracksChanged: ${trackGroups.length} tracks")
+  fun onTracksChanged(tracks: Tracks) {
+    MuxLogger.d("BandwidthMetrics", "onTracksChanged: Got ${tracks.groups.size} tracks")
     currentBandwidthMetric().availableTracks = trackGroups
     if (player == null || collector == null) {
       return
     }
-    if (trackGroups.length > 0) {
-      for (groupIndex in 0 until trackGroups.length) {
-        val trackGroup: TrackGroup = trackGroups.get(groupIndex)
-        if (0 < trackGroup.length) {
-          var trackFormat: Format = trackGroup.getFormat(0)
-          if (trackFormat.containerMimeType != null && trackFormat.containerMimeType!!
-              .contains("video")
-          ) {
-            val renditions: ArrayList<BandwidthMetricData.Rendition> = ArrayList()
-            for (i in 0 until trackGroup.length) {
-              trackFormat = trackGroup.getFormat(i)
-              val rendition: BandwidthMetricData.Rendition = BandwidthMetricData.Rendition()
-              rendition.bitrate = trackFormat.bitrate.toLong()
-              rendition.width = trackFormat.width
-              rendition.height = trackFormat.height
-              rendition.codec = trackFormat.codecs
-              rendition.fps = trackFormat.frameRate
-              rendition.name = trackFormat.width.toString() + "_" +
-                      trackFormat.height + "_" +
-                      trackFormat.bitrate + "_" + trackFormat.codecs + "_" +
-                      trackFormat.frameRate
-              renditions.add(rendition)
-            }
-            //TODO: Pretty verbose?
-            MuxLogger.d("BandwidthMetrics", "onTracksChanged: Got Rendition List: ${renditions.map { it.debugString() }}")
-            collector?.renditionList = renditions
+    val renditions = tracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO }
+      .onEach { Log.d("BandwidthMetrics", "I'm a video track group") }
+      .map { it.mapFormats { trackFormat ->
+          Rendition().apply {
+            bitrate = trackFormat.bitrate.toLong()
+            width = trackFormat.width
+            height = trackFormat.height
+            codec = trackFormat.codecs
+            fps = trackFormat.frameRate
+            name = trackFormat.width.toString() + "_" +
+                    trackFormat.height + "_" +
+                    trackFormat.bitrate + "_" + trackFormat.codecs + "_" +
+                    trackFormat.frameRate
           }
         }
       }
-    }
-    MuxLogger.d("BandwidthMetrics", "onTracksChanged: ended function with renditions: ${collector?.renditionList?.map {it.debugString()}}")
+      .flattenNestedList()
+      .also { Log.d("BandwidthMetrics", "List of video renditions: $it") }
+    collector?.renditionList = renditions
+    MuxLogger.d(
+      "BandwidthMetrics",
+      "onTracksChanged: ended function with renditions: ${collector?.renditionList?.map { it.debugString() }}"
+    )
   }
 
   private fun BandwidthMetricData.Rendition.debugString(): String {

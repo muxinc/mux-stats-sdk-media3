@@ -158,7 +158,7 @@ private class MuxAnalyticsListener(
       // TODO: This as-array thing isn't needed
       val mediaTrackGroups = tracks.groups.map { it.mediaTrackGroup }
       val asArray = Array(mediaTrackGroups.size) { mediaTrackGroups[it] }
-      bwm.onTracksChanged(TrackGroupArray(*asArray))
+      bwm.onTracksChanged(tracks)
     }
   }
 
