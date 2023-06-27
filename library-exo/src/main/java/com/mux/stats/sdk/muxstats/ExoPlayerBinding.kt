@@ -12,19 +12,28 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.source.MediaLoadData
 import com.mux.android.util.weak
+import com.mux.stats.sdk.muxstats.internal.createExoSessionDataBinding
 
 class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
+
+  private val sessionDataBinding = createExoSessionDataBinding()
 
   private var listener: MuxAnalyticsListener? = null
 
   override fun bindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
     listener = MuxAnalyticsListener(player, collector).also { player.addAnalyticsListener(it) }
+
+    // Also delegate to sub-bindings
+    sessionDataBinding.bindPlayer(player, collector)
   }
 
   override fun unbindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
     listener?.let { player.removeAnalyticsListener(it) }
     collector.playerWatcher?.stop("player unbound")
     listener = null
+
+    // Also delegate to sub-bindings
+    sessionDataBinding.unbindPlayer(player, collector)
   }
 }
 
