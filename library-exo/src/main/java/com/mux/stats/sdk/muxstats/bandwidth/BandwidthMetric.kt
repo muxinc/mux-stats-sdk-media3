@@ -5,11 +5,10 @@ import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.Timeline
-import androidx.media3.common.TrackGroup
 import androidx.media3.common.Tracks
+import androidx.media3.common.Tracks.Group
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.TrackGroupArray
 import com.mux.android.util.weak
 import com.mux.stats.sdk.core.events.playback.PlaybackEvent
 import com.mux.stats.sdk.core.events.playback.RequestCanceled
@@ -33,7 +32,7 @@ internal open class BandwidthMetric(
   private val collector: MuxStateCollector
 ) {
   /** Available qualities. */
-  var availableTracks: TrackGroupArray? = null
+  var availableTracks: List<Group>? = null
 
   /**
    * Each segment that started loading is stored here until the segment ceases loading.
@@ -196,22 +195,23 @@ internal open class BandwidthMetric(
     segmentUrl: String?,
     bytesLoaded: Long,
     trackFormat: Format?
-  )
-          : BandwidthMetricData? {
+  ) : BandwidthMetricData? {
     val segmentData: BandwidthMetricData = loadedSegments[loadTaskId] ?: return null
 
     segmentData.requestBytesLoaded = bytesLoaded
     segmentData.requestResponseEnd = System.currentTimeMillis()
-    if (trackFormat != null && availableTracks != null) {
-      for (i in 0 until availableTracks!!.length) {
-        val tracks: TrackGroup = availableTracks!!.get(i)
-        for (trackGroupIndex in 0 until tracks.length) {
-          val currentFormat: Format = tracks.getFormat(trackGroupIndex)
+    val availableVideoTrackGroups = availableTracks
+    if (trackFormat != null && availableVideoTrackGroups != null) {
+       availableVideoTrackGroups.onEach { group ->
+        for (trackGroupIndex in 0 until group.length) {
+          val currentFormat: Format = group.getTrackFormat(trackGroupIndex)
           if (trackFormat.width == currentFormat.width
             && trackFormat.height == currentFormat.height
             && trackFormat.bitrate == currentFormat.bitrate
           ) {
             segmentData.requestCurrentLevel = trackGroupIndex
+            MuxLogger.d("BandwidthMetrics", "onLoadCompleted: found rendition idx $trackGroupIndex"
+              + "\nwith format $currentFormat")
           }
         }
       }
@@ -371,7 +371,7 @@ internal class BandwidthMetricDispatcher(
   @OptIn(UnstableApi::class) // TODO: Investigate this usage
   fun onTracksChanged(tracks: Tracks) {
     MuxLogger.d("BandwidthMetrics", "onTracksChanged: Got ${tracks.groups.size} tracks")
-    currentBandwidthMetric().availableTracks = trackGroups
+    currentBandwidthMetric().availableTracks = tracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO }
     if (player == null || collector == null) {
       return
     }
@@ -401,7 +401,7 @@ internal class BandwidthMetricDispatcher(
   }
 
   private fun BandwidthMetricData.Rendition.debugString(): String {
-    return "size: [${width}x$height], ${fps}fps, ${bitrate}bps,\nname: $name\ncodec $codec"
+    return "{size: [${width}x$height], ${fps}fps, ${bitrate}bps, name: $name codec $codec}"
   }
 
   private fun dispatch(data: BandwidthMetricData, event: PlaybackEvent) {
