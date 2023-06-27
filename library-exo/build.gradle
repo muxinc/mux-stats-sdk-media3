@@ -67,7 +67,8 @@ muxDistribution {
 
 dependencies {
   api "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
-  api 'androidx.media3:media3-exoplayer:1.0.2' // TODO: Just base and hls
+  api 'androidx.media3:media3-exoplayer:1.0.2' // TODO: Just base and hls (or do I have base now?)
+  api 'androidx.media3:media3-exoplayer-hls:1.0.2'
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
 
