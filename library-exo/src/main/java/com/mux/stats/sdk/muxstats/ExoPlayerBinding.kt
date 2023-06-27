@@ -83,18 +83,11 @@ private class MuxAnalyticsListener(
   ) {
     MuxLogger.d(
       TAG, "onVideoInputFormatChanged: new format: bitrate ${format.bitrate}" +
-              " and framerate ${format.frameRate} "
+              " and frameRate ${format.frameRate} "
     )
-    val cleanBitrate = if (format.bitrate >= 0) {
-      format.averageBitrate
-    } else {
-      0
-    }
-    val cleanFrameRate = if (format.frameRate >= 0) {
-      format.frameRate
-    } else {
-      0F
-    }
+    val cleanBitrate = format.bitrate.takeIf { it >= 0 } ?: 0
+    val cleanFrameRate = format.frameRate.takeIf { it >= 0 } ?: 0F
+
     collector.renditionChange(
       advertisedBitrate = cleanBitrate,
       advertisedFrameRate = cleanFrameRate,
