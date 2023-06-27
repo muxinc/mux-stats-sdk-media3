@@ -126,7 +126,7 @@ internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxSta
           segmentData.setRequestMediaDuration(
             mediaEndTimeMs
                     - mediaStartTimeMs
-          );
+          )
         }
       }
     }
@@ -196,8 +196,8 @@ internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxSta
           : BandwidthMetricData? {
     val segmentData: BandwidthMetricData = loadedSegments[loadTaskId] ?: return null
 
-    segmentData.setRequestBytesLoaded(bytesLoaded);
-    segmentData.setRequestResponseEnd(System.currentTimeMillis());
+    segmentData.setRequestBytesLoaded(bytesLoaded)
+    segmentData.setRequestResponseEnd(System.currentTimeMillis())
     if (trackFormat != null && availableTracks != null) {
       for (i in 0 until availableTracks!!.length) {
         val tracks: TrackGroup = availableTracks!!.get(i)
@@ -207,13 +207,13 @@ internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxSta
             && trackFormat.height == currentFormat.height
             && trackFormat.bitrate == currentFormat.bitrate
           ) {
-            segmentData.setRequestCurrentLevel(trackGroupIndex);
+            segmentData.setRequestCurrentLevel(trackGroupIndex)
           }
         }
       }
     }
-    loadedSegments.remove(loadTaskId);
-    return segmentData;
+    loadedSegments.remove(loadTaskId)
+    return segmentData
   }
 }
 
@@ -223,14 +223,14 @@ internal class BandwidthMetricHls(
 ) : BandwidthMetric(player, collector) {
 
   override fun onLoadError(loadedSegments: Long, e: IOException): BandwidthMetricData {
-    val loadData: BandwidthMetricData = super.onLoadError(loadedSegments, e);
-    return loadData;
+    val loadData: BandwidthMetricData = super.onLoadError(loadedSegments, e)
+    return loadData
   }
 
   override fun onLoadCanceled(loadTaskId: Long): BandwidthMetricData {
-    val loadData: BandwidthMetricData = super.onLoadCanceled(loadTaskId);
-    loadData.setRequestCancel("FragLoadEmergencyAborted");
-    return loadData;
+    val loadData: BandwidthMetricData = super.onLoadCanceled(loadTaskId)
+    loadData.setRequestCancel("FragLoadEmergencyAborted")
+    return loadData
   }
 
   @OptIn(UnstableApi::class) // TODO: Investigate this usage
@@ -245,9 +245,9 @@ internal class BandwidthMetricHls(
         "BandwidthMetrics",
         "\n\nWe got new rendition quality: " + trackFormat.bitrate + "\n\n"
       )
-      loadData.setRequestLabeledBitrate(trackFormat.bitrate);
+      loadData.setRequestLabeledBitrate(trackFormat.bitrate)
     }
-    return loadData;
+    return loadData
   }
 }
 
@@ -282,7 +282,7 @@ internal class BandwidthMetricDispatcher(
 
   fun onLoadError(loadTaskId: Long, segmentUrl: String?, e: IOException) {
     if (player == null || collector == null) {
-      return;
+      return
     }
     val loadData: BandwidthMetricData = currentBandwidthMetric().onLoadError(loadTaskId, e)
     dispatch(data = loadData, event = RequestFailed(null))
@@ -314,7 +314,7 @@ internal class BandwidthMetricDispatcher(
       segmentMimeType,
       segmentWidth,
       segmentHeight
-    );
+    )
   }
 
   fun onLoadCompleted(
@@ -333,7 +333,10 @@ internal class BandwidthMetricDispatcher(
     }
   }
 
-  private fun parseHeaders(loadData: BandwidthMetricData, responseHeaders: Map<String, List<String>>) {
+  private fun parseHeaders(
+    loadData: BandwidthMetricData,
+    responseHeaders: Map<String, List<String>>
+  ) {
     val headers: Hashtable<String, String>? = parseHeaders(responseHeaders)
     if (headers != null) {
       loadData.requestId = headers["x-request-id"]
@@ -344,8 +347,8 @@ internal class BandwidthMetricDispatcher(
   @OptIn(UnstableApi::class) // TODO: Investigate this usage
   fun onTracksChanged(trackGroups: TrackGroupArray) {
     currentBandwidthMetric().availableTracks = trackGroups
-    if (player == null || collector == null ) {
-      return;
+    if (player == null || collector == null) {
+      return
     }
     if (trackGroups.length > 0) {
       for (groupIndex in 0 until trackGroups.length) {
@@ -358,7 +361,7 @@ internal class BandwidthMetricDispatcher(
             var renditions: ArrayList<BandwidthMetricData.Rendition> = ArrayList()
             for (i in 0 until trackGroup.length) {
               trackFormat = trackGroup.getFormat(i)
-              var rendition: BandwidthMetricData.Rendition = BandwidthMetricData.Rendition();
+              var rendition: BandwidthMetricData.Rendition = BandwidthMetricData.Rendition()
               rendition.bitrate = trackFormat.bitrate.toLong()
               rendition.width = trackFormat.width
               rendition.height = trackFormat.height
@@ -406,19 +409,19 @@ internal class BandwidthMetricDispatcher(
 
       val headerValues: List<String> = responseHeaders[headerName]!!
       if (headerValues.size == 1) {
-        headers[headerName] = headerValues[0];
+        headers[headerName] = headerValues[0]
       } else if (headerValues.size > 1) {
         // In the case that there is more than one header, we squash
         // it down to a single comma-separated value per RFC 2616
         // https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
         var headerValue: String = headerValues[0]
         for (i in 1 until headerValues.size) {
-          headerValue = headerValue + ", " + headerValues[i];
+          headerValue = headerValue + ", " + headerValues[i]
         }
-        headers[headerName] = headerValue;
+        headers[headerName] = headerValue
       }
     }
-    return headers;
+    return headers
   }
 
   /**
@@ -433,26 +436,26 @@ internal class BandwidthMetricDispatcher(
   private fun shouldDispatchEvent(data: BandwidthMetricData, event: PlaybackEvent): Boolean {
     requestSegmentDuration =
       if (data.requestMediaDuration == null || data.requestMediaDuration < 1000) {
-        1000;
+        1000
       } else {
-        data.requestMediaDuration;
+        data.requestMediaDuration
       }
-    val timeDiff: Long = System.currentTimeMillis() - lastRequestSentAt;
+    val timeDiff: Long = System.currentTimeMillis() - lastRequestSentAt
     if (timeDiff > requestSegmentDuration) {
       // Reset all stats
-      lastRequestSentAt = System.currentTimeMillis();
-      numberOfRequestCompletedBeaconsSentPerSegment = 0;
-      numberOfRequestCancelBeaconsSentPerSegment = 0;
-      numberOfRequestFailedBeaconsSentPerSegment = 0;
+      lastRequestSentAt = System.currentTimeMillis()
+      numberOfRequestCompletedBeaconsSentPerSegment = 0
+      numberOfRequestCancelBeaconsSentPerSegment = 0
+      numberOfRequestFailedBeaconsSentPerSegment = 0
     }
     if (event is RequestCompleted) {
-      numberOfRequestCompletedBeaconsSentPerSegment++;
+      numberOfRequestCompletedBeaconsSentPerSegment++
     }
     if (event is RequestCanceled) {
-      numberOfRequestCancelBeaconsSentPerSegment++;
+      numberOfRequestCancelBeaconsSentPerSegment++
     }
     if (event is RequestFailed) {
-      numberOfRequestFailedBeaconsSentPerSegment++;
+      numberOfRequestFailedBeaconsSentPerSegment++
     }
     if (numberOfRequestCompletedBeaconsSentPerSegment > maxNumberOfEventsPerSegmentDuration
       || numberOfRequestCancelBeaconsSentPerSegment > maxNumberOfEventsPerSegmentDuration
@@ -468,9 +471,9 @@ internal class BandwidthMetricDispatcher(
                   + "\nnumberOfRequestFailedBeaconsSentPerSegment: "
                   + numberOfRequestFailedBeaconsSentPerSegment
                   + "\ntimeDiff: " + timeDiff
-        );
+        )
       }
-      return false;
+      return false
     }
     if (debugModeOn) {
       MuxLogger.d(
@@ -482,9 +485,9 @@ internal class BandwidthMetricDispatcher(
                 + "\nnumberOfRequestFailedBeaconsSentPerSegment: "
                 + numberOfRequestFailedBeaconsSentPerSegment
                 + "\ntimeDiff: " + timeDiff
-      );
+      )
     }
-    return true;
+    return true
   } // fun shouldDispatchEvent
 } // class BandwidthMetricDispatcher
 
