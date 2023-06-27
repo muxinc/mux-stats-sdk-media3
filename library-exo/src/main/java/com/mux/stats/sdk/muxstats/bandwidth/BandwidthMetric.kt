@@ -1,6 +1,5 @@
 package com.mux.stats.sdk.muxstats.bandwidth
 
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
@@ -55,7 +54,6 @@ internal open class BandwidthMetric(
     var segmentData: BandwidthMetricData? = loadedSegments[loadTaskId]
     if (segmentData == null) {
       segmentData = BandwidthMetricData()
-      // TODO We should see how to put minimal stats here !!!
     }
     segmentData.requestError = e.toString()
     // TODO see what error codes are
@@ -77,14 +75,13 @@ internal open class BandwidthMetric(
     var segmentData: BandwidthMetricData? = loadedSegments[loadTaskId]
     if (segmentData == null) {
       segmentData = BandwidthMetricData()
-      // TODO We should see how to put minimal stats here !!!
     }
     segmentData.requestCancel = "genericLoadCanceled"
     segmentData.requestResponseEnd = System.currentTimeMillis()
     return segmentData
   }
 
-  @OptIn(UnstableApi::class) // TODO: Investigate this usage
+  @OptIn(UnstableApi::class) // opting-in to currentWindowIndex (also deprecated)
   open fun onLoad(
     loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
     segmentUrl: String?, dataType: Int, host: String?, segmentMimeType: String?,
@@ -101,7 +98,7 @@ internal open class BandwidthMetric(
       }
     }
     val segmentData = BandwidthMetricData()
-    // TODO RequestStart timestamp is currently not available from ExoPlayer
+    // RequestStart timestamp is currently not available from ExoPlayer
     segmentData.requestResponseStart = System.currentTimeMillis()
     segmentData.requestMediaStartTime = mediaStartTimeMs
     if (segmentWidth != 0 && segmentHeight != 0) {
@@ -190,7 +187,7 @@ internal open class BandwidthMetric(
    * @param trackFormat Media details related to the segment.
    * @return loaded segment.
    */
-  @OptIn(UnstableApi::class) // TODO: Revisit this API usage (and ret rid of the !! and ?)
+  @OptIn(UnstableApi::class) // opting-in to Format.bitrate
   open fun onLoadCompleted(
     loadTaskId: Long,
     segmentUrl: String?,
@@ -235,7 +232,7 @@ internal class BandwidthMetricHls(
     return loadData
   }
 
-  @OptIn(UnstableApi::class) // TODO: Investigate this usage
+  @OptIn(UnstableApi::class) // Opting-in to Format.bitrate
   override fun onLoadCompleted(
     loadTaskId: Long, segmentUrl: String?, bytesLoaded: Long,
     trackFormat: Format?
@@ -350,7 +347,7 @@ internal class BandwidthMetricDispatcher(
     }
   }
 
-  @OptIn(UnstableApi::class) // TODO: Investigate this usage
+  @OptIn(UnstableApi::class) // Opting-in to bitrate api
   fun onTracksChanged(tracks: Tracks) {
     MuxLogger.d("BandwidthMetrics", "onTracksChanged: Got ${tracks.groups.size} tracks")
     currentBandwidthMetric().availableTracks =
@@ -359,7 +356,6 @@ internal class BandwidthMetricDispatcher(
       return
     }
     val renditions = tracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO }
-      .onEach { Log.d("BandwidthMetrics", "I'm a video track group") }
       .flatMap {
         it.mapFormats { trackFormat ->
           Rendition().apply {
@@ -375,7 +371,6 @@ internal class BandwidthMetricDispatcher(
           }
         }
       }
-      .also { Log.d("BandwidthMetrics", "List of video renditions: $it") }
     collector?.renditionList = renditions
     MuxLogger.d(
       "BandwidthMetrics",
