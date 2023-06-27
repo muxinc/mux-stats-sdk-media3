@@ -86,30 +86,21 @@ private class MuxAnalyticsListener(
               " and framerate ${format.frameRate} "
     )
     val cleanBitrate = if (format.bitrate >= 0) {
-      format.bitrate
+      format.averageBitrate
     } else {
       0
     }
     val cleanFrameRate = if (format.frameRate >= 0) {
       format.frameRate
     } else {
-      0
+      0F
     }
     collector.renditionChange(
-      advertisedBitrate = format.averageBitrate,
-      advertisedFrameRate = format.frameRate,
+      advertisedBitrate = cleanBitrate,
+      advertisedFrameRate = cleanFrameRate,
       sourceWidth = format.width,
       sourceHeight = format.height
     )
-  }
-
-  // TODO: Move this into a util some place
-  fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
-    val retList = mutableListOf<R>()
-    for (i in 0 until length) {
-      retList.add(block(getTrackFormat(i)))
-    }
-    return retList
   }
 
   override fun onTracksChanged(eventTime: AnalyticsListener.EventTime, tracks: Tracks) {
