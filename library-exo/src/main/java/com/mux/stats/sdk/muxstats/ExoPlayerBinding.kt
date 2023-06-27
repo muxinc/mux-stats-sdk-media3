@@ -3,7 +3,6 @@ package com.mux.stats.sdk.muxstats
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.C.TRACK_TYPE_VIDEO
-import androidx.media3.common.C.TrackType
 import androidx.media3.common.Format
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
@@ -17,6 +16,8 @@ import androidx.media3.exoplayer.source.LoadEventInfo
 import androidx.media3.exoplayer.source.MediaLoadData
 import androidx.media3.exoplayer.source.TrackGroupArray
 import com.mux.android.util.weak
+import com.mux.stats.sdk.core.model.BandwidthMetricData
+import com.mux.stats.sdk.core.model.BandwidthMetricData.Rendition
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import java.io.IOException
@@ -85,8 +86,10 @@ private class MuxAnalyticsListener(
     format: Format,
     decoderReuseEvaluation: DecoderReuseEvaluation?
   ) {
-    MuxLogger.d(TAG, "onVideoInputFormatChanged: new format: bitrate ${format.bitrate}" +
-            " and framerate ${format.frameRate} ")
+    MuxLogger.d(
+      TAG, "onVideoInputFormatChanged: new format: bitrate ${format.bitrate}" +
+              " and framerate ${format.frameRate} "
+    )
     val cleanBitrate = if (format.bitrate >= 0) {
       format.bitrate
     } else {
@@ -105,6 +108,15 @@ private class MuxAnalyticsListener(
     )
   }
 
+  // TODO: Move this into a util some place
+  fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
+    val retList = mutableListOf<R>()
+    for (i in 0 until length) {
+      retList.add(block(getTrackFormat(i)))
+    }
+    return retList
+  }
+
   override fun onTracksChanged(eventTime: AnalyticsListener.EventTime, tracks: Tracks) {
     MuxLogger.d("ExoPlayerBinding", "onTracksChanged")
 
@@ -120,12 +132,28 @@ private class MuxAnalyticsListener(
           Log.d("ExoPlayerBinding", "format of track $format")
         }
       }
-      tracks.groups.filter { it.type == TRACK_TYPE_VIDEO}
+      tracks.groups.filter { it.type == TRACK_TYPE_VIDEO }
         .onEach { Log.d("ExoPlayerBinding", "I'm a video track group") }
-        .toCollection(mutableListOf())
-        .also {
-          Log.d("ExoPlayerBinding", "List of video track groups: $it")
+        .map { group ->
+          group.mapFormats { trackFormat ->
+            Rendition().apply {
+              bitrate = trackFormat.bitrate.toLong()
+              width = trackFormat.width
+              height = trackFormat.height
+              codec = trackFormat.codecs
+              fps = trackFormat.frameRate
+              name = trackFormat.width.toString() + "_" +
+                      trackFormat.height + "_" +
+                      trackFormat.bitrate + "_" + trackFormat.codecs + "_" +
+                      trackFormat.frameRate
+            }
+          }
         }
+        .fold(mutableListOf<Rendition>()) { acc, renditionsInGroup ->
+          acc.addAll(renditionsInGroup)
+          acc
+        }
+        .also { Log.d("ExoPlayerBinding", "List of video renditions: $it") }
 
       // TODO: This as-array thing isn't needed
       val mediaTrackGroups = tracks.groups.map { it.mediaTrackGroup }
