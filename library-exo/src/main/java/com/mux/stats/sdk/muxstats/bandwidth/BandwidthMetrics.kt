@@ -27,7 +27,7 @@ import java.util.regex.Pattern
  * these events in {@link MuxStatsExoPlayer} and will be propagated here for processing, at this
  * point both HLS and DASH segments are processed in same way so all metrics are collected here.
  */
-internal open class BandwidthMetric(
+internal open class BandwidthMetrics(
   private val player: ExoPlayer,
   private val collector: MuxStateCollector
 ) {
@@ -221,10 +221,10 @@ internal open class BandwidthMetric(
   }
 }
 
-internal class BandwidthMetricHls(
+internal class BandwidthMetricsHls(
   player: ExoPlayer,
   collector: MuxStateCollector
-) : BandwidthMetric(player, collector) {
+) : BandwidthMetrics(player, collector) {
 
   override fun onLoadCanceled(loadTaskId: Long): BandwidthMetricData {
     val loadData: BandwidthMetricData = super.onLoadCanceled(loadTaskId)
@@ -266,7 +266,7 @@ internal class BandwidthMetricDispatcher(
 ) {
   private val player: ExoPlayer? by weak(player)
   private val collector: MuxStateCollector? by weak(collector)
-  private val bandwidthMetricHls: BandwidthMetricHls = BandwidthMetricHls(player, collector)
+  private val bandwidthMetricHls: BandwidthMetricsHls = BandwidthMetricsHls(player, collector)
   private var debugModeOn: Boolean = false
   private var requestSegmentDuration: Long = 1000
   private var lastRequestSentAt: Long = -1
@@ -275,7 +275,7 @@ internal class BandwidthMetricDispatcher(
   private var numberOfRequestCancelBeaconsSentPerSegment: Int = 0
   private var numberOfRequestFailedBeaconsSentPerSegment: Int = 0
 
-  private fun currentBandwidthMetric(): BandwidthMetricHls {
+  private fun currentBandwidthMetric(): BandwidthMetricsHls {
     // in the future if bandwidth metrics for dash required a different logic we will implement
     //   it here
     return bandwidthMetricHls
