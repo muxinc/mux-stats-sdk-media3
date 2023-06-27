@@ -94,7 +94,7 @@ internal open class BandwidthMetric(
           .getWindow(player.currentWindowIndex, currentTimelineWindow)
       } catch (e: Exception) {
         // Failed to obtain data, ignore, we will get it on next call
-        MuxLogger.exception(e, "BandwidthMetric", "Failed to get current timeline")
+        MuxLogger.exception(e, "BandwidthMetrics", "Failed to get current timeline")
       }
     }
     val segmentData = BandwidthMetricData()
@@ -239,9 +239,11 @@ internal class BandwidthMetricHls(
     if (trackFormat != null && loadData != null) {
       MuxLogger.d(
         "BandwidthMetrics",
-        "\n\nWe got new rendition quality: " + trackFormat.bitrate + "\n\n"
+        "We got new rendition bitrate: " + trackFormat.bitrate
       )
-      loadData.requestLabeledBitrate = trackFormat.bitrate
+      if (trackFormat.bitrate > 0) {
+        loadData.requestLabeledBitrate = trackFormat.bitrate
+      }
     }
     return loadData
   }
@@ -344,6 +346,7 @@ internal class BandwidthMetricDispatcher(
 
   @OptIn(UnstableApi::class) // TODO: Investigate this usage
   fun onTracksChanged(trackGroups: TrackGroupArray) {
+    MuxLogger.d("BandwidthMetrics", "onTracksChanged: ${trackGroups.length} tracks")
     currentBandwidthMetric().availableTracks = trackGroups
     if (player == null || collector == null) {
       return
@@ -371,11 +374,18 @@ internal class BandwidthMetricDispatcher(
                       trackFormat.frameRate
               renditions.add(rendition)
             }
+            //TODO: Pretty verbose?
+            MuxLogger.d("BandwidthMetrics", "onTracksChanged: Got Rendition List: ${renditions.map { it.debugString() }}")
             collector?.renditionList = renditions
           }
         }
       }
     }
+    MuxLogger.d("BandwidthMetrics", "onTracksChanged: ended function with renditions: ${collector?.renditionList?.map {it.debugString()}}")
+  }
+
+  private fun BandwidthMetricData.Rendition.debugString(): String {
+    return "size: [${width}x$height], ${fps}fps, ${bitrate}bps,\nname: $name\ncodec $codec"
   }
 
   private fun dispatch(data: BandwidthMetricData, event: PlaybackEvent) {

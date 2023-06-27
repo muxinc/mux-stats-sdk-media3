@@ -82,7 +82,18 @@ private class MuxAnalyticsListener(
     format: Format,
     decoderReuseEvaluation: DecoderReuseEvaluation?
   ) {
-    MuxLogger.d(TAG, "onVideoInputFormatChanged")
+    MuxLogger.d(TAG, "onVideoInputFormatChanged: new format: bitrate ${format.bitrate}" +
+            " and framerate ${format.frameRate} ")
+    val cleanBitrate = if (format.bitrate >= 0) {
+      format.bitrate
+    } else {
+      0
+    }
+    val cleanFrameRate = if (format.frameRate >= 0) {
+      format.frameRate
+    } else {
+      0
+    }
     collector.renditionChange(
       advertisedBitrate = format.averageBitrate,
       advertisedFrameRate = format.frameRate,
@@ -92,6 +103,8 @@ private class MuxAnalyticsListener(
   }
 
   override fun onTracksChanged(eventTime: AnalyticsListener.EventTime, tracks: Tracks) {
+    MuxLogger.d("ExoPlayerBinding", "onTracksChanged")
+
     player?.let {
       collector.watchPlayerPos(it)
       collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
@@ -145,7 +158,7 @@ private class MuxAnalyticsListener(
   ) {
     bandwidthMetrics?.onLoadError(
       loadTaskId = loadEventInfo.loadTaskId,
-      segmentUrl = loadEventInfo.uri.toString(),
+      segmentUrl = loadEventInfo.uri.path,
       e = error
     )
   }
@@ -157,7 +170,7 @@ private class MuxAnalyticsListener(
   ) {
     bandwidthMetrics?.onLoadCanceled(
       loadTaskId = loadEventInfo.loadTaskId,
-      segmentUrl = loadEventInfo.uri.toString(),
+      segmentUrl = loadEventInfo.uri.path,
       headers = loadEventInfo.responseHeaders
     )
   }
