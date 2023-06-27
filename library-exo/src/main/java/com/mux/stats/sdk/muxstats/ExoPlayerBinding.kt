@@ -1,6 +1,9 @@
 package com.mux.stats.sdk.muxstats
 
+import android.util.Log
 import androidx.annotation.OptIn
+import androidx.media3.common.C.TRACK_TYPE_VIDEO
+import androidx.media3.common.C.TrackType
 import androidx.media3.common.Format
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
@@ -110,6 +113,21 @@ private class MuxAnalyticsListener(
       collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     }
     bandwidthMetrics?.let { bwm ->
+      tracks.groups.onEach {
+        Log.d("ExoPlayerBinding", "group type ${it.type}")
+        for (i in 0 until it.length) {
+          val format = it.getTrackFormat(i)
+          Log.d("ExoPlayerBinding", "format of track $format")
+        }
+      }
+      tracks.groups.filter { it.type == TRACK_TYPE_VIDEO}
+        .onEach { Log.d("ExoPlayerBinding", "I'm a video track group") }
+        .toCollection(mutableListOf())
+        .also {
+          Log.d("ExoPlayerBinding", "List of video track groups: $it")
+        }
+
+      // TODO: This as-array thing isn't needed
       val mediaTrackGroups = tracks.groups.map { it.mediaTrackGroup }
       val asArray = Array(mediaTrackGroups.size) { mediaTrackGroups[it] }
       bwm.onTracksChanged(TrackGroupArray(*asArray))

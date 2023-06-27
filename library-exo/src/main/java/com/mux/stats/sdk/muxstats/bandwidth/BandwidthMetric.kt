@@ -5,6 +5,7 @@ import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.Timeline
 import androidx.media3.common.TrackGroup
+import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.TrackGroupArray
@@ -14,6 +15,7 @@ import com.mux.stats.sdk.core.events.playback.RequestCanceled
 import com.mux.stats.sdk.core.events.playback.RequestCompleted
 import com.mux.stats.sdk.core.events.playback.RequestFailed
 import com.mux.stats.sdk.core.model.BandwidthMetricData
+import com.mux.stats.sdk.core.model.BandwidthMetricData.Rendition
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.MuxStateCollector
 import java.io.IOException
@@ -342,6 +344,10 @@ internal class BandwidthMetricDispatcher(
       loadData.requestId = headers["x-request-id"]
       loadData.requestResponseHeaders = headers
     }
+  }
+
+  fun Tracks.toRenditionList(): List<Rendition> {
+    return listOf()
   }
 
   @OptIn(UnstableApi::class) // TODO: Investigate this usage
