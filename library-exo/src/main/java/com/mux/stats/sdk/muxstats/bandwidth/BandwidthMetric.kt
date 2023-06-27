@@ -25,8 +25,10 @@ import java.util.regex.Pattern
  * these events in {@link MuxStatsExoPlayer} and will be propagated here for processing, at this
  * point both HLS and DASH segments are processed in same way so all metrics are collected here.
  */
-// TODO: This doesn't need to be open
-internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxStateCollector) {
+internal open class BandwidthMetric(
+  private val player: ExoPlayer,
+  private val collector: MuxStateCollector
+  ) {
   /** Available qualities. */
   var availableTracks: TrackGroupArray? = null
 
@@ -34,16 +36,16 @@ internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxSta
    * Each segment that started loading is stored here until the segment ceases loading.
    * The segment url is the key value of the map.
    */
-  var loadedSegments: HashMap<Long, BandwidthMetricData> = HashMap<Long, BandwidthMetricData>()
+  private var loadedSegments = HashMap<Long, BandwidthMetricData>()
 
-  private var currentTimelineWindow: Timeline.Window = Timeline.Window()
+  private var currentTimelineWindow = Timeline.Window()
 
   /**
    * When the segment failed to load an error will be reported to the backend. This also
    * removes the segment that failed to load from the {@link #loadedSegments} hash map.
    *
    * @param loadTaskId, unique segment id.
-   * @param e, error that occured.
+   * @param e, error that occurred.
    * @return segment that failed to load.
    */
   open fun onLoadError(loadTaskId: Long, e: IOException): BandwidthMetricData {
@@ -69,7 +71,7 @@ internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxSta
    * @return Canceled segment.
    */
   open fun onLoadCanceled(loadTaskId: Long): BandwidthMetricData {
-    var segmentData: BandwidthMetricData? = loadedSegments.get(loadTaskId)
+    var segmentData: BandwidthMetricData? = loadedSegments[loadTaskId]
     if (segmentData == null) {
       segmentData = BandwidthMetricData()
       // TODO We should see how to put minimal stats here !!!
@@ -88,10 +90,10 @@ internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxSta
     // Populate segment time details.
     synchronized(currentTimelineWindow) {
       try {
-        player.getCurrentTimeline()
-          .getWindow(player.getCurrentWindowIndex(), currentTimelineWindow)
+        player.currentTimeline
+          .getWindow(player.currentWindowIndex, currentTimelineWindow)
       } catch (e: Exception) {
-        // Failed to obtrain data, ignore, we will get it on next call
+        // Failed to obtain data, ignore, we will get it on next call
       }
     }
     val segmentData = BandwidthMetricData()
@@ -110,23 +112,21 @@ internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxSta
       when (dataType) {
         C.DATA_TYPE_MANIFEST -> {
           collector.detectMimeType = false
-          segmentData.setRequestType("manifest")
+          segmentData.requestType = "manifest"
         }
 
         C.DATA_TYPE_MEDIA_INITIALIZATION -> {
           if (segmentMimeType.contains("video")) {
-            segmentData.setRequestType("video_init")
+            segmentData.requestType = "video_init"
           } else if (segmentMimeType.contains("audio")) {
-            segmentData.setRequestType("audio_init")
+            segmentData.requestType = "audio_init"
           }
         }
 
         C.DATA_TYPE_MEDIA -> {
-          segmentData.setRequestType("media")
-          segmentData.setRequestMediaDuration(
-            mediaEndTimeMs
-                    - mediaStartTimeMs
-          )
+          segmentData.requestType = "media"
+          segmentData.requestMediaDuration = (mediaEndTimeMs
+                  - mediaStartTimeMs)
         }
       }
     }
@@ -196,8 +196,8 @@ internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxSta
           : BandwidthMetricData? {
     val segmentData: BandwidthMetricData = loadedSegments[loadTaskId] ?: return null
 
-    segmentData.setRequestBytesLoaded(bytesLoaded)
-    segmentData.setRequestResponseEnd(System.currentTimeMillis())
+    segmentData.requestBytesLoaded = bytesLoaded
+    segmentData.requestResponseEnd = System.currentTimeMillis()
     if (trackFormat != null && availableTracks != null) {
       for (i in 0 until availableTracks!!.length) {
         val tracks: TrackGroup = availableTracks!!.get(i)
@@ -207,7 +207,7 @@ internal open class BandwidthMetric(val player: ExoPlayer, val collector: MuxSta
             && trackFormat.height == currentFormat.height
             && trackFormat.bitrate == currentFormat.bitrate
           ) {
-            segmentData.setRequestCurrentLevel(trackGroupIndex)
+            segmentData.requestCurrentLevel = trackGroupIndex
           }
         }
       }
@@ -240,7 +240,7 @@ internal class BandwidthMetricHls(
         "BandwidthMetrics",
         "\n\nWe got new rendition quality: " + trackFormat.bitrate + "\n\n"
       )
-      loadData.setRequestLabeledBitrate(trackFormat.bitrate)
+      loadData.requestLabeledBitrate = trackFormat.bitrate
     }
     return loadData
   }
@@ -460,7 +460,7 @@ internal class BandwidthMetricDispatcher(
     ) {
       if (debugModeOn) {
         MuxLogger.d(
-          "BandwidthMetrics", "Dropping event: " + event.getType()
+          "BandwidthMetrics", "Dropping event: " + event.type
                   + "\nnumberOfRequestCompletedBeaconsSentPerSegment: "
                   + numberOfRequestCompletedBeaconsSentPerSegment
                   + "\nnumberOfRequestCancelBeaconsSentPerSegment: "
@@ -474,7 +474,7 @@ internal class BandwidthMetricDispatcher(
     }
     if (debugModeOn) {
       MuxLogger.d(
-        "BandwidthMetrics", "All good: " + event.getType()
+        "BandwidthMetrics", "All good: " + event.type
                 + "\nnumberOfRequestCompletedBeaconsSentPerSegment: "
                 + numberOfRequestCompletedBeaconsSentPerSegment
                 + "\nnumberOfRequestCancelBeaconsSentPerSegment: "
