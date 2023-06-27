@@ -44,7 +44,8 @@ fun Player.monitorWithMuxData(
       customerData = customerData,
       player = this,
       playerView = playerView,
-      customOptions = customOptions
+      customOptions = customOptions,
+      playerBinding = BaseMedia3Binding()
     )
   }
 }
