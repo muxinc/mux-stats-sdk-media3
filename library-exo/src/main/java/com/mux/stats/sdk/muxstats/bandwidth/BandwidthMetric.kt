@@ -196,14 +196,14 @@ internal open class BandwidthMetric(
     segmentUrl: String?,
     bytesLoaded: Long,
     trackFormat: Format?
-  ) : BandwidthMetricData? {
+  ): BandwidthMetricData? {
     val segmentData: BandwidthMetricData = loadedSegments[loadTaskId] ?: return null
 
     segmentData.requestBytesLoaded = bytesLoaded
     segmentData.requestResponseEnd = System.currentTimeMillis()
     val availableVideoTrackGroups = availableTracks
     if (trackFormat != null && availableVideoTrackGroups != null) {
-       availableVideoTrackGroups.onEach { group ->
+      availableVideoTrackGroups.onEach { group ->
         for (trackGroupIndex in 0 until group.length) {
           val currentFormat: Format = group.getTrackFormat(trackGroupIndex)
           if (trackFormat.width == currentFormat.width
@@ -211,8 +211,10 @@ internal open class BandwidthMetric(
             && trackFormat.bitrate == currentFormat.bitrate
           ) {
             segmentData.requestCurrentLevel = trackGroupIndex
-            MuxLogger.d("BandwidthMetrics", "onLoadCompleted: found rendition idx $trackGroupIndex"
-              + "\nwith format $currentFormat")
+            MuxLogger.d(
+              "BandwidthMetrics", "onLoadCompleted: found rendition idx $trackGroupIndex"
+                      + "\nwith format $currentFormat"
+            )
           }
         }
       }
@@ -241,11 +243,11 @@ internal class BandwidthMetricHls(
     val loadData: BandwidthMetricData? =
       super.onLoadCompleted(loadTaskId, segmentUrl, bytesLoaded, trackFormat)
     if (trackFormat != null && loadData != null) {
-      MuxLogger.d(
-        "BandwidthMetrics",
-        "We got new rendition bitrate: " + trackFormat.bitrate
-      )
       if (trackFormat.bitrate > 0) {
+        MuxLogger.d(
+          "BandwidthMetrics",
+          "onLoadCompleted: current track bitrate " + trackFormat.bitrate
+        )
         loadData.requestLabeledBitrate = trackFormat.bitrate
       }
     }
@@ -351,7 +353,8 @@ internal class BandwidthMetricDispatcher(
   @OptIn(UnstableApi::class) // TODO: Investigate this usage
   fun onTracksChanged(tracks: Tracks) {
     MuxLogger.d("BandwidthMetrics", "onTracksChanged: Got ${tracks.groups.size} tracks")
-    currentBandwidthMetric().availableTracks = tracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO }
+    currentBandwidthMetric().availableTracks =
+      tracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO }
     if (player == null || collector == null) {
       return
     }
