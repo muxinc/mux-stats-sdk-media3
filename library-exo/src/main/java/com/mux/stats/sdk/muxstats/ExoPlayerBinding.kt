@@ -15,7 +15,9 @@ import androidx.media3.exoplayer.source.MediaLoadData
 import com.mux.android.util.weak
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
+import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
 import java.io.IOException
+import java.util.regex.Pattern
 
 class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 
@@ -27,7 +29,13 @@ class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
       collector = collector,
       bandwidthMetrics = BandwidthMetricDispatcher(
         player = player,
-        collector = collector
+        collector = collector,
+        trackedResponseHeaders = listOf(
+          TrackedHeader.ExactlyIgnoreCase("x-cdn"),
+          TrackedHeader.ExactlyIgnoreCase("content-type"),
+          TrackedHeader.ExactlyIgnoreCase("x-request-id"),
+          TrackedHeader.Matching(Pattern.compile("^x-litix-.*", Pattern.CASE_INSENSITIVE))
+        )
       )
     ).also { player.addAnalyticsListener(it) }
   }
