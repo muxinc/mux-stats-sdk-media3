@@ -14,6 +14,7 @@ import androidx.media3.exoplayer.source.LoadEventInfo
 import androidx.media3.exoplayer.source.MediaLoadData
 import androidx.media3.exoplayer.source.TrackGroupArray
 import com.mux.android.util.weak
+import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import java.io.IOException
 
@@ -37,6 +38,11 @@ class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
     collector.playerWatcher?.stop("player unbound")
     listener = null
   }
+
+  companion object {
+    private const val TAG = "ExoPlayerBinding"
+  }
+
 }
 
 @OptIn(UnstableApi::class)
@@ -76,6 +82,7 @@ private class MuxAnalyticsListener(
     format: Format,
     decoderReuseEvaluation: DecoderReuseEvaluation?
   ) {
+    MuxLogger.d(TAG, "onVideoInputFormatChanged")
     collector.renditionChange(
       advertisedBitrate = format.averageBitrate,
       advertisedFrameRate = format.frameRate,
@@ -191,5 +198,13 @@ private class MuxAnalyticsListener(
         loadEventInfo.responseHeaders
       )
     }
+  } // fun onLoadCompleted
+
+  companion object {
+    private const val TAG = "ExoPlayerBinding"
+  }
+
+  init {
+    MuxLogger.d(TAG, "Listening to ExoPlayer $player")
   }
 }

@@ -36,7 +36,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   playerView = playerView,
   customerData = customerData,
   customOptions = customOptions ?: CustomOptions(),
-  logLevel = LogcatLevel.VERBOSE,
+  logLevel = LogcatLevel.DEBUG,
   trackFirstFrame = true,
   playerBinding = playerBinding,
   device = AndroidDevice(

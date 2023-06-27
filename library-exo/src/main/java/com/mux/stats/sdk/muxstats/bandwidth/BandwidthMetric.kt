@@ -94,6 +94,7 @@ internal open class BandwidthMetric(
           .getWindow(player.currentWindowIndex, currentTimelineWindow)
       } catch (e: Exception) {
         // Failed to obtain data, ignore, we will get it on next call
+        MuxLogger.exception(e, "BandwidthMetric", "Failed to get current timeline")
       }
     }
     val segmentData = BandwidthMetricData()
