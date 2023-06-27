@@ -18,6 +18,7 @@ import com.mux.stats.sdk.core.model.BandwidthMetricData
 import com.mux.stats.sdk.core.model.BandwidthMetricData.Rendition
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.MuxStateCollector
+import com.mux.stats.sdk.muxstats.mapFormats
 import java.io.IOException
 import java.util.*
 import java.util.regex.Pattern
@@ -347,27 +348,6 @@ internal class BandwidthMetricDispatcher(
     }
   }
 
-  fun Tracks.toRenditionList(): List<Rendition> {
-    // TODO: Don't need
-    return listOf()
-  }
-
-  // TODO: Move this into a util some place
-  fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
-    val retList = mutableListOf<R>()
-    for (i in 0 until length) {
-      retList.add(block(getTrackFormat(i)))
-    }
-    return retList
-  }
-
-  fun <R> List<List<R>>.flattenNestedList(): List<R> {
-    return fold(mutableListOf<R>()) { acc, rs ->
-      acc.addAll(rs)
-      acc
-    }
-  }
-
   @OptIn(UnstableApi::class) // TODO: Investigate this usage
   fun onTracksChanged(tracks: Tracks) {
     MuxLogger.d("BandwidthMetrics", "onTracksChanged: Got ${tracks.groups.size} tracks")
@@ -377,7 +357,8 @@ internal class BandwidthMetricDispatcher(
     }
     val renditions = tracks.groups.filter { it.type == C.TRACK_TYPE_VIDEO }
       .onEach { Log.d("BandwidthMetrics", "I'm a video track group") }
-      .map { it.mapFormats { trackFormat ->
+      .flatMap {
+        it.mapFormats { trackFormat ->
           Rendition().apply {
             bitrate = trackFormat.bitrate.toLong()
             width = trackFormat.width
@@ -391,7 +372,6 @@ internal class BandwidthMetricDispatcher(
           }
         }
       }
-      .flattenNestedList()
       .also { Log.d("BandwidthMetrics", "List of video renditions: $it") }
     collector?.renditionList = renditions
     MuxLogger.d(
