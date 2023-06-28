@@ -13,19 +13,19 @@ import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
  * Mux must take ownership of the [AdErrorListener] and [AdEventListener] for this ads loader, but
  * you can provide your own listeners and logic using the provided optional params
  *
- * @param sdk The [MuxStatsSdkMedia3] instance monitoring your player
+ * @param muxStats The [MuxStatsSdkMedia3] instance monitoring your player
  * @param customerAdEventListener Optional. An [AdEventListener] with your apps custom ad-event handling
  * @param customerAdErrorListener Optional. An [AdErrorListener] containing your app's ad-error handling
  */
 @OptIn(UnstableApi::class)
 @JvmSynthetic
 fun ImaAdsLoader.Builder.monitorWith(
-  sdk: MuxStatsSdkMedia3<*>,
+  muxStats: MuxStatsSdkMedia3<*>,
   customerAdEventListener: AdEventListener = AdEventListener { },
   customerAdErrorListener: AdErrorListener = AdErrorListener { },
 ): ImaAdsLoader.Builder {
   val adsListener = MuxImaAdsListener.newListener(
-    sdk,
+    muxStats,
     customerAdEventListener,
     customerAdErrorListener
   )

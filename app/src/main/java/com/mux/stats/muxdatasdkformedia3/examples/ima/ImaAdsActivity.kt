@@ -11,8 +11,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ima.ImaAdsLoader
 import androidx.media3.ui.PlayerView
-import com.google.ads.interactivemedia.v3.api.AdErrorEvent
-import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
 import com.mux.stats.muxdatasdkformedia3.toMediaItem
@@ -59,7 +57,7 @@ class ImaAdsActivity : AppCompatActivity() {
       muxStats = monitorPlayer(newPlayer)
       adsLoader = ImaAdsLoader.Builder(this)
         .monitorWith(
-          sdk = muxStats!!,
+          muxStats = muxStats!!,
           customerAdErrorListener = { /*Optional, your custom logic*/ },
           customerAdEventListener = { /*Optional, your custom logic*/ },
         )
@@ -104,7 +102,8 @@ class ImaAdsActivity : AppCompatActivity() {
   private fun createPlayer(): ExoPlayer {
     // TODO: Add the IMA-related media source stuff
     return ExoPlayer.Builder(this)
-      .build().apply {
+      .build()
+      .apply {
         addListener(object : Player.Listener {
           override fun onPlayerError(error: PlaybackException) {
             Log.e(javaClass.simpleName, "player error!", error)
