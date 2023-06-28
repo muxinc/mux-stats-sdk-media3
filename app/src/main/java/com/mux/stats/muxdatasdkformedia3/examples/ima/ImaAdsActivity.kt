@@ -11,15 +11,16 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ima.ImaAdsLoader
 import androidx.media3.ui.PlayerView
+import com.google.ads.interactivemedia.v3.api.AdErrorEvent
+import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.mux.stats.muxdatasdkformedia3.Constants
-import com.mux.stats.muxdatasdkformedia3.R
-import com.mux.stats.muxdatasdkformedia3.databinding.ActivityImaAdsBinding
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
 import com.mux.stats.muxdatasdkformedia3.toMediaItem
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
+import com.mux.stats.sdk.media3_ima.monitorWith
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
 
@@ -28,7 +29,7 @@ class ImaAdsActivity : AppCompatActivity() {
   private lateinit var view: ActivityPlayerBinding
   private var player: Player? = null
   private var muxStats: MuxStatsSdkMedia3<ExoPlayer>? = null
-  private lateinit var adsLoader: ImaAdsLoader
+  private var adsLoader: ImaAdsLoader? = null
 
   @OptIn(UnstableApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +57,14 @@ class ImaAdsActivity : AppCompatActivity() {
 
     player = createPlayer().also { newPlayer ->
       muxStats = monitorPlayer(newPlayer)
+      adsLoader = ImaAdsLoader.Builder(this)
+        .monitorWith(
+          sdk = muxStats!!,
+          customerAdErrorListener = { /*Optional, your custom logic*/ },
+          customerAdEventListener = { /*Optional, your custom logic*/ },
+        )
+        .build()
+
       view.playerView.player = newPlayer
       newPlayer.setMediaItem(mediaUrl.toMediaItem())
       newPlayer.prepare()
@@ -68,6 +77,8 @@ class ImaAdsActivity : AppCompatActivity() {
       oldPlayer.stop()
       oldPlayer.release()
     }
+    adsLoader?.setPlayer(null)
+
     // Make sure to release() your muxStats whenever the user is done with the player
     muxStats?.release()
   }
@@ -91,6 +102,7 @@ class ImaAdsActivity : AppCompatActivity() {
   }
 
   private fun createPlayer(): ExoPlayer {
+    // TODO: Add the IMA-related media source stuff
     return ExoPlayer.Builder(this)
       .build().apply {
         addListener(object : Player.Listener {

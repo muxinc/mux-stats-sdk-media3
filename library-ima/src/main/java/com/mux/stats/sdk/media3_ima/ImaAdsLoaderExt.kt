@@ -19,7 +19,7 @@ import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
  */
 @OptIn(UnstableApi::class)
 @JvmSynthetic
-fun ImaAdsLoader.Builder.monitorWithMuxData(
+fun ImaAdsLoader.Builder.monitorWith(
   sdk: MuxStatsSdkMedia3<*>,
   customerAdEventListener: AdEventListener = AdEventListener { },
   customerAdErrorListener: AdErrorListener = AdErrorListener { },
