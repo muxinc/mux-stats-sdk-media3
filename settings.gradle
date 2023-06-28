@@ -24,3 +24,4 @@ rootProject.name = "Mux Data SDK for Media3"
 include ':app'
 include ':library'
 include ':library-exo'
+include ':library-ima'
