@@ -1,6 +1,7 @@
 package com.mux.stats.sdk.muxstats
 
 import android.util.Log
+import androidx.media3.common.Format
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import com.mux.android.util.oneOf
@@ -29,6 +30,17 @@ fun Tracks.hasAtLeastOneVideoTrack(): Boolean {
     .map { trackGroup -> trackGroup.getFormat(0) }
     .find { format -> format.sampleMimeType?.contains("video") ?: false }
     .let { foundVideoTrack -> foundVideoTrack != null }
+}
+
+/**
+ * Maps the formats of the tracks in a [Tracks.Group] to some other type
+ */
+fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
+  val retList = mutableListOf<R>()
+  for (i in 0 until length) {
+    retList.add(block(getTrackFormat(i)))
+  }
+  return retList
 }
 
 /**

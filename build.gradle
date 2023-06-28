@@ -10,6 +10,6 @@ allprojects {
   project.ext {
     media3Version = '1.0.2'
 //    coreVersion = "0.7.4"
-    coreVersion = 'dev-feat-dropped-frames-count-578b47c'
+    coreVersion = 'dev-rendition-list-5b678be'
   }
 }
