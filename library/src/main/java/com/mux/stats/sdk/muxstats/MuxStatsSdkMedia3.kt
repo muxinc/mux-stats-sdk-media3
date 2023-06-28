@@ -62,8 +62,6 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   val boundPlayer: P get() { return player }
 }
 
-// TODO: boundPlayer/AdCollector on core-android
-
 /**
  * Collects generic data and events regarding ad playback.
  *
