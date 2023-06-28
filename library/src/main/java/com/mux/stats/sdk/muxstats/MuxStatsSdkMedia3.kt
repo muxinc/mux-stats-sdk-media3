@@ -72,7 +72,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
  */
 class AdCollector private constructor(
   private val stateCollector: MuxStateCollector,
-  private val eventBus: EventBus
+  private val eventBus: EventBus,
 ) {
 
   /**

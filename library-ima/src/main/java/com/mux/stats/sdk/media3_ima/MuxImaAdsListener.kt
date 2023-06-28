@@ -37,11 +37,22 @@ class MuxImaAdsListener private constructor(
   //  val x = createFor(muxStats)
   //  adsLoader.setXListener(x)
   companion object {
+
+    /**
+     * Creates a new [MuxImaAdsListener] based on the given [MuxStatsSdkMedia3]
+     */
     @JvmSynthetic
-    internal fun createIfImaAvailable(
-      muxSdk: MuxStatsSdkMedia3<*>
+    fun newListener(
+      muxSdk: MuxStatsSdkMedia3<*>,
+      customerAdEventListener: AdEventListener = AdEventListener { },
+      customerAdErrorListener: AdErrorListener = AdErrorListener { },
     ): MuxImaAdsListener {
-      return MuxImaAdsListener(muxSdk.boundPlayer, muxSdk.adCollector)
+      return MuxImaAdsListener(
+        muxSdk.boundPlayer,
+        muxSdk.adCollector,
+        customerAdEventListener,
+        customerAdErrorListener
+      )
     }
   }
 
