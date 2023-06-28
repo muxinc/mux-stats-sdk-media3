@@ -55,7 +55,14 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
    * Mux (TODO: Doc link)
    */
   val adCollector by lazy { AdCollector.create(collector, eventBus) }
+
+  /**
+   * The player bound to this object
+   */
+  val boundPlayer: P get() { return player }
 }
+
+// TODO: boundPlayer/AdCollector on core-android
 
 /**
  * Collects generic data and events regarding ad playback.
@@ -68,17 +75,33 @@ class AdCollector private constructor(
   private val eventBus: EventBus
 ) {
 
+  /**
+   * The current playback position
+   */
   val playbackPositionMillis get() = stateCollector.playbackPositionMills
+
+  /**
+   * The state of the player as understood by Mux
+   */
   val muxPlayerState get() = stateCollector.muxPlayerState
 
+  /**
+   * Call when playback pauses for ads
+   */
   fun onPausedForAds() {
     stateCollector.pause()
   }
 
+  /**
+   * Call when ad playback starts
+   */
   fun onStartPlayingAds() {
     stateCollector.playingAds()
   }
 
+  /**
+   * Call when done playing ads
+   */
   fun onFinishPlayingAds() {
     stateCollector.finishedPlayingAds()
   }
