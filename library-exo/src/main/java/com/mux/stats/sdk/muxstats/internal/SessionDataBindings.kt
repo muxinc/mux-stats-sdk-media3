@@ -1,0 +1,96 @@
+package com.mux.stats.sdk.muxstats.internal
+
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.analytics.AnalyticsListener
+import androidx.media3.exoplayer.hls.HlsManifest
+import com.mux.android.util.weak
+import com.mux.stats.sdk.core.model.SessionTag
+import com.mux.stats.sdk.core.util.MuxLogger
+import com.mux.stats.sdk.muxstats.MuxPlayerAdapter
+import com.mux.stats.sdk.muxstats.MuxStateCollector
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+
+private class SessionDataPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
+
+  private var listener: AnalyticsListener? by weak(null)
+
+  override fun bindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
+    if (isHlsExtensionAvailable()) {
+      listener = SessionDataListener(player, collector).also { player.addAnalyticsListener(it) }
+    }
+  }
+
+  override fun unbindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
+    listener?.let { player.removeAnalyticsListener(it) }
+  }
+
+  /**
+   * Listens for timeline changes and updates HLS session data if we're on an HLS stream.
+   * This class should only be instantiated if ExoPlayer's HLS extension is available at runtime
+   * @see [.isHlsExtensionAvailable]
+   */
+  @OptIn(UnstableApi::class)
+  private class SessionDataListener(player: ExoPlayer, val collector: MuxStateCollector) :
+    AnalyticsListener {
+
+    private val player by weak(player)
+
+    companion object {
+      val RX_SESSION_TAG_DATA_ID: Pattern by lazy { Pattern.compile("DATA-ID=\"(.*)\",") }
+      val RX_SESSION_TAG_VALUES: Pattern by lazy { Pattern.compile("VALUE=\"(.*)\"") }
+
+      /** HLS session data tags with this Data ID will be sent to Mux Data  */
+      const val HLS_SESSION_LITIX_PREFIX = "io.litix.data."
+      const val LOG_TAG = "SessionDataListener"
+    }
+
+    override fun onTimelineChanged(eventTime: AnalyticsListener.EventTime, reason: Int) {
+      player?.let { safePlayer ->
+        val manifest = safePlayer.currentManifest
+        if (manifest is HlsManifest) {
+          collector.onMainPlaylistTags(parseHlsSessionData(manifest.multivariantPlaylist.tags))
+        }
+      }
+    }
+
+    private fun parseHlsSessionData(hlsTags: List<String>): List<SessionTag> {
+      return filterHlsSessionTags(hlsTags)
+        .map { parseHlsSessionTag(it) }
+        .filter { it.key != null && it.key.contains(HLS_SESSION_LITIX_PREFIX) }
+    }
+
+    private fun filterHlsSessionTags(rawTags: List<String>) =
+      rawTags.filter { it.substring(1).startsWith("EXT-X-SESSION-DATA") }
+
+    private fun parseHlsSessionTag(line: String): SessionTag {
+      val dataId: Matcher = RX_SESSION_TAG_DATA_ID.matcher(line)
+      val value: Matcher = RX_SESSION_TAG_VALUES.matcher(line)
+      var parsedDataId: String? = ""
+      var parsedValue: String? = ""
+      if (dataId.find()) {
+        parsedDataId = dataId.group(1)?.replace(HLS_SESSION_LITIX_PREFIX, "")
+      } else {
+        MuxLogger.d(LOG_TAG, "Data-ID not found in session data: $line")
+      }
+      if (value.find()) {
+        parsedValue = value.group(1)
+      } else {
+        MuxLogger.d(LOG_TAG, "Value not found in session data: $line")
+      }
+      return SessionTag(parsedDataId, parsedValue)
+    }
+  }
+}
+
+/**
+ * Creates a listener that listens for timeline changes and updates HLS session data if we're on an
+ * HLS stream.
+ * This class should only be instantiated if ExoPlayer's HLS extension is available at runtime
+ * @see [.isHlsExtensionAvailable]
+ */
+@JvmSynthetic
+internal fun createExoSessionDataBinding(): MuxPlayerAdapter.PlayerBinding<ExoPlayer> =
+  SessionDataPlayerBinding()

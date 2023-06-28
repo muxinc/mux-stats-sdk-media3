@@ -16,10 +16,13 @@ import com.mux.android.util.weak
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
+import com.mux.stats.sdk.muxstats.internal.createExoSessionDataBinding
 import java.io.IOException
 import java.util.regex.Pattern
 
 class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
+
+  private val sessionDataBinding = createExoSessionDataBinding()
 
   private var listener: MuxAnalyticsListener? = null
 
@@ -38,15 +41,22 @@ class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
         )
       )
     ).also { player.addAnalyticsListener(it) }
+
+    // Also delegate to sub-bindings
+    sessionDataBinding.bindPlayer(player, collector)
   }
 
   override fun unbindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
     listener?.let { player.removeAnalyticsListener(it) }
     collector.playerWatcher?.stop("player unbound")
     listener = null
+
+    // Also delegate to sub-bindings
+    sessionDataBinding.unbindPlayer(player, collector)
   }
 
   companion object {
+    @Suppress("unused")
     private const val TAG = "ExoPlayerBinding"
   }
 
