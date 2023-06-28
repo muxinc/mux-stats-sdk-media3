@@ -16,6 +16,12 @@ import com.mux.stats.sdk.core.events.playback.AdEvent as MuxAdEvent
 /**
  * Listens for [AdErrorEvent] and [AdEvent]s from an IMA Ads loader.
  * TODO: Usage
+ * basic/java:
+ * MuxImaAdsListener.createIfImaAvailable(muxStats, my listeners) // and set on your adsLoader
+ * adsLoaderBuilder.setAdEventListener()
+ * adsLoaderBuilder.setAdErrorListener()
+ * kotlin:
+ * adsLoaderBuilder.monitorWithMuxData(my listeners)
  */
 class MuxImaAdsListener private constructor(
   exoPlayer: Player,

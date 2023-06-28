@@ -49,6 +49,11 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
     playerSoftware = "media3-generic",
   )
 ) {
+  /**
+   * Collects events related to ad playback and reports them. If you are using Google IMA, you don't
+   * need to interact with this class directly. Instead, use the `media3-ima` library provided by
+   * Mux (TODO: Doc link)
+   */
   val adCollector by lazy { AdCollector.create(collector, eventBus) }
 }
 
