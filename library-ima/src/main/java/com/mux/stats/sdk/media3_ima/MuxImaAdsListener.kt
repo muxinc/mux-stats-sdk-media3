@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.media3_ima
 
+import android.util.Log
 import androidx.media3.common.Player
 import com.google.ads.interactivemedia.v3.api.Ad
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
@@ -32,29 +33,6 @@ class MuxImaAdsListener private constructor(
   private val customerAdEventListener: AdEventListener = AdEventListener { },
   private val customerAdErrorListener: AdErrorListener = AdErrorListener { },
 ) : AdErrorListener, AdEventListener {
-
-  // TODO: Static method that supplies AdCollector from a MuxStatsSdkWhatever
-  //  val x = createFor(muxStats)
-  //  adsLoader.setXListener(x)
-  companion object {
-
-    /**
-     * Creates a new [MuxImaAdsListener] based on the given [MuxStatsSdkMedia3]
-     */
-    @JvmSynthetic
-    fun newListener(
-      muxSdk: MuxStatsSdkMedia3<*>,
-      customerAdEventListener: AdEventListener = AdEventListener { },
-      customerAdErrorListener: AdErrorListener = AdErrorListener { },
-    ): MuxImaAdsListener {
-      return MuxImaAdsListener(
-        muxSdk.boundPlayer,
-        muxSdk.adCollector,
-        customerAdEventListener,
-        customerAdErrorListener
-      )
-    }
-  }
 
   /** The ExoPlayer that is playing the ads */
   private val exoPlayer by weak(exoPlayer)
@@ -113,6 +91,9 @@ class MuxImaAdsListener private constructor(
    * @param adEvent
    */
   override fun onAdEvent(adEvent: AdEvent) {
+    if (adEvent.type != AdEvent.AdEventType.AD_PROGRESS) {
+      Log.d(TAG, "onAdEvent: event ${adEvent.type.name}")
+    }
     exoPlayer?.let { player ->
       val event: PlaybackEvent? = null
       val ad = adEvent.ad
@@ -161,9 +142,12 @@ class MuxImaAdsListener private constructor(
           // End the ad break, and then toggle playback state to ensure that
           // we get a play/playing after the ads.
           dispatchAdPlaybackEvent(AdBreakEndEvent(null), ad)
-          player.playWhenReady = false
-          adCollector.onFinishPlayingAds()
-          player.playWhenReady = true
+          //player.playWhenReady = false
+          // ExoPlayer state doesn't change when the ad player starts, so report play/playing
+          val willPlayImmediately = player.playWhenReady
+                  && player.playbackState == Player.STATE_READY
+          adCollector.onFinishPlayingAds(willPlayImmediately)
+//          player.playWhenReady = true
         }
 
         AdEvent.AdEventType.PAUSED -> {
@@ -205,5 +189,26 @@ class MuxImaAdsListener private constructor(
   private fun dispatchAdPlaybackEvent(event: MuxAdEvent, ad: Ad?) {
     setupAdViewData(event, ad)
     adCollector.dispatch(event)
+  }
+
+  companion object {
+    private const val TAG = "MuxImaAdsListener"
+
+    /**
+     * Creates a new [MuxImaAdsListener] based on the given [MuxStatsSdkMedia3]
+     */
+    @JvmSynthetic
+    fun newListener(
+      muxSdk: MuxStatsSdkMedia3<*>,
+      customerAdEventListener: AdEventListener = AdEventListener { },
+      customerAdErrorListener: AdErrorListener = AdErrorListener { },
+    ): MuxImaAdsListener {
+      return MuxImaAdsListener(
+        muxSdk.boundPlayer,
+        muxSdk.adCollector,
+        customerAdEventListener,
+        customerAdErrorListener
+      )
+    }
   }
 }

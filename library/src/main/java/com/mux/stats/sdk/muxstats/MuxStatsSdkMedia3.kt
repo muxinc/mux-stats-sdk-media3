@@ -102,8 +102,11 @@ class AdCollector private constructor(
   /**
    * Call when done playing ads
    */
-  fun onFinishPlayingAds() {
+  fun onFinishPlayingAds(willPlay: Boolean) {
     stateCollector.finishedPlayingAds()
+    if(willPlay) {
+      stateCollector.playing()
+    }
   }
 
   fun dispatch(event: AdEvent) {
