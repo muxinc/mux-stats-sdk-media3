@@ -45,6 +45,7 @@ dependencies {
   implementation "androidx.media3:media3-exoplayer-rtsp:${media3Version}"
   implementation "androidx.media3:media3-session:${media3Version}"
   implementation "androidx.media3:media3-ui:${media3Version}"
+  implementation "androidx.media3:media3-exoplayer-ima:${media3Version}"
 
   implementation 'androidx.core:core-ktx:1.9.0'
   implementation 'androidx.appcompat:appcompat:1.6.0'

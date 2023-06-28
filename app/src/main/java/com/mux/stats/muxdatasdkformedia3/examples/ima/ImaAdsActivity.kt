@@ -9,6 +9,7 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.ima.ImaAdsLoader
 import androidx.media3.ui.PlayerView
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.R
@@ -27,6 +28,7 @@ class ImaAdsActivity : AppCompatActivity() {
   private lateinit var view: ActivityPlayerBinding
   private var player: Player? = null
   private var muxStats: MuxStatsSdkMedia3<ExoPlayer>? = null
+  private lateinit var adsLoader: ImaAdsLoader
 
   @OptIn(UnstableApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {

@@ -24,7 +24,7 @@ import com.mux.stats.sdk.core.events.playback.AdEvent as MuxAdEvent
  * adsLoaderBuilder.setAdEventListener()
  * adsLoaderBuilder.setAdErrorListener()
  * kotlin:
- * adsLoaderBuilder.monitorWithMuxData(my listeners)
+ * adsLoaderBuilder.monitorWithMuxData(muxStats, my listeners)
  */
 class MuxImaAdsListener private constructor(
   exoPlayer: Player,
