@@ -91,9 +91,6 @@ class MuxImaAdsListener private constructor(
    * @param adEvent
    */
   override fun onAdEvent(adEvent: AdEvent) {
-    if (adEvent.type != AdEvent.AdEventType.AD_PROGRESS) {
-      Log.d(TAG, "onAdEvent: event ${adEvent.type.name}")
-    }
     exoPlayer?.let { player ->
       val event: PlaybackEvent? = null
       val ad = adEvent.ad
