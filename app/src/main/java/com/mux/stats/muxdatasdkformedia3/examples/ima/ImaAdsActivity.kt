@@ -1,11 +1,11 @@
 package com.mux.stats.muxdatasdkformedia3.examples.ima
 
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.OptIn
+import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaItem.AdsConfiguration
 import androidx.media3.common.PlaybackException
@@ -15,11 +15,9 @@ import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ima.ImaAdsLoader
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
-import androidx.media3.exoplayer.source.ads.AdsLoader
 import androidx.media3.ui.PlayerView
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
-import com.mux.stats.muxdatasdkformedia3.toMediaItem
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
@@ -64,16 +62,17 @@ class ImaAdsActivity : AppCompatActivity() {
       adsLoader = ImaAdsLoader.Builder(this)
         .monitorWith(
           muxStats = muxStats!!,
-          customerAdErrorListener = { /*Optional, your custom logic*/ },
-          customerAdEventListener = { /*Optional, your custom logic*/ },
+          customerAdErrorListener = { /*Optional parameter, your custom logic*/ },
+          customerAdEventListener = { /*Optional parameter, your custom logic*/ },
         )
         .build()
+        .apply { setPlayer(newPlayer) }
 
       view.playerView.player = newPlayer
       newPlayer.setMediaItem(
         MediaItem.Builder()
           .setUri(Uri.parse(mediaUrl))
-          .setAdsConfiguration( AdsConfiguration.Builder(Uri.parse(adTagUri)).build() )
+          .setAdsConfiguration(AdsConfiguration.Builder(Uri.parse(adTagUri)).build())
           .build()
       )
       newPlayer.prepare()
