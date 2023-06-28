@@ -15,9 +15,10 @@ import com.mux.stats.sdk.muxstats.MuxStateCollector
 import com.mux.stats.sdk.core.events.playback.AdEvent as MuxAdEvent
 
 /**
- * Ima SDK wrapper, listen to ad events and dispatch the appropriate AdPlayback events accordingly.
+ * Listens for [AdErrorEvent] and [AdEvent]s from an IMA Ads loader.
  */
-class MuxImaSdkListener private constructor(
+// TODO: Some kind of ad-related abstraction, or just expose the collector?
+class MuxImaAdsListener private constructor(
   exoPlayer: Player,
   private val stateCollector: MuxStateCollector,
   private val eventBus: EventBus
@@ -29,7 +30,7 @@ class MuxImaSdkListener private constructor(
       exoPlayer: Player,
       collector: MuxStateCollector,
       eventBus: EventBus
-    ): MuxImaSdkListener? {
+    ): MuxImaAdsListener? {
       return try {
         // Check for some classes that are definitely part of IMA
         Class.forName("com.google.ads.interactivemedia.v3.api.AdsLoader")
@@ -38,7 +39,7 @@ class MuxImaSdkListener private constructor(
         Class.forName("com.google.ads.interactivemedia.v3.api.AdEvent")
         Class.forName("com.google.ads.interactivemedia.v3.api.Ad")
 
-        MuxImaSdkListener(exoPlayer, collector, eventBus)
+        MuxImaAdsListener(exoPlayer, collector, eventBus)
       } catch (e: ClassNotFoundException) {
         null
       }
