@@ -34,6 +34,8 @@ dependencies {
   api "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
   // note- 3.30.0 and 3.30.1 are marked as broken by google, so don't use
   api 'com.google.ads.interactivemedia.v3:interactivemedia:3.29.0'
+  // implementation is used so it doesn't pollute customers namespace
+  implementation "com.mux:utils-kt:$coreVersion"
 
   implementation 'androidx.core:core-ktx:1.10.1'
   implementation 'androidx.appcompat:appcompat:1.6.1'
