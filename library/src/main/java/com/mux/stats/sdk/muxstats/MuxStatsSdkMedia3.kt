@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.View
 import androidx.media3.common.Player
 import com.mux.stats.sdk.core.CustomOptions
+import com.mux.stats.sdk.core.events.EventBus
+import com.mux.stats.sdk.core.events.playback.AdEvent
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
 
@@ -46,4 +48,44 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
     muxPluginVersion = BuildConfig.LIB_VERSION,
     playerSoftware = "media3-generic",
   )
-)
+) {
+  val adCollector by lazy { AdCollector.create(collector, eventBus) }
+}
+
+/**
+ * Collects generic data and events regarding ad playback.
+ *
+ * If you're using the Google IMA Ads SDK, can use MuxImaAdsListener in our `media3-ima` lib
+ * (TODO: Doc link)
+ */
+class AdCollector private constructor(
+  private val stateCollector: MuxStateCollector,
+  private val eventBus: EventBus
+) {
+
+  val playbackPositionMillis get() = stateCollector.playbackPositionMills
+  val muxPlayerState get() = stateCollector.muxPlayerState
+
+  fun onPausedForAds() {
+    stateCollector.pause()
+  }
+
+  fun onStartPlayingAds() {
+    stateCollector.playingAds()
+  }
+
+  fun onFinishPlayingAds() {
+    stateCollector.finishedPlayingAds()
+  }
+
+  fun dispatch(event: AdEvent) {
+    eventBus.dispatch(event)
+  }
+
+  companion object {
+    @JvmSynthetic
+    internal fun create(collector: MuxStateCollector, eventBus: EventBus): AdCollector {
+      return AdCollector(collector, eventBus)
+    }
+  }
+}

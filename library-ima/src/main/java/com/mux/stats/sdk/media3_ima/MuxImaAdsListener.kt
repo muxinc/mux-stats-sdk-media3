@@ -6,30 +6,30 @@ import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.mux.android.util.oneOf
 import com.mux.android.util.weak
-import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.*
 import com.mux.stats.sdk.core.model.AdData
 import com.mux.stats.sdk.core.model.ViewData
+import com.mux.stats.sdk.muxstats.AdCollector
 import com.mux.stats.sdk.muxstats.MuxPlayerState
-import com.mux.stats.sdk.muxstats.MuxStateCollector
 import com.mux.stats.sdk.core.events.playback.AdEvent as MuxAdEvent
 
 /**
  * Listens for [AdErrorEvent] and [AdEvent]s from an IMA Ads loader.
+ * TODO: Usage
  */
-// TODO: Some kind of ad-related abstraction, or just expose the collector?
 class MuxImaAdsListener private constructor(
   exoPlayer: Player,
-  private val stateCollector: MuxStateCollector,
-  private val eventBus: EventBus
+  private val adCollector: AdCollector,
 ) : AdErrorEvent.AdErrorListener, AdEvent.AdEventListener {
 
+  // TODO: Static method that supplies AdCollector from a MuxStatsSdkWhatever
+  //  val x = createFor(muxStats)
+  //  adsLoader.setXListener(x)
   companion object {
     @JvmSynthetic
     internal fun createIfImaAvailable(
       exoPlayer: Player,
-      collector: MuxStateCollector,
-      eventBus: EventBus
+      adCollector: AdCollector
     ): MuxImaAdsListener? {
       return try {
         // Check for some classes that are definitely part of IMA
@@ -39,7 +39,7 @@ class MuxImaAdsListener private constructor(
         Class.forName("com.google.ads.interactivemedia.v3.api.AdEvent")
         Class.forName("com.google.ads.interactivemedia.v3.api.Ad")
 
-        MuxImaAdsListener(exoPlayer, collector, eventBus)
+        MuxImaAdsListener(exoPlayer, adCollector)
       } catch (e: ClassNotFoundException) {
         null
       }
@@ -67,7 +67,7 @@ class MuxImaAdsListener private constructor(
   override fun onAdError(adErrorEvent: AdErrorEvent) {
     val event = AdErrorEvent(null)
     setupAdViewData(event, null)
-    eventBus.dispatch(event)
+    adCollector.dispatch(event)
   }
 
   /**
@@ -79,7 +79,7 @@ class MuxImaAdsListener private constructor(
   private fun setupAdViewData(event: MuxAdEvent, ad: Ad?) {
     val viewData = ViewData()
     val adData = AdData();
-    if (stateCollector.playbackPositionMills == 0L) {
+    if (adCollector.playbackPositionMillis == 0L) {
       if (ad != null) {
         viewData.viewPrerollAdId = ad.adId
         viewData.viewPrerollCreativeId = ad.creativeId
@@ -109,11 +109,11 @@ class MuxImaAdsListener private constructor(
         AdEvent.AdEventType.LOADED -> {}
         AdEvent.AdEventType.CONTENT_PAUSE_REQUESTED -> {
           // Send pause event if we are currently playing or preparing to play content
-          if (stateCollector.muxPlayerState.oneOf(MuxPlayerState.PLAY, MuxPlayerState.PLAYING)) {
-            stateCollector.pause()
+          if (adCollector.muxPlayerState.oneOf(MuxPlayerState.PLAY, MuxPlayerState.PLAYING)) {
+            adCollector.onPausedForAds()
           }
           sendPlayOnStarted = false
-          stateCollector.playingAds()
+          adCollector.onStartPlayingAds()
           if (!player.playWhenReady && player.currentPosition == 0L) {
             // This is preroll ads when play when ready is set to false, we need to ignore these events
             missingAdBreakStartEvent = true
@@ -147,7 +147,7 @@ class MuxImaAdsListener private constructor(
           // we get a play/playing after the ads.
           dispatchAdPlaybackEvent(AdBreakEndEvent(null), ad)
           player.playWhenReady = false
-          stateCollector.finishedPlayingAds()
+          adCollector.onFinishPlayingAds()
           player.playWhenReady = true
         }
         AdEvent.AdEventType.PAUSED -> {
@@ -184,6 +184,6 @@ class MuxImaAdsListener private constructor(
    */
   private fun dispatchAdPlaybackEvent(event: MuxAdEvent, ad: Ad?) {
     setupAdViewData(event, ad)
-    eventBus.dispatch(event)
+    adCollector.dispatch(event)
   }
 }
