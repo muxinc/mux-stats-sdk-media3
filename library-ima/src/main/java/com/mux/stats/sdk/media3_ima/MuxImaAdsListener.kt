@@ -139,15 +139,11 @@ class MuxImaAdsListener private constructor(
 
         AdEvent.AdEventType.COMPLETED -> dispatchAdPlaybackEvent(AdEndedEvent(null), ad)
         AdEvent.AdEventType.CONTENT_RESUME_REQUESTED -> {
-          // End the ad break, and then toggle playback state to ensure that
-          // we get a play/playing after the ads.
           dispatchAdPlaybackEvent(AdBreakEndEvent(null), ad)
-          //player.playWhenReady = false
-          // ExoPlayer state doesn't change when the ad player starts, so report play/playing
+          // ExoPlayer state doesn't change for client ads so fill in the blanks
           val willPlayImmediately = player.playWhenReady
                   && player.playbackState == Player.STATE_READY
           adCollector.onFinishPlayingAds(willPlayImmediately)
-//          player.playWhenReady = true
         }
 
         AdEvent.AdEventType.PAUSED -> {
