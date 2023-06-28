@@ -57,14 +57,9 @@ private class SessionDataPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlaye
     }
 
     private fun parseHlsSessionData(hlsTags: List<String>): List<SessionTag> {
-      val data: MutableList<SessionTag> = ArrayList()
-      for (tag in filterHlsSessionTags(hlsTags)) {
-        val st: SessionTag = parseHlsSessionTag(tag)
-        if (st.key != null && st.key.contains(HLS_SESSION_LITIX_PREFIX)) {
-          data.add(parseHlsSessionTag(tag))
-        }
-      }
-      return data
+      return filterHlsSessionTags(hlsTags)
+        .map { parseHlsSessionTag(it) }
+        .filter { it.key != null && it.key.contains(HLS_SESSION_LITIX_PREFIX) }
     }
 
     private fun filterHlsSessionTags(rawTags: List<String>) =
