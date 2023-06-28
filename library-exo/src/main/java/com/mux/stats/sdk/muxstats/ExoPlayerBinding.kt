@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.muxstats
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.Player
@@ -73,6 +74,7 @@ private class MuxAnalyticsListener(
   private val player by weak(player)
 
   override fun onPlaybackStateChanged(eventTime: AnalyticsListener.EventTime, state: Int) {
+    Log.d(TAG, "onPlaybackStateChanged: state $state, pwr ${player?.playWhenReady}")
     // query playWhenReady for consistency. The order of execution between this callback and
     //  onPlayWhenReadyChanged is not well-defined
     player?.let { collector.handleExoPlaybackState(state, it.playWhenReady) }
