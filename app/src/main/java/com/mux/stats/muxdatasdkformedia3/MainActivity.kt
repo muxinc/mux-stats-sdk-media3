@@ -14,6 +14,7 @@ import com.mux.stats.muxdatasdkformedia3.databinding.ActivityMainBinding
 import com.mux.stats.muxdatasdkformedia3.databinding.ListitemExampleBinding
 import com.mux.stats.muxdatasdkformedia3.examples.background.BackgroundPlayActivity
 import com.mux.stats.muxdatasdkformedia3.examples.basic.BasicPlayerActivity
+import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaAdsActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,13 +26,16 @@ class MainActivity : AppCompatActivity() {
     setContentView(view.root)
     view.recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     view.recycler.adapter = ExampleListAdapter(this, examples())
-    Log.d("ok", "ok")
   }
 
   private fun examples() = listOf(
     Example(
       title = "Basic playback",
       destination = Intent(this, BasicPlayerActivity::class.java)
+    ),
+    Example(
+      title = "IMA Ads",
+      destination = Intent(this, ImaAdsActivity::class.java)
     ),
     Example(
       title = "Background playback",
