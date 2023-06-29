@@ -18,6 +18,7 @@ import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
 import com.mux.stats.sdk.muxstats.internal.createExoSessionDataBinding
+import com.mux.stats.sdk.muxstats.internal.populateLiveStreamData
 import java.io.IOException
 import java.util.regex.Pattern
 
@@ -92,6 +93,7 @@ private class MuxAnalyticsListener(
     eventTime.timeline.takeIf { it.windowCount > 0 }?.let { tl ->
       val window = Timeline.Window().apply { tl.getWindow(0, this) }
       collector.sourceDurationMs = window.durationMs
+      collector.populateLiveStreamData(window)
     }
   }
 

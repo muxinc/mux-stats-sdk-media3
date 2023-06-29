@@ -10,6 +10,6 @@ allprojects {
   project.ext {
     media3Version = '1.0.2'
 //    coreVersion = "0.7.4"
-    coreVersion = 'dev-feat-live-c073174'
+    coreVersion = 'dev-feat-live-069a758'
   }
 }

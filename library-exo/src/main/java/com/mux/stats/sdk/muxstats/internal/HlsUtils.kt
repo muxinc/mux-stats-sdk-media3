@@ -6,6 +6,7 @@ import androidx.media3.common.Timeline.Window
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.hls.HlsManifest
 import com.mux.stats.sdk.core.util.MuxLogger
+import com.mux.stats.sdk.muxstats.MuxStateCollector
 
 /*
  * HlsUtils.kt: Utility functions for working with HLS playlists in exoplayer
@@ -22,8 +23,26 @@ private val hlsExtensionAvailable: Boolean by lazy {
     false
   }
 }
+
+/**
+ * True when Exoplayer's HLS extension is available at runtime
+ */
 @JvmSynthetic
 internal fun isHlsExtensionAvailable() = hlsExtensionAvailable
+
+/**
+ * Add livestream data to a [MuxStateCollector] if the given [Window] represents a live stream
+ */
+@JvmSynthetic
+internal fun MuxStateCollector.populateLiveStreamData(window: Window) {
+  if (window.isLive()) {
+    hlsManifestNewestTime = window.windowStartTimeMs
+    hlsHoldBack = parseManifestTagL(window, "HOLD-BACK")
+    hlsPartHoldBack = parseManifestTagL(window, "PART-HOLD-BACK")
+    hlsPartTargetDuration = parseManifestTagL(window, "PART-TARGET")
+    hlsTargetDuration = parseManifestTagL(window, "EXT-X-TARGETDURATION")
+  }
+}
 
 /**
  * Parses manifest tags representing a named numerical value, returning the value as a Long
@@ -50,21 +69,19 @@ internal fun parseManifestTag(currentWindow: Timeline.Window, tagName: String): 
     return "-1"
   }
 
-  synchronized(currentWindow) {
-    if (currentWindow.manifest != null && tagName.isNotEmpty()) {
-      if (currentWindow.manifest is HlsManifest) {
-        val manifest = currentWindow.manifest as HlsManifest
-        for (tag in manifest.mediaPlaylist.tags) {
-          if (tag.contains(tagName)) {
-            var value = tag.split(tagName).toTypedArray()[1]
-            if (value.contains(",")) {
-              value = value.split(",").toTypedArray()[0]
-            }
-            if (value.startsWith("=") || value.startsWith(":")) {
-              value = value.substring(1, value.length)
-            }
-            return value
+  if (currentWindow.manifest != null && tagName.isNotEmpty()) {
+    if (currentWindow.manifest is HlsManifest) {
+      val manifest = currentWindow.manifest as HlsManifest
+      for (tag in manifest.mediaPlaylist.tags) {
+        if (tag.contains(tagName)) {
+          var value = tag.split(tagName).toTypedArray()[1]
+          if (value.contains(",")) {
+            value = value.split(",").toTypedArray()[0]
           }
+          if (value.startsWith("=") || value.startsWith(":")) {
+            value = value.substring(1, value.length)
+          }
+          return value
         }
       }
     }
