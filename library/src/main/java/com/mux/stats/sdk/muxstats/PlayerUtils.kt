@@ -90,7 +90,6 @@ fun MuxStateCollector.handleExoPlaybackState(
     Player.STATE_READY -> {
       if (playWhenReady) {
         if(muxPlayerState == MuxPlayerState.SEEKING) {
-          Log.d("STATE", "Was seeking, dispatch seeked")
           seeked(false)
         }
         playing()

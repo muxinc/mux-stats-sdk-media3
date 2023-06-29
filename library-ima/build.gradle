@@ -1,0 +1,89 @@
+plugins {
+  id 'com.android.library'
+  id 'org.jetbrains.kotlin.android'
+  id 'com.mux.gradle.android.mux-android-distribution'
+}
+
+android {
+  namespace 'com.mux.stats.sdk.media3_ima'
+  compileSdk 33
+
+  defaultConfig {
+    minSdk 16
+    targetSdk 33
+
+    testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    consumerProguardFiles "consumer-rules.pro"
+  }
+
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+    }
+  }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+  kotlinOptions {
+    jvmTarget = '1.8'
+  }
+}
+
+muxDistribution {
+  devVersion versionFromCommitHash('dev-')
+  releaseVersion versionFromTag()
+  artifactIds just("data-media3-ima")
+  groupIds just("com.mux.stats.sdk.muxstats")
+  publicReleaseIf releaseOnTag()
+
+  // TODO: This is kinda clumsy, packageJavadocs should be a function not a property probably
+  packageJavadocs = releaseOnTag().call()
+  publishIf { it.containsIgnoreCase("release") }
+  artifactoryConfig {
+    contextUrl = "https://muxinc.jfrog.io/artifactory/"
+    releaseRepoKey = 'default-maven-release-local'
+    devRepoKey = 'default-maven-local'
+  }
+
+  pom {
+    description "The Mux Data SDK for Google's androidX media3 player"
+    inceptionYear = "2022"
+    url = "https://github.com/muxinc/mux-stats-sdk-media3"
+    organization {
+      name = "Mux, Inc"
+      url = "https://www.mux.com"
+    }
+    developers {
+      developer {
+        email = "support@mux.com"
+        name = "The players and sdks team @mux"
+        organization = "Mux, inc"
+      }
+    }
+  }
+}
+
+dependencies {
+  api "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
+  // note- 3.30.0 and 3.30.1 are marked as broken by google, so don't use
+  api 'com.google.ads.interactivemedia.v3:interactivemedia:3.29.0'
+  implementation "androidx.media3:media3-exoplayer-ima:${media3Version}"
+  // implementation is used so it doesn't pollute customers namespace
+  implementation "com.mux:utils-kt:$coreVersion"
+
+  implementation 'androidx.core:core-ktx:1.10.1'
+  implementation 'androidx.appcompat:appcompat:1.6.1'
+  implementation 'com.google.android.material:material:1.9.0'
+  testImplementation 'junit:junit:4.13.2'
+  androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+  androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+configurations.all {
+  resolutionStrategy.dependencySubstitution {
+    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom") using project(":library")\
+      because "In development, we build from src"
+  }
+}

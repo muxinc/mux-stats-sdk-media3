@@ -4,6 +4,8 @@ import android.content.Context
 import android.view.View
 import androidx.media3.common.Player
 import com.mux.stats.sdk.core.CustomOptions
+import com.mux.stats.sdk.core.events.EventBus
+import com.mux.stats.sdk.core.events.playback.AdEvent
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
 
@@ -46,4 +48,73 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
     muxPluginVersion = BuildConfig.LIB_VERSION,
     playerSoftware = "media3-generic",
   )
-)
+) {
+  /**
+   * Collects events related to ad playback and reports them. If you are using Google IMA, you don't
+   * need to interact with this class directly. Instead, use the `media3-ima` library provided by
+   * Mux (TODO: Doc link)
+   */
+  val adCollector by lazy { AdCollector.create(collector, eventBus) }
+
+  /**
+   * The player bound to this object
+   */
+  val boundPlayer: P get() { return player }
+}
+
+/**
+ * Collects generic data and events regarding ad playback.
+ *
+ * If you're using the Google IMA Ads SDK, can use MuxImaAdsListener in our `media3-ima` lib
+ * (TODO: Doc link)
+ */
+class AdCollector private constructor(
+  private val stateCollector: MuxStateCollector,
+  private val eventBus: EventBus,
+) {
+
+  /**
+   * The current playback position
+   */
+  val playbackPositionMillis get() = stateCollector.playbackPositionMills
+
+  /**
+   * The state of the player as understood by Mux
+   */
+  val muxPlayerState get() = stateCollector.muxPlayerState
+
+  /**
+   * Call when playback pauses for ads
+   */
+  fun onPausedForAds() {
+    stateCollector.pause()
+  }
+
+  /**
+   * Call when ad playback starts
+   */
+  fun onStartPlayingAds() {
+    stateCollector.playingAds()
+  }
+
+  /**
+   * Call when done playing ads
+   */
+  fun onFinishPlayingAds(willPlay: Boolean) {
+    stateCollector.finishedPlayingAds()
+    if(willPlay) {
+      stateCollector.playing()
+    }
+  }
+
+  fun dispatch(event: AdEvent) {
+    eventBus.dispatch(event)
+  }
+
+  companion object {
+    @JvmSynthetic
+    internal fun create(collector: MuxStateCollector, eventBus: EventBus): AdCollector {
+      return AdCollector(collector, eventBus)
+    }
+  }
+}
