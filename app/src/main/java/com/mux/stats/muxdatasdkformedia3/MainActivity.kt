@@ -38,9 +38,19 @@ class MainActivity : AppCompatActivity() {
       destination = Intent(this, ImaAdsActivity::class.java)
     ),
     Example(
-      title = "Background playback",
-      destination = Intent(this, BackgroundPlayActivity::class.java)
+      title = "Live Playback",
+      destination = Intent(this, BasicPlayerActivity::class.java).apply {
+        putExtra(
+          BasicPlayerActivity.EXTRA_URL,
+          "https://stream.mux.com/v69RSHhFelSm4701snP22dYz2jICy4E4FUyk02rW4gxRM.m3u8"
+        )
+      }
     ),
+    // TODO: post-beta, add APIs for talking to a `MediaSessionService`
+//    Example(
+//      title = "Background playback",
+//      destination = Intent(this, BackgroundPlayActivity::class.java)
+//    ),
   )
 }
 
