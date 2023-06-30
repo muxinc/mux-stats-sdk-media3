@@ -162,9 +162,6 @@ private class MuxAnalyticsListener(
     collector.sourceHeight = videoSize.height
   }
 
-  override fun onPlayerError(eventTime: AnalyticsListener.EventTime, error: PlaybackException) {
-  }
-
   override fun onLoadError(
     eventTime: AnalyticsListener.EventTime,
     loadEventInfo: LoadEventInfo,
