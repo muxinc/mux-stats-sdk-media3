@@ -1,8 +1,8 @@
 package com.mux.stats.sdk.muxstats
 
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
@@ -19,12 +19,14 @@ import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
 import com.mux.stats.sdk.muxstats.internal.createExoSessionDataBinding
 import com.mux.stats.sdk.muxstats.internal.populateLiveStreamData
+import com.mux.stats.sdk.muxstats.internal.createErrorDataBinding
 import java.io.IOException
 import java.util.regex.Pattern
 
 class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 
   private val sessionDataBinding = createExoSessionDataBinding()
+  private val errorBinding = createErrorDataBinding()
 
   private var listener: MuxAnalyticsListener? = null
 
@@ -45,6 +47,7 @@ class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
     ).also { player.addAnalyticsListener(it) }
 
     // Also delegate to sub-bindings
+    errorBinding.bindPlayer(player, collector)
     sessionDataBinding.bindPlayer(player, collector)
   }
 
@@ -55,6 +58,7 @@ class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 
     // Also delegate to sub-bindings
     sessionDataBinding.unbindPlayer(player, collector)
+    errorBinding.unbindPlayer(player, collector)
   }
 
   companion object {
