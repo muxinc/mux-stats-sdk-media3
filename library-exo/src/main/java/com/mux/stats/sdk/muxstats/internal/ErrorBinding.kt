@@ -9,7 +9,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.mediacodec.MediaCodecRenderer
 import androidx.media3.exoplayer.mediacodec.MediaCodecUtil
 import com.mux.android.util.weak
-import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.MuxErrorException
 import com.mux.stats.sdk.muxstats.MuxPlayerAdapter
 import com.mux.stats.sdk.muxstats.MuxStateCollector
@@ -18,7 +17,7 @@ import com.mux.stats.sdk.muxstats.MuxStateCollector
  * Player binding for  exoplayer android metrics
  * This implementation works from 2.15.1 up until now (as of 4/25/2022)
  */
-private class ExoErrorMetricsByListener215ToNow : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
+private class ErrorBindings : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
   private var playerListener: Player.Listener? by weak(null)
 
   override fun bindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
@@ -31,10 +30,10 @@ private class ExoErrorMetricsByListener215ToNow : MuxPlayerAdapter.PlayerBinding
     playerListener?.let { player.removeListener(it) }
   }
 
-  private fun newListener(collector: MuxStateCollector) = ErrorPlayerListenerUpTo214(collector)
+  private fun newListener(collector: MuxStateCollector) = ErrorPlayerListener(collector)
 } // class ErrorPlayerBuListenerUpTo214
 
-private class ErrorPlayerListenerUpTo214(val collector: MuxStateCollector) : Player.Listener {
+private class ErrorPlayerListener(val collector: MuxStateCollector) : Player.Listener {
   override fun onPlayerError(error: PlaybackException) {
     if (error is ExoPlaybackException) {
       collector.handleExoPlaybackException(error.errorCode, error)
@@ -49,8 +48,8 @@ private class ErrorPlayerListenerUpTo214(val collector: MuxStateCollector) : Pla
  * Generates a player binding for exoplayer error metrics.
  */
 @JvmSynthetic
-internal fun playerErrorMetrics(): MuxPlayerAdapter.PlayerBinding<ExoPlayer> =
-  ExoErrorMetricsByListener215ToNow();
+internal fun createErrorDataBinding(): MuxPlayerAdapter.PlayerBinding<ExoPlayer> =
+  ErrorBindings();
 
 /**
  * Handles fatal [ExoPlaybackException]s from the player, reporting them to the dashboard
