@@ -3,6 +3,7 @@ package com.mux.stats.sdk.muxstats
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
@@ -156,6 +157,9 @@ private class MuxAnalyticsListener(
   ) {
     collector.sourceWidth = videoSize.width
     collector.sourceHeight = videoSize.height
+  }
+
+  override fun onPlayerError(eventTime: AnalyticsListener.EventTime, error: PlaybackException) {
   }
 
   override fun onLoadError(
