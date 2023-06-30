@@ -39,7 +39,9 @@ class BasicPlayerActivity : AppCompatActivity() {
 
   override fun onResume() {
     super.onResume()
-    startPlaying(Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY)
+    startPlaying(
+      intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY
+    )
   }
 
   override fun onPause() {
@@ -92,9 +94,14 @@ class BasicPlayerActivity : AppCompatActivity() {
         addListener(object : Player.Listener {
           override fun onPlayerError(error: PlaybackException) {
             Log.e(javaClass.simpleName, "player error!", error)
-            Toast.makeText(this@BasicPlayerActivity, error.localizedMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@BasicPlayerActivity, error.localizedMessage, Toast.LENGTH_SHORT)
+              .show()
           }
         })
       }
+  }
+
+  companion object {
+    const val EXTRA_URL: String = "com.mux.video.url"
   }
 }
