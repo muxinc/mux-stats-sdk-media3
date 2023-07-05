@@ -25,7 +25,7 @@ repositories {
 Add a dependency on this SDK
 
 ```groovy
-api 'com.mux.stats.sdk.muxstats:data-media3:0.5.0'
+api 'com.mux.stats.sdk.muxstats:data-media3:0.7.0'
 ```
 
 ### Monitor your player
@@ -41,7 +41,7 @@ override fun onCreate() {
   muxStats = monitorPlayer(player)
 }
 
-private fun monitorPlayer(player: Player): MuxStatsSdkMedia3 {
+private fun monitorPlayer(player: Player): MuxStatsSdkMedia3<ExoPlayer> {
   // You can add your own data to a View, which will override any data we collect
   val customerData = CustomerData(
     CustomerPlayerData().apply { },
