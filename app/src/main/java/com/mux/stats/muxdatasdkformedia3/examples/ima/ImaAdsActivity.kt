@@ -1,42 +1,52 @@
-package com.mux.stats.muxdatasdkformedia3
+package com.mux.stats.muxdatasdkformedia3.examples.ima
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaItem.AdsConfiguration
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.ima.ImaAdsLoader
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.ui.PlayerView
+import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
+import com.mux.stats.sdk.media3_ima.monitorWith
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
 
-class PlayerActivity : AppCompatActivity() {
-
-  companion object {
-    const val MUX_DATA_ENV_KEY = "YOUR KEY HERE"
-    const val VOD_TEST_URL_STEVE = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8"
-    const val VOD_TEST_URL_DRAGON_WARRIOR_LADY =
-      "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
-  }
+class ImaAdsActivity : AppCompatActivity() {
 
   private lateinit var view: ActivityPlayerBinding
   private var player: Player? = null
-  private var muxStats: MuxStatsSdkMedia3? = null
+  private var muxStats: MuxStatsSdkMedia3<ExoPlayer>? = null
+  private var adsLoader: ImaAdsLoader? = null
 
+  @OptIn(UnstableApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     view = ActivityPlayerBinding.inflate(layoutInflater)
     setContentView(view.root)
+
+    view.playerView.apply {
+      setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
+    }
   }
 
   override fun onResume() {
     super.onResume()
-    startPlaying(VOD_TEST_URL_DRAGON_WARRIOR_LADY)
+    startPlaying(Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY, Constants.AD_TAG_COMPLEX)
   }
 
   override fun onPause() {
@@ -44,13 +54,28 @@ class PlayerActivity : AppCompatActivity() {
     super.onPause()
   }
 
-  private fun startPlaying(mediaUrl: String) {
+  private fun startPlaying(mediaUrl: String, adTagUri: String) {
     stopPlaying()
 
     player = createPlayer().also { newPlayer ->
       muxStats = monitorPlayer(newPlayer)
+      adsLoader = ImaAdsLoader.Builder(this)
+        .monitorWith(
+          muxStats = muxStats!!,
+          customerAdErrorListener = { /*Optional parameter, your custom logic*/ },
+          customerAdEventListener = { /*Optional parameter, your custom logic*/ },
+        )
+        .build()
+        .apply { setPlayer(newPlayer) }
+
       view.playerView.player = newPlayer
-      newPlayer.setMediaItem(mediaUrl.toMediaItem())
+      newPlayer.setMediaItem(
+        MediaItem.Builder()
+          .setUri(Uri.parse(mediaUrl))
+          .setAdsConfiguration(AdsConfiguration.Builder(Uri.parse(adTagUri)).build())
+          .build()
+      )
+      newPlayer.prepare()
       newPlayer.playWhenReady = true
     }
   }
@@ -60,11 +85,13 @@ class PlayerActivity : AppCompatActivity() {
       oldPlayer.stop()
       oldPlayer.release()
     }
+    adsLoader?.setPlayer(null)
+
     // Make sure to release() your muxStats whenever the user is done with the player
     muxStats?.release()
   }
 
-  private fun monitorPlayer(player: Player): MuxStatsSdkMedia3 {
+  private fun monitorPlayer(player: ExoPlayer): MuxStatsSdkMedia3<ExoPlayer> {
     // You can add your own data to a View, which will override any data we collect
     val customerData = CustomerData(
       CustomerPlayerData().apply { },
@@ -76,19 +103,25 @@ class PlayerActivity : AppCompatActivity() {
 
     return player.monitorWithMuxData(
       context = this,
-      envKey = MUX_DATA_ENV_KEY,
+      envKey = Constants.MUX_DATA_ENV_KEY,
       customerData = customerData,
       playerView = view.playerView
     )
   }
 
-  private fun createPlayer(): Player {
+  @OptIn(UnstableApi::class)
+  private fun createPlayer(): ExoPlayer {
+    val mediaSrcFactory = DefaultMediaSourceFactory(DefaultDataSource.Factory(this))
+      .setLocalAdInsertionComponents({ adsLoader }, view.playerView)
+
     return ExoPlayer.Builder(this)
-      .build().apply {
+      .setMediaSourceFactory(mediaSrcFactory)
+      .build()
+      .apply {
         addListener(object : Player.Listener {
           override fun onPlayerError(error: PlaybackException) {
             Log.e(javaClass.simpleName, "player error!", error)
-            Toast.makeText(this@PlayerActivity, error.localizedMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@ImaAdsActivity, error.localizedMessage, Toast.LENGTH_SHORT).show()
           }
         })
       }

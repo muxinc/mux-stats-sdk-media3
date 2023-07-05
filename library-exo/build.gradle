@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-  namespace 'com.mux.stats.sdk.muxstats.media3'
+  namespace 'com.mux.stats.sdk.muxstats.media3_exo'
   compileSdk 33
 
   defaultConfig {
@@ -14,8 +14,6 @@ android {
 
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles "consumer-rules.pro"
-
-    buildConfigField "String", "MEDIA3_VERSION", "\"${media3Version}\""
   }
 
   buildTypes {
@@ -36,7 +34,7 @@ android {
 muxDistribution {
   devVersion versionFromCommitHash('dev-')
   releaseVersion versionFromTag()
-  artifactIds just("data-media3-custom")
+  artifactIds just("data-media3")
   groupIds just("com.mux.stats.sdk.muxstats")
   publicReleaseIf releaseOnTag()
 
@@ -54,7 +52,7 @@ muxDistribution {
     inceptionYear = "2022"
     url = "https://github.com/muxinc/mux-stats-sdk-media3"
     organization {
-      name =  "Mux, Inc"
+      name = "Mux, Inc"
       url = "https://www.mux.com"
     }
     developers {
@@ -68,14 +66,26 @@ muxDistribution {
 }
 
 dependencies {
-//  def coreVersion = 'dev-covariant-binding-9a3773e'
-  api "com.mux.stats.sdk.muxstats:android:$coreVersion"
-  api "androidx.media3:media3-common:$media3Version"
+  api "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1"
 
+  api "androidx.media3:media3-exoplayer:$media3Version" // TODO: Not all of exo is required
+  compileOnly "androidx.media3:media3-exoplayer-hls:$media3Version"
+
+  implementation 'androidx.core:core-ktx:1.10.1'
+  implementation 'androidx.appcompat:appcompat:1.6.1'
+  implementation 'com.google.android.material:material:1.9.0'
   testImplementation 'junit:junit:4.13.2'
   androidTestImplementation 'androidx.test.ext:junit:1.1.5'
   androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
+
+configurations.all {
+  resolutionStrategy.dependencySubstitution {
+    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom") using project(":library")\
+      because "In development, we build from src"
+  }
+}
+
+

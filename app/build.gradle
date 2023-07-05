@@ -36,13 +36,17 @@ android {
 }
 
 dependencies {
-  implementation project(':library')
+  implementation "com.mux.stats.sdk.muxstats:data-media3-ima:${project.version}"
+  implementation "com.mux.stats.sdk.muxstats:data-media3-custom:${project.version}"
+  implementation "com.mux.stats.sdk.muxstats:data-media3:${project.version}"
 
   implementation "androidx.media3:media3-exoplayer:${media3Version}"
   implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"
   implementation "androidx.media3:media3-exoplayer-hls:${media3Version}"
   implementation "androidx.media3:media3-exoplayer-rtsp:${media3Version}"
+  implementation "androidx.media3:media3-session:${media3Version}"
   implementation "androidx.media3:media3-ui:${media3Version}"
+  implementation "androidx.media3:media3-exoplayer-ima:${media3Version}"
 
   implementation 'androidx.core:core-ktx:1.9.0'
   implementation 'androidx.appcompat:appcompat:1.6.0'
@@ -51,4 +55,15 @@ dependencies {
   testImplementation 'junit:junit:4.13.2'
   androidTestImplementation 'androidx.test.ext:junit:1.1.5'
   androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+configurations.all {
+  resolutionStrategy.dependencySubstitution {
+    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom") using project(":library")\
+      because "In development, we build from src"
+    substitute module("com.mux.stats.sdk.muxstats:data-media3") using \
+      project(":library-exo") because "In development, we build from src"
+    substitute module("com.mux.stats.sdk.muxstats:data-media3-ima") using \
+      project(":library-ima") because "In development, we build from src"
+  }
 }
