@@ -113,8 +113,4 @@ This SDK is still in beta as we continue development on it, and some gaps in fun
 
 * When used from a `Service` or `ViewModel`, screen and player dimensions cannot be detected
 * When used with Compose, screen and player dimensions cannot be detected even in UI components
-* Only minimal quality metrics are currently reported
 * Video metadata such as Title, Source URL, etc is not tracked automatically
-* Advanced features like CDN tracking, bandwidth metrics, HLS segment tracking, etc are not yet
-  supported
-* IMA integration is not supported yet
