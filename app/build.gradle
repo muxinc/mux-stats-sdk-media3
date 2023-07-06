@@ -36,9 +36,10 @@ android {
 }
 
 dependencies {
-  implementation "com.mux.stats.sdk.muxstats:data-media3-ima:${project.version}"
-  implementation "com.mux.stats.sdk.muxstats:data-media3-custom:${project.version}"
-  implementation "com.mux.stats.sdk.muxstats:data-media3:${project.version}"
+  afterEvaluate {
+    implementation "com.mux.stats.sdk.muxstats:data-media3-ima:${project.version}"
+    implementation "com.mux.stats.sdk.muxstats:data-media3:${project.version}"
+  }
 
   implementation "androidx.media3:media3-exoplayer:${media3Version}"
   implementation "androidx.media3:media3-exoplayer-dash:${media3Version}"
