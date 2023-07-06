@@ -38,7 +38,6 @@ android {
 dependencies {
   afterEvaluate {
     implementation "com.mux.stats.sdk.muxstats:data-media3-ima:${project.version}"
-    implementation "com.mux.stats.sdk.muxstats:data-media3-custom:${project.version}"
     implementation "com.mux.stats.sdk.muxstats:data-media3:${project.version}"
   }
 
