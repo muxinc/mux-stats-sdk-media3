@@ -66,7 +66,10 @@ muxDistribution {
 }
 
 dependencies {
-  api "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
+  afterEvaluate {
+    // The version won't be available when `dependencies` is evaluated
+    api "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
+  }
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
 
