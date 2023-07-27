@@ -47,6 +47,12 @@ muxDistribution {
     devRepoKey = 'default-maven-local'
   }
 
+  dokkaConfig {
+    moduleName = "Mux Upload SDK"
+    footer = "(c) " + new Date().format("yyyy") + " Mux, Inc. Have questions or need help?" +
+            " Contact support@mux.com"
+  }
+
   pom {
     description "The Mux Data SDK for Google's androidX media3 player"
     inceptionYear = "2022"
