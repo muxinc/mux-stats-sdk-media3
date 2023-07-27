@@ -60,7 +60,7 @@ muxDistribution {
     developers {
       developer {
         email = "support@mux.com"
-        name = "The players and sdks team @mux"
+        name = "The player and sdks team @mux"
         organization = "Mux, inc"
       }
     }
