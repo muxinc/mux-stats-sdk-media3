@@ -1,5 +1,4 @@
-import org.jetbrains.dokka.gradle.DokkaTask
-
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
   id 'com.android.application' version '8.0.2' apply false
@@ -15,10 +14,13 @@ allprojects {
     coreVersion = '0.7.5'
   }
 
+  tasks.withType(DokkaTaskPartial.class) {
+    dokkaSourceSets.configureEach {
+      //includes.from("README.md")
+    }
+  }
 }
 
 tasks.named("dokkaHtmlMultiModule").configure {
-//  outputDirectory.set(buildDir.resolve("dokkaCustomMultiModuleOutput"))
   outputDirectory.set(new File(buildDir, "dokkaOutput"))
-//  documentationFileName "README.md"
 }
