@@ -182,7 +182,7 @@ class MuxImaAdsListener private constructor(
     /**
      * Creates a new [MuxImaAdsListener] based on the given [MuxStatsSdkMedia3]
      */
-    @JvmSynthetic
+    @JvmStatic
     fun newListener(
       muxSdk: MuxStatsSdkMedia3<*>,
       customerAdEventListener: AdEventListener = AdEventListener { },
