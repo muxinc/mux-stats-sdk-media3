@@ -14,7 +14,7 @@ import com.mux.android.util.weak
  * [Player] with custom APIs, and you wish to observe it
  *
  * If you are using ExoPlayer, you don't need to use this class. Prefer using `ExoPlayerBinding` from
- * the `data-media3-exo` library
+ * the `data-media3` library
  */
 open class BaseMedia3Binding<P: Player> : MuxPlayerAdapter.PlayerBinding<P> {
 
