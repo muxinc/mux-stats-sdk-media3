@@ -23,7 +23,16 @@ import com.mux.stats.sdk.muxstats.internal.createErrorDataBinding
 import java.io.IOException
 import java.util.regex.Pattern
 
-class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
+/**
+ * [MuxPlayerAdapter.PlayerBinding] implementation for `ExoPlayer`.
+ *
+ * Java callers should provide a new instance of this class when creating their [MuxStatsSdkMedia3]
+ * instance
+ *
+ * Kotlin callers shouldn't need to interact with this class. Just use [monitorWithMuxData] to
+ * handle this automatically
+ */
+open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 
   private val sessionDataBinding = createExoSessionDataBinding()
   private val errorBinding = createErrorDataBinding()
