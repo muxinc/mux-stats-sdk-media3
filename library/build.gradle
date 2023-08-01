@@ -50,7 +50,7 @@ muxDistribution {
   }
 
   dokkaConfig {
-    moduleName = "Mux Upload SDK"
+    moduleName = "Mux Data SDK for Media3, Base"
     footer = "(c) " + new Date().format("yyyy") + " Mux, Inc. Have questions or need help?" +
             " Contact support@mux.com"
   }
