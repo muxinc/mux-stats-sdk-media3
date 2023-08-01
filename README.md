@@ -25,7 +25,7 @@ repositories {
 Add a dependency on this SDK
 
 ```groovy
-api 'com.mux.stats.sdk.muxstats:data-media3:0.7.0'
+api 'com.mux.stats.sdk.muxstats:data-media3:0.7.2'
 ```
 
 ### Monitor your player
