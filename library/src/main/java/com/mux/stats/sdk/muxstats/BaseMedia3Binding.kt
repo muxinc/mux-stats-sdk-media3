@@ -13,7 +13,8 @@ import com.mux.android.util.weak
  * You don't ordinarily need to work with this class directly, unless you are implementing your own
  * [Player] with custom APIs, and you wish to observe it
  *
- * // TODO: Mention the normal ExoPlayer path & link docs, in case they are lost
+ * If you are using ExoPlayer, you don't need to use this class. Prefer using `ExoPlayerBinding` from
+ * the `data-media3-exo` library
  */
 open class BaseMedia3Binding<P: Player> : MuxPlayerAdapter.PlayerBinding<P> {
 
