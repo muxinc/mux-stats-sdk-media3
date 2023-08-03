@@ -97,7 +97,7 @@ dependencies {
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
 
-  implementation project(':library')
+  debugImplementation project(':library')
 
 //  api "androidx.media3:media3-exoplayer:$media3Version" // TODO: Not all of exo is required
 //  compileOnly "androidx.media3:media3-exoplayer-hls:$media3Version"
@@ -150,9 +150,15 @@ afterEvaluate {
   //  There's r2_18_1Api '..' and releaseApi '..', but no r2_18_1ReleaseApi '..'
   android.libraryVariants.findAll { it.buildType.name.contains("release") }
           .each { variant ->
+            def suffix = variant.productFlavors.get(0).name
+            if (suffix.containsIgnoreCase("latest")) {
+              suffix = "" // 'latest' variant has no -at_X_X
+            } else {
+              suffix = "-$suffix"
+            }
             def depNotation =
                     "com.mux.stats.sdk.muxstats" +
-                            ":data-media3-custom${variant.productFlavors.get(0).name}" +
+                            ":data-media3-custom${suffix}" +
                             ":${project.version}"
             def sourceSet = variant.sourceSets.reverse()[0] // Last src set is most specific
             // would be the same as declaring eg, r2_18_1ReleaseApi

@@ -95,7 +95,7 @@ dependencies {
 //    latestApi "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
 //  }
 
-  implementation project(':library')
+  debugImplementation project(':library')
   
   // note- 3.30.0 and 3.30.1 are marked as broken by google, so don't use
   api 'com.google.ads.interactivemedia.v3:interactivemedia:3.29.0'
@@ -144,9 +144,15 @@ afterEvaluate {
   //  There's r2_18_1Api '..' and releaseApi '..', but no r2_18_1ReleaseApi '..'
   android.libraryVariants.findAll { it.buildType.name.contains("release") }
           .each { variant ->
+            def suffix = variant.productFlavors.get(0).name
+            if (suffix.containsIgnoreCase("latest")) {
+              suffix = "" // 'latest' variant has no -at_X_X
+            } else {
+              suffix = "-$suffix"
+            }
             def depNotation =
                     "com.mux.stats.sdk.muxstats" +
-                            ":data-media3-custom${variant.productFlavors.get(0).name}" +
+                            ":data-media3-custom${suffix}" +
                             ":${project.version}"
             def sourceSet = variant.sourceSets.reverse()[0] // Last src set is most specific
             // would be the same as declaring eg, r2_18_1ReleaseApi
