@@ -90,7 +90,9 @@ muxDistribution {
 dependencies {
   afterEvaluate {
     // The version won't be available when `dependencies` is evaluated
-    api "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
+    at_1_0Api "com.mux.stats.sdk.muxstats:data-media3-custom-at_1_0:$project.version"
+    at_1_1Api "com.mux.stats.sdk.muxstats:data-media3-custom-at_1_1:$project.version"
+    latestApi "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
   }
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
@@ -120,7 +122,11 @@ dependencies {
 configurations.all {
   resolutionStrategy.dependencySubstitution {
     substitute module("com.mux.stats.sdk.muxstats:data-media3-custom") using project(":library")\
-      because "In development, we build from src"
+      because "When developing, we want the version from src"
+    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom-at_1_0") using project(":library")\
+      because "When developing, we want the version from src"
+    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom-at_1_1") using project(":library")\
+      because "When developing, we want the version from src"
   }
 }
 

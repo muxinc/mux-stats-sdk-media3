@@ -89,7 +89,9 @@ muxDistribution {
 
 dependencies {
   afterEvaluate {
-    api "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
+    at_1_0Api "com.mux.stats.sdk.muxstats:data-media3-custom-at_1_0:$project.version"
+    at_1_1Api "com.mux.stats.sdk.muxstats:data-media3-custom-at_1_1:$project.version"
+    latestApi "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
   }
   
   // note- 3.30.0 and 3.30.1 are marked as broken by google, so don't use
@@ -114,6 +116,10 @@ dependencies {
 configurations.all {
   resolutionStrategy.dependencySubstitution {
     substitute module("com.mux.stats.sdk.muxstats:data-media3-custom") using project(":library")\
-      because "In development, we build from src"
+      because "When devleoping, we want the version from src"
+    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom-at_1_0") using project(":library")\
+      because "When devleoping, we want the version from src"
+    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom-at_1_1") using project(":library")\
+      because "When devleoping, we want the version from src"
   }
 }
