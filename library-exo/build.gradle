@@ -43,7 +43,14 @@ android {
 muxDistribution {
   devVersion versionFromCommitHash('dev-')
   releaseVersion versionFromTag()
-  artifactIds just("data-media3")
+  artifactIds { variant ->
+    def media3Variant = variant.productFlavors.find { it.dimension == "media3" }.name
+    if (media3Variant.containsIgnoreCase("latest")) {
+      return "data-media3"
+    } else {
+      return "data-media3-$media3Variant"
+    }
+  }
   groupIds just("com.mux.stats.sdk.muxstats")
   publicReleaseIf releaseOnTag()
 
