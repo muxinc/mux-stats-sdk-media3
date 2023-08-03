@@ -41,7 +41,6 @@ android {
 }
 
 muxDistribution {
-  println(">>>muxDistribution")
   devVersion versionFromCommitHash('dev-')
   releaseVersion versionFromTag()
   artifactIds { variant ->
