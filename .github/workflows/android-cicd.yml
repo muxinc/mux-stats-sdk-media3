@@ -32,7 +32,7 @@ jobs:
           ORG_GRADLE_PROJECT_artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
           GH_USER: ${{ github.actor }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and Publish to Dev Repo [Common]
+      - name: Build and Publish to Dev Repo [Exo/IMA]
         uses: gradle/gradle-build-action@v2.4.2
         with:
           arguments: :library-ima:artifactoryPublish :library-exo:artifactoryPublish
