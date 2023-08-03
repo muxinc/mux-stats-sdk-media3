@@ -50,6 +50,7 @@ muxDistribution {
     if (media3Variant.containsIgnoreCase("latest")) {
       return "data-media3-custom"
     } else {
+      println("I AM NAMED data-media3-custom-$media3Variant")
       return "data-media3-custom-$media3Variant"
     }
   }

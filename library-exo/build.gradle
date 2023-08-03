@@ -130,11 +130,15 @@ configurations.all {
           return "-$media3Variant"
         }
       }
+      println(">>>\"com.mux.stats.sdk.muxstats:data-media3-custom${suffix()}\"")
       substitute module("com.mux.stats.sdk.muxstats:data-media3-custom${suffix()}")\
         using project(":library")\
         because "In development, we build from src"
 
     }
+//    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom")\
+//        using project(":library")\
+//        because "In development, we build from src"
   }
 }
 

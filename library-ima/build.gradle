@@ -41,6 +41,7 @@ android {
 }
 
 muxDistribution {
+  println(">>>muxDistribution")
   devVersion versionFromCommitHash('dev-')
   releaseVersion versionFromTag()
   artifactIds { variant ->
@@ -129,5 +130,8 @@ configurations.all {
         because "In development, we build from src"
 
     }
+//    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom")\
+//        using project(":library")\
+//        because "In development, we build from src"
   }
 }

@@ -46,18 +46,21 @@ android {
 
 dependencies {
   afterEvaluate {
-    println ">>>> VERSION IS $project.version"
-    at_1_0Api "com.mux.stats.sdk.muxstats:data-media3-ima-at_1_0:$project.version"
-    at_1_1Api "com.mux.stats.sdk.muxstats:data-media3-ima-at_1_1:$project.version"
-    latestApi "com.mux.stats.sdk.muxstats:data-media3-ima:$project.version"
-    at_1_0Api "com.mux.stats.sdk.muxstats:data-media3-at_1_0:$project.version"
-    at_1_1Api "com.mux.stats.sdk.muxstats:data-media3-at_1_1:$project.version"
-    latestApi "com.mux.stats.sdk.muxstats:data-media3-$project.version"
-
+//    println ">>>> VERSION IS $project.version"
+//    at_1_0Api "com.mux.stats.sdk.muxstats:data-media3-ima-at_1_0:$project.version"
+//    at_1_1Api "com.mux.stats.sdk.muxstats:data-media3-ima-at_1_1:$project.version"
+//    latestApi "com.mux.stats.sdk.muxstats:data-media3-ima:$project.version"
+//    at_1_0Api "com.mux.stats.sdk.muxstats:data-media3-at_1_0:$project.version"
+//    at_1_1Api "com.mux.stats.sdk.muxstats:data-media3-at_1_1:$project.version"
+//    latestApi "com.mux.stats.sdk.muxstats:data-media3-$project.version"
 
 //    implementation "com.mux.stats.sdk.muxstats:data-media3-ima:${project.version}"
 //    implementation "com.mux.stats.sdk.muxstats:data-media3:${project.version}"
   }
+
+  implementation project(":library-ima")
+  implementation project(":library-exo")
+  implementation project(":library")
 
   //noinspection GradleDependency
   at_1_0Implementation "androidx.media3:media3-exoplayer:1.0.0"
@@ -99,28 +102,28 @@ dependencies {
   androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
 
-configurations.all {
-  resolutionStrategy.dependencySubstitution {
-    android.applicationVariants.each { variant ->
-      def media3Variant = variant.productFlavors.find { it.dimension == "media3" }.name
-      def suffix = {
-        if (media3Variant.containsIgnoreCase("latest")) {
-          return ""
-        } else {
-          return "-$media3Variant"
-        }
-      }
-      substitute module("com.mux.stats.sdk.muxstats:data-media3-custom${suffix()}")\
-        using project(":library")\
-        because "In development, we build from src"
-      substitute module("com.mux.stats.sdk.muxstats:data-media3${suffix()}") using \
-        project(":library-exo")\
-        because "In development, we build from src"
-      substitute module("com.mux.stats.sdk.muxstats:data-media3-ima${suffix()}") using \
-        project(":library-ima")\
-        because "In development, we build from src"
-
-      }
-  }
-}
+//configurations.all {
+//  resolutionStrategy.dependencySubstitution {
+//    android.applicationVariants.each { variant ->
+//      def media3Variant = variant.productFlavors.find { it.dimension == "media3" }.name
+//      def suffix = {
+//        if (media3Variant.containsIgnoreCase("latest")) {
+//          return ""
+//        } else {
+//          return "-$media3Variant"
+//        }
+//      }
+//      substitute module("com.mux.stats.sdk.muxstats:data-media3-custom${suffix()}")\
+//        using project(":library")\
+//        because "In development, we build from src"
+//      substitute module("com.mux.stats.sdk.muxstats:data-media3${suffix()}") using \
+//        project(":library-exo")\
+//        because "In development, we build from src"
+//      substitute module("com.mux.stats.sdk.muxstats:data-media3-ima${suffix()}") using \
+//        project(":library-ima")\
+//        because "In development, we build from src"
+//
+//      }
+//  }
+//}
 
