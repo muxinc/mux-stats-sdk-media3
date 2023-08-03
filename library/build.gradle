@@ -18,6 +18,16 @@ android {
     buildConfigField "String", "MEDIA3_VERSION", "\"${media3Version}\""
   }
 
+  flavorDimensions = ["media3"]
+
+  productFlavors {
+    // This module does not currently need different src sets for different media3 versions.
+    // We still need to declare different flavors so we can create version-specific variants
+    at_1_0 { dimension "media3" }
+    at_1_1 { dimension "media3" }
+    latest { dimension "media3" }
+  }
+
   buildTypes {
     release {
       minifyEnabled false
@@ -36,7 +46,9 @@ android {
 muxDistribution {
   devVersion versionFromCommitHash('dev-')
   releaseVersion versionFromTag()
-  artifactIds just("data-media3-custom")
+  artifactIds { variant ->
+    def variantName = variant.name
+  }
   groupIds just("com.mux.stats.sdk.muxstats")
   publicReleaseIf releaseOnTag()
 
@@ -74,12 +86,16 @@ muxDistribution {
 }
 
 dependencies {
-//  def coreVersion = 'dev-covariant-binding-9a3773e'
   api "com.mux.stats.sdk.muxstats:android:$coreVersion"
-  api "androidx.media3:media3-common:$media3Version"
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1"
+
+  //noinspection GradleDependency
+  at_1_0Api "androidx.media3:media3-common:1.0.0"
+  at_1_1Api "androidx.media3:media3-common:1.1.0"
+  latestApi "androidx.media3:media3-common:1.1.0"
+
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 
   testImplementation 'junit:junit:4.13.2'
   androidTestImplementation 'androidx.test.ext:junit:1.1.5'
