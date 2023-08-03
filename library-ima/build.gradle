@@ -89,17 +89,10 @@ muxDistribution {
 }
 
 dependencies {
-//  afterEvaluate {
-//    at_1_0Api "com.mux.stats.sdk.muxstats:data-media3-custom-at_1_0:$project.version"
-//    at_1_1Api "com.mux.stats.sdk.muxstats:data-media3-custom-at_1_1:$project.version"
-//    latestApi "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
-//  }
-
   debugImplementation project(':library')
   
   // note- 3.30.0 and 3.30.1 are marked as broken by google, so don't use
   api 'com.google.ads.interactivemedia.v3:interactivemedia:3.29.0'
-//  implementation "androidx.media3:media3-exoplayer-ima:${media3Version}"
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
 
@@ -116,32 +109,10 @@ dependencies {
   androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
 
-//configurations.configureEach {
-//  resolutionStrategy.dependencySubstitution {
-//    android.libraryVariants.each { variant ->
-//      def media3Variant = variant.productFlavors.find { it.dimension == "media3" }.name
-//      def suffix = {
-//        if (media3Variant.containsIgnoreCase("latest")) {
-//          return ""
-//        } else {
-//          return "-$media3Variant"
-//        }
-//      }
-//      substitute module("com.mux.stats.sdk.muxstats:data-media3-custom${suffix()}")\
-//        using project(":library")\
-//        because "In development, we build from src"
-//
-//    }
-//    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom")\
-//        using project(":library")\
-//        because "In development, we build from src"
-//  }
-//}
-
 afterEvaluate {
-  // Add dependency on ExoPlayerAdapter lib via mvn, which is also variant-aware
+  // Release builds need mvn coordinates to depend on modules from this project
   //  We only want to add this to release builds, and it has to be the same variant to work.
-  //  There's r2_18_1Api '..' and releaseApi '..', but no r2_18_1ReleaseApi '..'
+  //  There's 'at_1_1Api '..' and releaseApi '..', but no at_1_1ReleaseApi '..'
   android.libraryVariants.findAll { it.buildType.name.contains("release") }
           .each { variant ->
             def suffix = variant.productFlavors.get(0).name
@@ -153,7 +124,6 @@ afterEvaluate {
             def depNotation =
                     "com.mux.stats.sdk.muxstats:data-media3-custom${suffix}:${project.version}"
             def sourceSet = variant.sourceSets.reverse()[0] // Last src set is most specific
-            // would be the same as declaring eg, r2_18_1ReleaseApi
             project.dependencies.add(sourceSet.apiConfigurationName, depNotation)
           }
 }

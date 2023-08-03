@@ -45,20 +45,6 @@ android {
 }
 
 dependencies {
-  afterEvaluate {
-//    println ">>>> VERSION IS $project.version"
-//    project.version = "dev-maint-media3-1_1-a1a44b0"
-//    at_1_0Implementation "com.mux.stats.sdk.muxstats:data-media3-ima-at_1_0:$project.version"
-//    at_1_1Implementation "com.mux.stats.sdk.muxstats:data-media3-ima-at_1_1:$project.version"
-//    latestImplementation "com.mux.stats.sdk.muxstats:data-media3-ima:$project.version"
-//    at_1_0Implementation "com.mux.stats.sdk.muxstats:data-media3-at_1_0:$project.version"
-//    at_1_1Implementation "com.mux.stats.sdk.muxstats:data-media3-at_1_1:$project.version"
-//    latestImplementation "com.mux.stats.sdk.muxstats:data-media3-$project.version"
-
-//    implementation "com.mux.stats.sdk.muxstats:data-media3-ima:${project.version}"
-//    implementation "com.mux.stats.sdk.muxstats:data-media3:${project.version}"
-  }
-
   implementation project(":library-ima")
   implementation project(":library-exo")
   implementation project(":library")
@@ -102,29 +88,3 @@ dependencies {
   androidTestImplementation 'androidx.test.ext:junit:1.1.5'
   androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
-
-configurations.configureEach {
-  resolutionStrategy.dependencySubstitution {
-    android.applicationVariants.each { variant ->
-      def media3variant = variant.productFlavors.find { it.dimension == "media3" }.name
-      def suffix = {
-        if (media3variant.containsIgnoreCase("latest")) {
-          return ""
-        } else {
-          return "-$media3variant"
-        }
-      }
-      substitute module("com.mux.stats.sdk.muxstats:data-media3-custom${suffix()}")\
-        using project(":library")\
-        because "in development, we build from src"
-      substitute module("com.mux.stats.sdk.muxstats:data-media3${suffix()}") using\
-        project(":library-exo")\
-        because "in development, we build from src"
-      substitute module("com.mux.stats.sdk.muxstats:data-media3-ima${suffix()}") using\
-        project(":library-ima")\
-        because "in development, we build from src"
-
-      }
-  }
-}
-
