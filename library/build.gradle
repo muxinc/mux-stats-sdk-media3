@@ -19,7 +19,6 @@ android {
   }
 
   flavorDimensions = ["media3"]
-
   productFlavors {
     // This module does not currently need different src sets for different media3 versions.
     // We still need to declare different flavors so we can create version-specific variants
