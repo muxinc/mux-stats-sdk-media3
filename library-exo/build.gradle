@@ -157,9 +157,7 @@ afterEvaluate {
               suffix = "-$suffix"
             }
             def depNotation =
-                    "com.mux.stats.sdk.muxstats" +
-                            ":data-media3-custom${suffix}" +
-                            ":${project.version}"
+                    "com.mux.stats.sdk.muxstats:data-media3-custom${suffix}:${project.version}"
             def sourceSet = variant.sourceSets.reverse()[0] // Last src set is most specific
             // would be the same as declaring eg, r2_18_1ReleaseApi
             project.dependencies.add(sourceSet.apiConfigurationName, depNotation)
