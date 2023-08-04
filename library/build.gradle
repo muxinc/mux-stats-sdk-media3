@@ -14,17 +14,24 @@ android {
 
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles "consumer-rules.pro"
-
-    buildConfigField "String", "MEDIA3_VERSION", "\"${media3Version}\""
   }
 
   flavorDimensions = ["media3"]
   productFlavors {
     // This module does not currently need different src sets for different media3 versions.
     // We still need to declare different flavors so we can create version-specific variants
-    at_1_0 { dimension "media3" }
-    at_1_1 { dimension "media3" }
-    latest { dimension "media3" }
+    at_1_0 {
+      dimension "media3"
+      buildConfigField "String", "MEDIA3_VERSION", "\"1.0.x\""
+    }
+    at_1_1 {
+      dimension "media3"
+      buildConfigField "String", "MEDIA3_VERSION", "\"1.1.x\""
+    }
+    at_latest {
+      dimension "media3"
+      buildConfigField "String", "MEDIA3_VERSION", "\"1.1.x\""
+    }
   }
 
   buildTypes {
@@ -47,7 +54,7 @@ muxDistribution {
   releaseVersion versionFromTag()
   artifactIds { variant ->
     def media3Variant = variant.productFlavors.find { it.dimension == "media3" }.name
-    if (media3Variant.containsIgnoreCase("latest")) {
+    if (media3Variant.containsIgnoreCase("at_latest")) {
       return "data-media3-custom"
     } else {
       return "data-media3-custom-$media3Variant"
@@ -97,7 +104,7 @@ dependencies {
   //noinspection GradleDependency
   at_1_0Api "androidx.media3:media3-common:1.0.0"
   at_1_1Api "androidx.media3:media3-common:1.1.0"
-  latestApi "androidx.media3:media3-common:1.1.0"
+  at_latestApi "androidx.media3:media3-common:1.1.0"
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 

@@ -10,7 +10,6 @@ plugins {
 
 allprojects {
   project.ext {
-    media3Version = '1.1.0'
     coreVersion = '0.7.5'
   }
 

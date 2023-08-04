@@ -22,7 +22,7 @@ android {
     // We still need to declare different flavors so we can create version-specific variants
     at_1_0 { dimension "media3" }
     at_1_1 { dimension "media3" }
-    latest { dimension "media3" }
+    at_latest { dimension "media3" }
   }
 
   buildTypes {
@@ -45,7 +45,7 @@ muxDistribution {
   releaseVersion versionFromTag()
   artifactIds { variant ->
     def media3Variant = variant.productFlavors.find { it.dimension == "media3" }.name
-    if (media3Variant.containsIgnoreCase("latest")) {
+    if (media3Variant.containsIgnoreCase("at_latest")) {
       return "data-media3"
     } else {
       return "data-media3-$media3Variant"
@@ -101,8 +101,8 @@ dependencies {
   at_1_1Api "androidx.media3:media3-exoplayer:1.1.0"
   at_1_1CompileOnly "androidx.media3:media3-exoplayer-hls:1.1.0"
 
-  latestApi "androidx.media3:media3-exoplayer:1.1.0"
-  latestCompileOnly "androidx.media3:media3-exoplayer-hls:1.1.0"
+  at_latestApi "androidx.media3:media3-exoplayer:1.1.0"
+  at_latestCompileOnly "androidx.media3:media3-exoplayer-hls:1.1.0"
 
   implementation 'androidx.core:core-ktx:1.10.1'
   implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -119,8 +119,8 @@ afterEvaluate {
   android.libraryVariants.findAll { it.buildType.name.contains("release") }
           .each { variant ->
             def suffix = variant.productFlavors.get(0).name
-            if (suffix.containsIgnoreCase("latest")) {
-              suffix = "" // 'latest' variant has no -at_X_X
+            if (suffix.containsIgnoreCase("at_latest")) {
+              suffix = "" // 'at_latest' variant has no -at_X_X
             } else {
               suffix = "-$suffix"
             }
