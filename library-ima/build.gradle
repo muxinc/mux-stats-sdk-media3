@@ -16,6 +16,15 @@ android {
     consumerProguardFiles "consumer-rules.pro"
   }
 
+  flavorDimensions = ["media3"]
+  productFlavors {
+    // This module does not currently need different src sets for different media3 versions.
+    // We still need to declare different flavors so we can create version-specific variants
+    at_1_0 { dimension "media3" }
+    at_1_1 { dimension "media3" }
+    at_latest { dimension "media3" }
+  }
+
   buildTypes {
     release {
       minifyEnabled false
@@ -34,7 +43,14 @@ android {
 muxDistribution {
   devVersion versionFromCommitHash('dev-')
   releaseVersion versionFromTag()
-  artifactIds just("data-media3-ima")
+  artifactIds { variant ->
+    def media3Variant = variant.productFlavors.find { it.dimension == "media3" }.name
+    if (media3Variant.containsIgnoreCase("at_latest")) {
+      return "data-media3-ima"
+    } else {
+      return "data-media3-ima-$media3Variant"
+    }
+  }
   groupIds just("com.mux.stats.sdk.muxstats")
   publicReleaseIf releaseOnTag()
 
@@ -72,15 +88,17 @@ muxDistribution {
 }
 
 dependencies {
-  afterEvaluate {
-    api "com.mux.stats.sdk.muxstats:data-media3-custom:$project.version"
-  }
+  debugImplementation project(':library')
   
   // note- 3.30.0 and 3.30.1 are marked as broken by google, so don't use
   api 'com.google.ads.interactivemedia.v3:interactivemedia:3.29.0'
-  implementation "androidx.media3:media3-exoplayer-ima:${media3Version}"
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
+
+  //noinspection GradleDependency
+  at_1_0Api "androidx.media3:media3-exoplayer-ima:1.0.0"
+  at_1_1Api "androidx.media3:media3-exoplayer-ima:1.1.0"
+  at_latestApi "androidx.media3:media3-exoplayer-ima:1.1.0"
 
   implementation 'androidx.core:core-ktx:1.10.1'
   implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -90,9 +108,21 @@ dependencies {
   androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
 
-configurations.all {
-  resolutionStrategy.dependencySubstitution {
-    substitute module("com.mux.stats.sdk.muxstats:data-media3-custom") using project(":library")\
-      because "In development, we build from src"
-  }
+afterEvaluate {
+  // Release builds need mvn coordinates to depend on modules from this project
+  //  We only want to add this to release builds, and it has to be the same variant to work.
+  //  There's 'at_1_1Api '..' and releaseApi '..', but no at_1_1ReleaseApi '..'
+  android.libraryVariants.findAll { it.buildType.name.contains("release") }
+          .each { variant ->
+            def suffix = variant.productFlavors.get(0).name
+            if (suffix.containsIgnoreCase("at_latest")) {
+              suffix = "" // 'at_latest' variant has no -at_X_X
+            } else {
+              suffix = "-$suffix"
+            }
+            def depNotation =
+                    "com.mux.stats.sdk.muxstats:data-media3-custom${suffix}:${project.version}"
+            def sourceSet = variant.sourceSets.reverse()[0] // Last src set is most specific
+            project.dependencies.add(sourceSet.apiConfigurationName, depNotation)
+          }
 }
