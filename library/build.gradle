@@ -14,8 +14,24 @@ android {
 
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles "consumer-rules.pro"
+  }
 
-    buildConfigField "String", "MEDIA3_VERSION", "\"${media3Version}\""
+  flavorDimensions = ["media3"]
+  productFlavors {
+    // This module does not currently need different src sets for different media3 versions.
+    // We still need to declare different flavors so we can create version-specific variants
+    at_1_0 {
+      dimension "media3"
+      buildConfigField "String", "MEDIA3_VERSION", "\"1.0.x\""
+    }
+    at_1_1 {
+      dimension "media3"
+      buildConfigField "String", "MEDIA3_VERSION", "\"1.1.x\""
+    }
+    at_latest {
+      dimension "media3"
+      buildConfigField "String", "MEDIA3_VERSION", "\"1.1.x\""
+    }
   }
 
   buildTypes {
@@ -36,7 +52,14 @@ android {
 muxDistribution {
   devVersion versionFromCommitHash('dev-')
   releaseVersion versionFromTag()
-  artifactIds just("data-media3-custom")
+  artifactIds { variant ->
+    def media3Variant = variant.productFlavors.find { it.dimension == "media3" }.name
+    if (media3Variant.containsIgnoreCase("at_latest")) {
+      return "data-media3-custom"
+    } else {
+      return "data-media3-custom-$media3Variant"
+    }
+  }
   groupIds just("com.mux.stats.sdk.muxstats")
   publicReleaseIf releaseOnTag()
 
@@ -74,12 +97,16 @@ muxDistribution {
 }
 
 dependencies {
-//  def coreVersion = 'dev-covariant-binding-9a3773e'
   api "com.mux.stats.sdk.muxstats:android:$coreVersion"
-  api "androidx.media3:media3-common:$media3Version"
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1"
+
+  //noinspection GradleDependency
+  at_1_0Api "androidx.media3:media3-common:1.0.0"
+  at_1_1Api "androidx.media3:media3-common:1.1.0"
+  at_latestApi "androidx.media3:media3-common:1.1.0"
+
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 
   testImplementation 'junit:junit:4.13.2'
   androidTestImplementation 'androidx.test.ext:junit:1.1.5'
