@@ -7,6 +7,7 @@ import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.Player.PositionInfo
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView.KEEP_SCREEN_ON
@@ -99,8 +100,31 @@ class BasicPlayerActivity : AppCompatActivity() {
             Toast.makeText(this@BasicPlayerActivity, error.localizedMessage, Toast.LENGTH_SHORT)
               .show()
           }
+
+          override fun onPositionDiscontinuity(
+            oldPosition: Player.PositionInfo,
+            newPosition: Player.PositionInfo,
+            reason: Int
+          ) {
+
+            Log.d("LEARNSEEK", "positionDiscontinuity")
+            Log.d("LEARNSEEK", "oldPosition ${oldPosition.strrring()}")
+            Log.d("LEARNSEEK", "newPosition ${newPosition.strrring()}")
+            Log.d("LEARNSEEK", "reason $reason")
+            super.onPositionDiscontinuity(oldPosition, newPosition, reason)
+          }
+
         })
       }
+  }
+
+  fun PositionInfo.strrring(): String {
+    return "PositionInfo:{\n" +
+            "\t windowUId: $windowUid\n" +
+            "\t mediaItemIndex: $mediaItemIndex\n" +
+            "\t contentPositionMs: $contentPositionMs\n" +
+            "\t positionMs: $positionMs\n" +
+            "\n}"
   }
 
   companion object {
