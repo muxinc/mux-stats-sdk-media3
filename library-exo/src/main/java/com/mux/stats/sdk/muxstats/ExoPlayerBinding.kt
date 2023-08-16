@@ -74,6 +74,7 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 
   // Catches the Collector up to the current play state if the user registers after prepare()
   private fun catchUpPlayState(player: ExoPlayer, collector: MuxStateCollector) {
+    MuxLogger.d("PlayerUtils", "catchUpPlayState: Called. pwr is ${player.playWhenReady}")
     if(player.playWhenReady) {
       // Captures auto-play & late-registration, setting state and sending 'viewstart'
       collector.play()
@@ -98,6 +99,20 @@ private class MuxAnalyticsListener(
 
   private val bandwidthMetrics by weak(bandwidthMetrics)
   private val player by weak(player)
+
+  override fun onPlayWhenReadyChanged(
+    eventTime: AnalyticsListener.EventTime,
+    playWhenReady: Boolean,
+    reason: Int
+  ) {
+    player?.let { _ ->
+      if (playWhenReady) {
+        collector.play()
+      } else {
+        collector.playing()
+      }
+    }
+  }
 
   override fun onPlaybackStateChanged(eventTime: AnalyticsListener.EventTime, state: Int) {
     // query playWhenReady for consistency. The order of execution between this callback and
@@ -146,6 +161,7 @@ private class MuxAnalyticsListener(
     MuxLogger.d("ExoPlayerBinding", "onTracksChanged")
 
     player?.let {
+      collector.watchPlayerPos(it)
       collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     }
     bandwidthMetrics?.onTracksChanged(tracks)

@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
   project.ext {
-    coreVersion = '0.7.5'
+    coreVersion = 'dev-fix-rebuffering-issue-aeec396'
   }
 
   tasks.withType(DokkaTaskPartial.class) {
