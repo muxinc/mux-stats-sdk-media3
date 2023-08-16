@@ -5,8 +5,10 @@ import androidx.media3.common.Format
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import com.mux.android.util.oneOf
+import com.mux.stats.sdk.core.util.MuxLogger
 
 internal const val PLAYER_STATE_POLL_MS = 150L
+private const val LOG_TAG = "PlayerUtils"
 
 /**
  * Asynchronously watch player playback position, collecting periodic updates out-of-band from the
@@ -83,12 +85,11 @@ fun MuxStateCollector.handleExoPlaybackState(
 
   when (playbackState) {
     Player.STATE_BUFFERING -> {
-      Log.v("LEARNSEEK", "entering BUFFERING")
+      MuxLogger.d(LOG_TAG, "entering BUFFERING")
       buffering()
     }
     Player.STATE_READY -> {
-      Log.v("LEARNSEEK", "entering READY")
-      Log.v("LEARNSEEK", "   from mux player state $muxPlayerState")
+      MuxLogger.d(LOG_TAG, "entering READY")
 
       // We're done seeking after we get back to STATE_READY
       if(muxPlayerState == MuxPlayerState.SEEKING) {
@@ -104,11 +105,11 @@ fun MuxStateCollector.handleExoPlaybackState(
       }
     }
     Player.STATE_ENDED -> {
-      Log.v("LEARNSEEK", "entering ENDED")
+      MuxLogger.d(LOG_TAG, "entering ENDED")
       ended()
     }
     Player.STATE_IDLE -> {
-      Log.v("LEARNSEEK", "entering IDLE")
+      MuxLogger.d(LOG_TAG, "entering IDLE")
       if (muxPlayerState.oneOf(MuxPlayerState.PLAY, MuxPlayerState.PLAYING)) {
         // If we are playing/preparing to play and go idle, the player was stopped
         pause()
