@@ -92,6 +92,7 @@ fun MuxStateCollector.handleExoPlaybackState(
 
       // We're done seeking after we get back to STATE_READY
       if(muxPlayerState == MuxPlayerState.SEEKING) {
+        // TODO <em> playing() and pause() handle rebuffering, why not also seeking
         seeked(false)
       }
 
