@@ -52,18 +52,7 @@ fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
 fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
   when (reason) {
     Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT, Player.DISCONTINUITY_REASON_SEEK -> {
-      // If they seek while paused, this is how we know the seek is complete
-      // todo <em> Do we need the audio-only case here?? I doubt it but test
-//      if (muxPlayerState == MuxPlayerState.PAUSED
-//        // Seeks on audio-only media are reported this way instead
-//        || !mediaHasVideoTrack!!
-//      ) {
-//        seeked(false)
-//      } else {
-//        // Video Case: A Seek Event started
-//        seeking()
-//      }
-      // pos. discontinuities are signaled separately from buffering.
+      // Called when seeking starts. Player will move to READY when seeking is over
       seeking()
     }
     else -> {} // ignored

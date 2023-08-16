@@ -40,6 +40,8 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
   private var listener: MuxAnalyticsListener? = null
 
   override fun bindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
+    catchUpPlayState(player, collector)
+
     listener = MuxAnalyticsListener(
       player = player,
       collector = collector,
@@ -70,11 +72,21 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
     errorBinding.unbindPlayer(player, collector)
   }
 
+  // Catches the Collector up to the current play state if the user registers after prepare()
+  private fun catchUpPlayState(player: ExoPlayer, collector: MuxStateCollector) {
+    if(player.playWhenReady) {
+      // Captures auto-play & late-registration, setting state and sending 'viewstart'
+      collector.play()
+    } else {
+      collector.pause()
+    }
+    collector.handleExoPlaybackState(player.playbackState, player.playWhenReady)
+  }
+
   companion object {
     @Suppress("unused")
     private const val TAG = "ExoPlayerBinding"
   }
-
 }
 
 @OptIn(UnstableApi::class)
@@ -134,7 +146,6 @@ private class MuxAnalyticsListener(
     MuxLogger.d("ExoPlayerBinding", "onTracksChanged")
 
     player?.let {
-//      collector.watchPlayerPos(it)
       collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     }
     bandwidthMetrics?.onTracksChanged(tracks)
