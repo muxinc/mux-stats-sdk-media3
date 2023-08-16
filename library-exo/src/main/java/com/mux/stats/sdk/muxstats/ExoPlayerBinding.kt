@@ -134,7 +134,7 @@ private class MuxAnalyticsListener(
     MuxLogger.d("ExoPlayerBinding", "onTracksChanged")
 
     player?.let {
-      collector.watchPlayerPos(it)
+//      collector.watchPlayerPos(it)
       collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     }
     bandwidthMetrics?.onTracksChanged(tracks)

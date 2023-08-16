@@ -70,7 +70,7 @@ private class MuxPlayerListener(player: Player, val collector: MuxStateCollector
 
   override fun onTracksChanged(tracks: Tracks) {
     player?.let {
-      collector.watchPlayerPos(it)
+      //collector.watchPlayerPos(it)
       collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     }
   }

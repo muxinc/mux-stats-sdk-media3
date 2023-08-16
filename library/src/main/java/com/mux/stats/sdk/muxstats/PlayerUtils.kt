@@ -49,17 +49,20 @@ fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
 @JvmSynthetic // Hides from java
 fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
   when (reason) {
-    Player.DISCONTINUITY_REASON_SEEK -> {
+    Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT, Player.DISCONTINUITY_REASON_SEEK -> {
       // If they seek while paused, this is how we know the seek is complete
-      if (muxPlayerState == MuxPlayerState.PAUSED
-        // Seeks on audio-only media are reported this way instead
-        || !mediaHasVideoTrack!!
-      ) {
-        seeked(false)
-      } else {
-        // Video Case: A Seek Event started
-        seeking()
-      }
+      // todo <em> Do we need the audio-only case here?? I doubt it but test
+//      if (muxPlayerState == MuxPlayerState.PAUSED
+//        // Seeks on audio-only media are reported this way instead
+//        || !mediaHasVideoTrack!!
+//      ) {
+//        seeked(false)
+//      } else {
+//        // Video Case: A Seek Event started
+//        seeking()
+//      }
+      // pos. discontinuities are signaled separately from buffering.
+      seeking()
     }
     else -> {} // ignored
   }
@@ -80,6 +83,7 @@ fun MuxStateCollector.handleExoPlaybackState(
 
   when (playbackState) {
     Player.STATE_BUFFERING -> {
+      Log.v("LEARNSEEK", "entering BUFFERING")
       buffering()
       if (playWhenReady) {
         play()
@@ -88,6 +92,7 @@ fun MuxStateCollector.handleExoPlaybackState(
       }
     }
     Player.STATE_READY -> {
+      Log.v("LEARNSEEK", "entering READY")
       if (playWhenReady) {
         if(muxPlayerState == MuxPlayerState.SEEKING) {
           seeked(false)
@@ -98,9 +103,11 @@ fun MuxStateCollector.handleExoPlaybackState(
       }
     }
     Player.STATE_ENDED -> {
+      Log.v("LEARNSEEK", "entering ENDED")
       ended()
     }
     Player.STATE_IDLE -> {
+      Log.v("LEARNSEEK", "entering IDLE")
       if (muxPlayerState.oneOf(MuxPlayerState.PLAY, MuxPlayerState.PLAYING)) {
         // If we are playing/preparing to play and go idle, the player was stopped
         pause()
