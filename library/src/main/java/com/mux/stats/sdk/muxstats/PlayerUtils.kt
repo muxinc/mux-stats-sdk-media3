@@ -85,18 +85,18 @@ fun MuxStateCollector.handleExoPlaybackState(
     Player.STATE_BUFFERING -> {
       Log.v("LEARNSEEK", "entering BUFFERING")
       buffering()
-      if (playWhenReady) {
-        play()
-      } else if (muxPlayerState != MuxPlayerState.PAUSED) {
-        pause()
-      }
     }
     Player.STATE_READY -> {
       Log.v("LEARNSEEK", "entering READY")
+      Log.v("LEARNSEEK", "   from mux player state $muxPlayerState")
+
+      // We're done seeking after we get back to STATE_READY
+      if(muxPlayerState == MuxPlayerState.SEEKING) {
+        seeked(false)
+      }
+
+      // If playWhenReady && READY, we're playing or else we're paused
       if (playWhenReady) {
-        if(muxPlayerState == MuxPlayerState.SEEKING) {
-          seeked(false)
-        }
         playing()
       } else if (muxPlayerState != MuxPlayerState.PAUSED) {
         pause()
