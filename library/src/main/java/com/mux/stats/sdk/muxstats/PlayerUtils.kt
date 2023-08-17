@@ -1,6 +1,5 @@
 package com.mux.stats.sdk.muxstats
 
-import android.util.Log
 import androidx.media3.common.Format
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
@@ -83,7 +82,7 @@ fun MuxStateCollector.handleExoPlaybackState(
       // We're done seeking after we get back to STATE_READY
       if(muxPlayerState == MuxPlayerState.SEEKING) {
         // TODO <em> playing() and pause() handle rebuffering, why not also seeking
-        seeked(false)
+        seeked()
       }
 
       // If playWhenReady && READY, we're playing or else we're paused
