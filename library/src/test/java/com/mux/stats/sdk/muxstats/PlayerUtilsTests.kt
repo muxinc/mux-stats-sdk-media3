@@ -137,4 +137,36 @@ class PlayerUtilsTests : AbsRobolectricTest() {
       mockStateCollector.buffering()
     }
   }
+
+  @Test
+  fun testPlaybackStateIdle() {
+    fun testIdleFromState(from: MuxPlayerState) {
+      val mockStateCollector = mockk<MuxStateCollector> {
+        every { muxPlayerState } returns from
+        every { pause() } just runs
+      }
+
+      // Handling is the same for both cases
+      mockStateCollector.handleExoPlaybackState(Player.STATE_IDLE, false)
+      mockStateCollector.handleExoPlaybackState(Player.STATE_IDLE, true)
+
+      val shouldPause = listOf(MuxPlayerState.PLAYING, MuxPlayerState.PLAY).contains(from)
+      val times = if (shouldPause) 2 else 0
+      verify(exactly = times) {
+        mockStateCollector.pause()
+      }
+      // no other state-changing methods should be called
+      verify(exactly = 0) {
+        mockStateCollector.buffering()
+        mockStateCollector.seeking()
+        mockStateCollector.seeked()
+        mockStateCollector.playing()
+        mockStateCollector.ended()
+      }
+    }
+
+   for (state in MuxPlayerState.values()) {
+     testIdleFromState(state)
+   }
+  }
 }
