@@ -169,4 +169,49 @@ class PlayerUtilsTests : AbsRobolectricTest() {
      testIdleFromState(state)
    }
   }
+
+  @Test
+  fun testHandleExoPlaybackStateReadyWhileSeekingWhilePlayWhenReady() {
+    val mockStateCollector = mockk<MuxStateCollector> {
+      every { seeked() } just runs
+      every { playing() } just runs
+      every { muxPlayerState } returns MuxPlayerState.SEEKING
+    }
+
+    mockStateCollector.handleExoPlaybackState(Player.STATE_READY, true)
+    verify(exactly = 1) {
+      mockStateCollector.seeked()
+      mockStateCollector.playing()
+    }
+    // no state-changing methods should be called
+    verify(exactly = 0) {
+      mockStateCollector.buffering()
+      mockStateCollector.seeking()
+      mockStateCollector.pause()
+      mockStateCollector.ended()
+    }
+  }
+
+  @Test
+  fun testHandleExoPlaybackStateReadyWhileSeekingWhileNotPlayWhenReady() {
+    val mockStateCollector = mockk<MuxStateCollector> {
+      every { seeked() } just runs
+      every { pause() } just runs
+      every { muxPlayerState } returns MuxPlayerState.SEEKING
+    }
+
+    mockStateCollector.handleExoPlaybackState(Player.STATE_READY, false)
+    verify(exactly = 1) {
+      mockStateCollector.seeked()
+      mockStateCollector.pause()
+    }
+    // no state-changing methods should be called
+    verify(exactly = 0) {
+      mockStateCollector.playing()
+      mockStateCollector.buffering()
+      mockStateCollector.seeking()
+      mockStateCollector.ended()
+      mockStateCollector.play()
+    }
+  }
 }
