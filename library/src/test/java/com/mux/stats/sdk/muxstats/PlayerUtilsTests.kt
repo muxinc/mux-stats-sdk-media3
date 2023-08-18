@@ -7,6 +7,7 @@ import androidx.media3.common.Player.DISCONTINUITY_REASON_SEEK
 import androidx.media3.common.Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT
 import androidx.media3.common.Player.DISCONTINUITY_REASON_SKIP
 import androidx.media3.common.Player.DiscontinuityReason
+import com.mux.core_android.test.tools.log
 import com.mux.stats.media3.test.tools.AbsRobolectricTest
 import io.mockk.every
 import io.mockk.just
@@ -66,6 +67,7 @@ class PlayerUtilsTests : AbsRobolectricTest() {
     }
 
     for (state in MuxPlayerState.values()) {
+      log(javaClass.simpleName, "testing handlePlayWhenReadyBecomesFalse from state $state")
       testFromPlayerState(state)
     }
   }
