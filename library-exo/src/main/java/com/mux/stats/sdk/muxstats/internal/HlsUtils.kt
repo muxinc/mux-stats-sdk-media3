@@ -18,7 +18,7 @@ private val hlsExtensionAvailable: Boolean by lazy {
   try {
     Class.forName(HlsManifest::class.java.canonicalName!!)
     true
-  } catch (e: ClassNotFoundException) {
+  } catch (e: Exception) {
     MuxLogger.w("isHlsExtensionAvailable", "HLS extension not found. Some features may not work")
     false
   }

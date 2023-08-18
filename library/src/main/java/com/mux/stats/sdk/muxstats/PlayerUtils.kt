@@ -59,6 +59,18 @@ fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
 }
 
 /**
+ * Handles changes to playWhenReady.
+ */
+@JvmSynthetic
+fun MuxStateCollector.handlePlayWhenReady(playWhenReady: Boolean) {
+  if (playWhenReady) {
+    play()
+  } else if (muxPlayerState != MuxPlayerState.PAUSED){
+    pause()
+  }
+}
+
+/**
  * Handles a change of basic ExoPlayer state
  */
 @JvmSynthetic // Hidden from Java callers, since the only ones are external
