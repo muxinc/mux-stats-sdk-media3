@@ -40,6 +40,33 @@ class PlayerUtilsTests : AbsRobolectricTest() {
     testContinuityReason(DISCONTINUITY_REASON_SKIP, false)
     testContinuityReason(DISCONTINUITY_REASON_REMOVE, false)
     testContinuityReason(DISCONTINUITY_REASON_INTERNAL, false)
+  }
 
+  @Test
+  fun testHandlePlayWhenReadyBecomesTrue() {
+    val mockStateCollector = mockk<MuxStateCollector> {
+      every { play() } just runs
+    }
+    mockStateCollector.handlePlayWhenReady(true)
+    verify { mockStateCollector.play() }
+  }
+
+  @Test
+  fun testHandlePlayWhenReadyBecomesFalse() {
+    fun testFromPlayerState(from: MuxPlayerState) {
+      val mockStateCollector = mockk<MuxStateCollector> {
+        every { pause() } just runs
+        every { muxPlayerState } returns from
+      }
+
+      mockStateCollector.handlePlayWhenReady(false)
+
+      val times = if (from == MuxPlayerState.PAUSED) 0 else 1
+      verify(exactly = times) { mockStateCollector.pause() }
+    }
+
+    for (state in MuxPlayerState.values()) {
+      testFromPlayerState(state)
+    }
   }
 }
