@@ -19,7 +19,7 @@ class PlayerUtilsTests : AbsRobolectricTest() {
 
   @Test
   fun testHandlePositionDiscontinuity() {
-    fun testContinuityReason(@DiscontinuityReason reason: Int, shouldCallSeeking: Boolean) {
+    fun testDiscontinuityReason(@DiscontinuityReason reason: Int, shouldCallSeeking: Boolean) {
       val mockCollector = mockk<MuxStateCollector> {
         every { seeking() } just runs
       }
@@ -33,13 +33,13 @@ class PlayerUtilsTests : AbsRobolectricTest() {
     }
 
     // Cases that start seeking
-    testContinuityReason(DISCONTINUITY_REASON_SEEK_ADJUSTMENT, true)
-    testContinuityReason(DISCONTINUITY_REASON_SEEK, true)
+    testDiscontinuityReason(DISCONTINUITY_REASON_SEEK_ADJUSTMENT, true)
+    testDiscontinuityReason(DISCONTINUITY_REASON_SEEK, true)
     // Cases that don't start seeking
-    testContinuityReason(DISCONTINUITY_REASON_AUTO_TRANSITION, false)
-    testContinuityReason(DISCONTINUITY_REASON_SKIP, false)
-    testContinuityReason(DISCONTINUITY_REASON_REMOVE, false)
-    testContinuityReason(DISCONTINUITY_REASON_INTERNAL, false)
+    testDiscontinuityReason(DISCONTINUITY_REASON_AUTO_TRANSITION, false)
+    testDiscontinuityReason(DISCONTINUITY_REASON_SKIP, false)
+    testDiscontinuityReason(DISCONTINUITY_REASON_REMOVE, false)
+    testDiscontinuityReason(DISCONTINUITY_REASON_INTERNAL, false)
   }
 
   @Test
