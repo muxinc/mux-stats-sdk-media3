@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.muxstats
 
+import androidx.media3.common.Player
 import androidx.media3.common.Player.DISCONTINUITY_REASON_AUTO_TRANSITION
 import androidx.media3.common.Player.DISCONTINUITY_REASON_INTERNAL
 import androidx.media3.common.Player.DISCONTINUITY_REASON_REMOVE
@@ -9,6 +10,7 @@ import androidx.media3.common.Player.DISCONTINUITY_REASON_SKIP
 import androidx.media3.common.Player.DiscontinuityReason
 import com.mux.core_android.test.tools.log
 import com.mux.stats.media3.test.tools.AbsRobolectricTest
+import io.mockk.Called
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -69,6 +71,47 @@ class PlayerUtilsTests : AbsRobolectricTest() {
     for (state in MuxPlayerState.values()) {
       log(javaClass.simpleName, "testing handlePlayWhenReadyBecomesFalse from state $state")
       testFromPlayerState(state)
+    }
+  }
+
+  @Test
+  fun testHandleExoPlaybackStateWhilePlayingAds() {
+    val mockStateCollector = mockk<MuxStateCollector> {
+      every { muxPlayerState } returns MuxPlayerState.PLAYING_ADS
+    }
+    mockStateCollector.handleExoPlaybackState(0 ,false) // params not under test
+    // no state-changing methods should be called
+    verify(exactly = 0) {
+      mockStateCollector.buffering()
+      mockStateCollector.seeking()
+      mockStateCollector.seeked()
+      mockStateCollector.playing()
+      mockStateCollector.pause()
+      mockStateCollector.ended()
+    }
+  }
+
+  @Test
+  fun testHandleExoPlaybackStateBuffering() {
+    val mockStateCollector = mockk<MuxStateCollector> {
+      every { buffering() } just runs
+      every { muxPlayerState } returns MuxPlayerState.INIT // state during call is not under test
+    }
+
+    // both cases should call buffering()
+    mockStateCollector.handleExoPlaybackState(Player.STATE_BUFFERING, false)
+    mockStateCollector.handleExoPlaybackState(Player.STATE_BUFFERING, true)
+
+    verify(exactly = 2) {
+      mockStateCollector.buffering()
+    }
+    // no other state-changing methods should be called
+    verify(exactly = 0) {
+      mockStateCollector.seeking()
+      mockStateCollector.seeked()
+      mockStateCollector.playing()
+      mockStateCollector.pause()
+      mockStateCollector.ended()
     }
   }
 }

@@ -79,7 +79,7 @@ fun MuxStateCollector.handleExoPlaybackState(
   playWhenReady: Boolean
 ) {
   if (this.muxPlayerState == MuxPlayerState.PLAYING_ADS) {
-    // Normal playback events are ignored during ad playback
+    // Normal playback events are ignored during ad playback.
     return
   }
 
