@@ -10,7 +10,6 @@ import androidx.media3.common.Player.DISCONTINUITY_REASON_SKIP
 import androidx.media3.common.Player.DiscontinuityReason
 import com.mux.core_android.test.tools.log
 import com.mux.stats.media3.test.tools.AbsRobolectricTest
-import io.mockk.Called
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
@@ -79,7 +78,7 @@ class PlayerUtilsTests : AbsRobolectricTest() {
     val mockStateCollector = mockk<MuxStateCollector> {
       every { muxPlayerState } returns MuxPlayerState.PLAYING_ADS
     }
-    mockStateCollector.handleExoPlaybackState(0 ,false) // params not under test
+    mockStateCollector.handleExoPlaybackState(0, false) // params not under test
     // no state-changing methods should be called
     verify(exactly = 0) {
       mockStateCollector.buffering()
@@ -112,6 +111,30 @@ class PlayerUtilsTests : AbsRobolectricTest() {
       mockStateCollector.playing()
       mockStateCollector.pause()
       mockStateCollector.ended()
+    }
+  }
+
+  @Test
+  fun testHandleExoPlaybackStateEnded() {
+    val mockStateCollector = mockk<MuxStateCollector> {
+      every { ended() } just runs
+      every { muxPlayerState } returns MuxPlayerState.INIT // state during call is not under test
+    }
+
+    // both cases should call ended()
+    mockStateCollector.handleExoPlaybackState(Player.STATE_ENDED, false)
+    mockStateCollector.handleExoPlaybackState(Player.STATE_ENDED, true)
+
+    verify(exactly = 2) {
+      mockStateCollector.ended()
+    }
+    // no other state-changing methods should be called
+    verify(exactly = 0) {
+      mockStateCollector.seeking()
+      mockStateCollector.seeked()
+      mockStateCollector.playing()
+      mockStateCollector.pause()
+      mockStateCollector.buffering()
     }
   }
 }
