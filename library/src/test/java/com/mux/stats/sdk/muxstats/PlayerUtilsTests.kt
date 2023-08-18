@@ -214,4 +214,67 @@ class PlayerUtilsTests : AbsRobolectricTest() {
       mockStateCollector.play()
     }
   }
+
+  @Test
+  fun testHandleExoPlaybackStateReadyWhilePlayWhenReady() {
+    val mockStateCollector = mockk<MuxStateCollector> {
+      every { muxPlayerState } returns MuxPlayerState.INIT // value not part of test
+      every { playing() } just runs
+    }
+
+    mockStateCollector.handleExoPlaybackState(Player.STATE_READY, true)
+    verify(exactly = 1) {
+      mockStateCollector.playing()
+    }
+    // no state-changing methods should be called
+    verify(exactly = 0) {
+      mockStateCollector.seeked()
+      mockStateCollector.pause()
+      mockStateCollector.buffering()
+      mockStateCollector.seeking()
+      mockStateCollector.ended()
+      mockStateCollector.play()
+    }
+  }
+
+  @Test
+  fun testHandleExoPlaybackStateReadyWhileNotPlayWhenReady() {
+    val mockStateCollector = mockk<MuxStateCollector> {
+      every { muxPlayerState } returns MuxPlayerState.INIT // value not part of test
+      every { pause() } just runs
+    }
+
+    mockStateCollector.handleExoPlaybackState(Player.STATE_READY, false)
+    verify(exactly = 1) {
+      mockStateCollector.pause()
+    }
+    // no state-changing methods should be called
+    verify(exactly = 0) {
+      mockStateCollector.seeked()
+      mockStateCollector.playing()
+      mockStateCollector.buffering()
+      mockStateCollector.seeking()
+      mockStateCollector.ended()
+      mockStateCollector.play()
+    }
+  }
+
+  @Test
+  fun testHandleExoPlaybackStateReadyWhileNotPlayWhenReadyAlreadyPaused() {
+    val mockStateCollector = mockk<MuxStateCollector> {
+      every { muxPlayerState } returns MuxPlayerState.PAUSED
+    }
+
+    mockStateCollector.handleExoPlaybackState(Player.STATE_READY, false)
+    // no state-changing methods should be called
+    verify(exactly = 0) {
+      mockStateCollector.pause()
+      mockStateCollector.seeked()
+      mockStateCollector.playing()
+      mockStateCollector.buffering()
+      mockStateCollector.seeking()
+      mockStateCollector.ended()
+      mockStateCollector.play()
+    }
+  }
 }
