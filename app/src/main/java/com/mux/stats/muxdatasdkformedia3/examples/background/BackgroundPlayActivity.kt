@@ -1,10 +1,10 @@
 package com.mux.stats.muxdatasdkformedia3.examples.background
 
 import android.content.ComponentName
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.MediaStore.Audio.Media
 import android.util.Log
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
@@ -22,6 +22,7 @@ class BackgroundPlayActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     view = ActivityBackgroundPlayBinding.inflate(layoutInflater)
     setContentView(view.root)
+    window.addFlags(View.KEEP_SCREEN_ON)
   }
 
   override fun onStart() {

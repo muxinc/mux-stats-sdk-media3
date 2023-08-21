@@ -7,8 +7,10 @@ import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.Player.PositionInfo
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView.KEEP_SCREEN_ON
 import androidx.media3.ui.PlayerView.SHOW_BUFFERING_WHEN_PLAYING
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
@@ -35,6 +37,7 @@ class BasicPlayerActivity : AppCompatActivity() {
     view.playerView.apply {
       setShowBuffering(SHOW_BUFFERING_WHEN_PLAYING)
     }
+    window.addFlags(KEEP_SCREEN_ON)
   }
 
   override fun onResume() {

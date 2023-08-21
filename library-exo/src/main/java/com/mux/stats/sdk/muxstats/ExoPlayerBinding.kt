@@ -40,6 +40,8 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
   private var listener: MuxAnalyticsListener? = null
 
   override fun bindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
+    catchUpPlayState(player, collector)
+
     listener = MuxAnalyticsListener(
       player = player,
       collector = collector,
@@ -70,11 +72,22 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
     errorBinding.unbindPlayer(player, collector)
   }
 
+  // Catches the Collector up to the current play state if the user registers after prepare()
+  private fun catchUpPlayState(player: ExoPlayer, collector: MuxStateCollector) {
+    MuxLogger.d("PlayerUtils", "catchUpPlayState: Called. pwr is ${player.playWhenReady}")
+    if(player.playWhenReady) {
+      // Captures auto-play & late-registration, setting state and sending 'viewstart'
+      collector.play()
+    } else {
+      collector.pause()
+    }
+    collector.handleExoPlaybackState(player.playbackState, player.playWhenReady)
+  }
+
   companion object {
     @Suppress("unused")
     private const val TAG = "ExoPlayerBinding"
   }
-
 }
 
 @OptIn(UnstableApi::class)
@@ -86,6 +99,14 @@ private class MuxAnalyticsListener(
 
   private val bandwidthMetrics by weak(bandwidthMetrics)
   private val player by weak(player)
+
+  override fun onPlayWhenReadyChanged(
+    eventTime: AnalyticsListener.EventTime,
+    playWhenReady: Boolean,
+    reason: Int
+  ) {
+    player?.let { collector.handlePlayWhenReady(playWhenReady) }
+  }
 
   override fun onPlaybackStateChanged(eventTime: AnalyticsListener.EventTime, state: Int) {
     // query playWhenReady for consistency. The order of execution between this callback and

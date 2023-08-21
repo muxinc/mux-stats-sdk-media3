@@ -3,6 +3,7 @@ package com.mux.stats.muxdatasdkformedia3.examples.ima
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
@@ -42,6 +43,7 @@ class ImaAdsActivity : AppCompatActivity() {
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
     }
+    window.addFlags(View.KEEP_SCREEN_ON)
   }
 
   override fun onResume() {
