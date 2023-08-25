@@ -1,26 +1,17 @@
 package com.mux.stats.sdk.muxstats
 
+import android.net.Uri
 import androidx.media3.common.Format
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import com.mux.android.util.oneOf
+import com.mux.stats.sdk.core.model.VideoData
 import com.mux.stats.sdk.core.util.MuxLogger
 
 internal const val PLAYER_STATE_POLL_MS = 150L
 private const val LOG_TAG = "PlayerUtils"
-
-/**
- * Asynchronously watch player playback position, collecting periodic updates out-of-band from the
- * normal callback flow.
- */
-fun MuxStateCollector.watchPlayerPos(player: Player) {
-  playerWatcher = MuxStateCollector.PlayerWatcher(
-    PLAYER_STATE_POLL_MS,
-    this,
-    player
-  ) { it, _ -> it.currentPosition }
-  playerWatcher?.start()
-}
 
 /**
  * Returns true if any media track in the given [Tracks] object had a video MIME type
@@ -48,7 +39,7 @@ fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
  * Handles an ExoPlayer position discontinuity
  */
 @JvmSynthetic // Hides from java
-fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
+internal fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
   when (reason) {
     Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT, Player.DISCONTINUITY_REASON_SEEK -> {
       // Called when seeking starts. Player will move to READY when seeking is over
@@ -62,7 +53,7 @@ fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
  * Handles changes to playWhenReady.
  */
 @JvmSynthetic
-fun MuxStateCollector.handlePlayWhenReady(playWhenReady: Boolean) {
+internal fun MuxStateCollector.handlePlayWhenReady(playWhenReady: Boolean) {
   if (playWhenReady) {
     play()
   } else if (muxPlayerState != MuxPlayerState.PAUSED){
@@ -71,10 +62,24 @@ fun MuxStateCollector.handlePlayWhenReady(playWhenReady: Boolean) {
 }
 
 /**
+ * Asynchronously watch player playback position, collecting periodic updates out-of-band from the
+ * normal callback flow.
+ */
+@JvmSynthetic
+internal fun MuxStateCollector.watchPlayerPos(player: Player) {
+  playerWatcher = MuxStateCollector.PlayerWatcher(
+    PLAYER_STATE_POLL_MS,
+    this,
+    player
+  ) { it, _ -> it.currentPosition }
+  playerWatcher?.start()
+}
+
+/**
  * Handles a change of basic ExoPlayer state
  */
 @JvmSynthetic // Hidden from Java callers, since the only ones are external
-fun MuxStateCollector.handleExoPlaybackState(
+internal fun MuxStateCollector.handleExoPlaybackState(
   playbackState: Int, // the @IntDef for player state omitted. Unavailable on all exo versions
   playWhenReady: Boolean
 ) {
@@ -117,3 +122,31 @@ fun MuxStateCollector.handleExoPlaybackState(
     }
   } // when (playbackState)
 } // fun handleExoPlaybackState
+
+@JvmSynthetic
+internal fun handleMediaItemChanged(mediaItem: MediaItem) {
+  mediaItem.localConfiguration?.let {
+    val sourceUrl = it.uri;
+    val sourceDomain = sourceUrl.authority
+    val videoData = VideoData().apply {
+      videoSourceDomain = sourceDomain
+      videoSourceUrl = sourceUrl.toString()
+    }
+
+    // TODO: Dispatch Data (requires Core update)
+  }
+
+  // Also pick up data from MediaMetadata
+  handleMediaMetadata(mediaItem.mediaMetadata)
+}
+
+@JvmSynthetic
+internal fun handleMediaMetadata(mediaMetadata: MediaMetadata) {
+  val posterUrl = mediaMetadata.artworkUri
+  val title = mediaMetadata.title
+  val videoData  = VideoData().apply {
+    videoPosterUrl = posterUrl.toString()
+    // TODO: Add title to VideoData too
+  }
+  // TODO: Dispatch Data (requires Core update)
+}
