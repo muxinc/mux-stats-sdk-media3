@@ -39,7 +39,7 @@ fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
  * Handles an ExoPlayer position discontinuity
  */
 @JvmSynthetic // Hides from java
-internal fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
+fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
   when (reason) {
     Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT, Player.DISCONTINUITY_REASON_SEEK -> {
       // Called when seeking starts. Player will move to READY when seeking is over
@@ -53,7 +53,7 @@ internal fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
  * Handles changes to playWhenReady.
  */
 @JvmSynthetic
-internal fun MuxStateCollector.handlePlayWhenReady(playWhenReady: Boolean) {
+fun MuxStateCollector.handlePlayWhenReady(playWhenReady: Boolean) {
   if (playWhenReady) {
     play()
   } else if (muxPlayerState != MuxPlayerState.PAUSED){
@@ -66,7 +66,7 @@ internal fun MuxStateCollector.handlePlayWhenReady(playWhenReady: Boolean) {
  * normal callback flow.
  */
 @JvmSynthetic
-internal fun MuxStateCollector.watchPlayerPos(player: Player) {
+fun MuxStateCollector.watchPlayerPos(player: Player) {
   playerWatcher = MuxStateCollector.PlayerWatcher(
     PLAYER_STATE_POLL_MS,
     this,
@@ -79,7 +79,7 @@ internal fun MuxStateCollector.watchPlayerPos(player: Player) {
  * Handles a change of basic ExoPlayer state
  */
 @JvmSynthetic // Hidden from Java callers, since the only ones are external
-internal fun MuxStateCollector.handleExoPlaybackState(
+fun MuxStateCollector.handleExoPlaybackState(
   playbackState: Int, // the @IntDef for player state omitted. Unavailable on all exo versions
   playWhenReady: Boolean
 ) {
@@ -124,16 +124,15 @@ internal fun MuxStateCollector.handleExoPlaybackState(
 } // fun handleExoPlaybackState
 
 @JvmSynthetic
-internal fun handleMediaItemChanged(mediaItem: MediaItem) {
-  mediaItem.localConfiguration?.let {
-    val sourceUrl = it.uri;
+fun MuxStateCollector.handleMediaItemChanged(mediaItem: MediaItem) {
+  mediaItem.localConfiguration?.let { localConfig ->
+    val sourceUrl = localConfig.uri;
     val sourceDomain = sourceUrl.authority
     val videoData = VideoData().apply {
       videoSourceDomain = sourceDomain
       videoSourceUrl = sourceUrl.toString()
     }
-
-    // TODO: Dispatch Data (requires Core update)
+    videoDataChange(videoData)
   }
 
   // Also pick up data from MediaMetadata
@@ -141,12 +140,14 @@ internal fun handleMediaItemChanged(mediaItem: MediaItem) {
 }
 
 @JvmSynthetic
-internal fun handleMediaMetadata(mediaMetadata: MediaMetadata) {
-  val posterUrl = mediaMetadata.artworkUri
-  val title = mediaMetadata.title
+fun MuxStateCollector.handleMediaMetadata(mediaMetadata: MediaMetadata) {
+  // explicitly make those ! into ?
+  val posterUrl: Uri? = mediaMetadata.artworkUri
+  val title: CharSequence? = mediaMetadata.title
+
   val videoData  = VideoData().apply {
     videoPosterUrl = posterUrl.toString()
-    // TODO: Add title to VideoData too
+    videoTitle = title.toString()
   }
-  // TODO: Dispatch Data (requires Core update)
+  videoDataChange(videoData)
 }

@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
   project.ext {
-    coreVersion = '0.8.0'
+    coreVersion = 'dev-feat-detected-media-metadata-708cce9'
   }
 
   tasks.withType(DokkaTaskPartial.class) {
