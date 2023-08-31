@@ -98,10 +98,14 @@ dependencies {
   //noinspection GradleDependency
   at_1_0CompileOnly "androidx.media3:media3-exoplayer-hls:1.0.0"
 
+  //noinspection GradleDependency
   at_1_1Api "androidx.media3:media3-exoplayer:1.1.0"
+  //noinspection GradleDependency
   at_1_1CompileOnly "androidx.media3:media3-exoplayer-hls:1.1.0"
 
+  //noinspection GradleDependency
   at_latestApi "androidx.media3:media3-exoplayer:1.1.0"
+  //noinspection GradleDependency
   at_latestCompileOnly "androidx.media3:media3-exoplayer-hls:1.1.0"
 
   implementation 'androidx.core:core-ktx:1.10.1'
