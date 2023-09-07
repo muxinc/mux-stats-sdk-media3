@@ -2,7 +2,8 @@ package com.mux.stats.sdk.muxstats
 
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
-import androidx.media3.common.PlaybackException
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
@@ -17,9 +18,9 @@ import com.mux.android.util.weak
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
+import com.mux.stats.sdk.muxstats.internal.createErrorDataBinding
 import com.mux.stats.sdk.muxstats.internal.createExoSessionDataBinding
 import com.mux.stats.sdk.muxstats.internal.populateLiveStreamData
-import com.mux.stats.sdk.muxstats.internal.createErrorDataBinding
 import java.io.IOException
 import java.util.regex.Pattern
 
@@ -75,7 +76,7 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
   // Catches the Collector up to the current play state if the user registers after prepare()
   private fun catchUpPlayState(player: ExoPlayer, collector: MuxStateCollector) {
     MuxLogger.d("PlayerUtils", "catchUpPlayState: Called. pwr is ${player.playWhenReady}")
-    if(player.playWhenReady) {
+    if (player.playWhenReady) {
       // Captures auto-play & late-registration, setting state and sending 'viewstart'
       collector.play()
     } else {
@@ -129,6 +130,22 @@ private class MuxAnalyticsListener(
       collector.sourceDurationMs = window.durationMs
       collector.populateLiveStreamData(window)
     }
+  }
+
+  override fun onMediaItemTransition(
+    eventTime: AnalyticsListener.EventTime,
+    mediaItem: MediaItem?,
+    reason: Int
+  ) {
+    mediaItem?.let { collector.handleMediaItemChanged(it) }
+  }
+
+  override fun onMediaMetadataChanged(
+    eventTime: AnalyticsListener.EventTime,
+    mediaMetadata: MediaMetadata
+  ) {
+    @Suppress("UNNECESSARY_SAFE_CALL")
+    mediaMetadata?.let { collector.handleMediaMetadata(it) }
   }
 
   override fun onVideoInputFormatChanged(

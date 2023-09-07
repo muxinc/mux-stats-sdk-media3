@@ -1,5 +1,7 @@
 package com.mux.stats.sdk.muxstats
 
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
@@ -55,6 +57,14 @@ private class MuxPlayerListener(player: Player, val collector: MuxStateCollector
       val window = Timeline.Window().apply { tl.getWindow(0, this) }
       collector.sourceDurationMs = window.durationMs
     }
+  }
+
+  override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+    collector.handleMediaMetadata(mediaMetadata)
+  }
+
+  override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+    mediaItem?.let { collector.handleMediaItemChanged(it) }
   }
 
   override fun onVideoSizeChanged(videoSize: VideoSize) {

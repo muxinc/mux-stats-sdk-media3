@@ -1,26 +1,17 @@
 package com.mux.stats.sdk.muxstats
 
+import android.net.Uri
 import androidx.media3.common.Format
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
 import com.mux.android.util.oneOf
+import com.mux.stats.sdk.core.model.VideoData
 import com.mux.stats.sdk.core.util.MuxLogger
 
 internal const val PLAYER_STATE_POLL_MS = 150L
 private const val LOG_TAG = "PlayerUtils"
-
-/**
- * Asynchronously watch player playback position, collecting periodic updates out-of-band from the
- * normal callback flow.
- */
-fun MuxStateCollector.watchPlayerPos(player: Player) {
-  playerWatcher = MuxStateCollector.PlayerWatcher(
-    PLAYER_STATE_POLL_MS,
-    this,
-    player
-  ) { it, _ -> it.currentPosition }
-  playerWatcher?.start()
-}
 
 /**
  * Returns true if any media track in the given [Tracks] object had a video MIME type
@@ -71,6 +62,20 @@ fun MuxStateCollector.handlePlayWhenReady(playWhenReady: Boolean) {
 }
 
 /**
+ * Asynchronously watch player playback position, collecting periodic updates out-of-band from the
+ * normal callback flow.
+ */
+@JvmSynthetic
+fun MuxStateCollector.watchPlayerPos(player: Player) {
+  playerWatcher = MuxStateCollector.PlayerWatcher(
+    PLAYER_STATE_POLL_MS,
+    this,
+    player
+  ) { it, _ -> it.currentPosition }
+  playerWatcher?.start()
+}
+
+/**
  * Handles a change of basic ExoPlayer state
  */
 @JvmSynthetic // Hidden from Java callers, since the only ones are external
@@ -117,3 +122,32 @@ fun MuxStateCollector.handleExoPlaybackState(
     }
   } // when (playbackState)
 } // fun handleExoPlaybackState
+
+@JvmSynthetic
+fun MuxStateCollector.handleMediaItemChanged(mediaItem: MediaItem) {
+  mediaItem.localConfiguration?.let { localConfig ->
+    val sourceUrl = localConfig.uri;
+    val sourceDomain = sourceUrl.authority
+    val videoData = VideoData().apply {
+      videoSourceDomain = sourceDomain
+      videoSourceUrl = sourceUrl.toString()
+    }
+    videoDataChange(videoData)
+  }
+
+  // Also pick up data from MediaMetadata
+  handleMediaMetadata(mediaItem.mediaMetadata)
+}
+
+@JvmSynthetic
+fun MuxStateCollector.handleMediaMetadata(mediaMetadata: MediaMetadata) {
+  // explicitly make those ! into ?
+  val posterUrl: Uri? = mediaMetadata.artworkUri
+  val title: CharSequence? = mediaMetadata.title
+
+  val videoData  = VideoData().apply {
+    videoPosterUrl = posterUrl.toString()
+    videoTitle = title.toString()
+  }
+  videoDataChange(videoData)
+}

@@ -5,6 +5,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.Player.PositionInfo
@@ -58,10 +60,20 @@ class BasicPlayerActivity : AppCompatActivity() {
     player = createPlayer().also { newPlayer ->
       muxStats = monitorPlayer(newPlayer)
       view.playerView.player = newPlayer
-      newPlayer.setMediaItem(mediaUrl.toMediaItem())
+      newPlayer.setMediaItem(createMediaItem(mediaUrl))
       newPlayer.prepare()
       newPlayer.playWhenReady = true
     }
+  }
+
+  private fun createMediaItem(mediaUrl: String): MediaItem {
+    return mediaUrl.toMediaItem().buildUpon()
+      .setMediaMetadata(
+        MediaMetadata.Builder()
+          .setTitle("Sample app, BasicPlayerActivity")
+          .setDescription("A Basic test video")
+          .build()
+      ).build()
   }
 
   private fun stopPlaying() {
@@ -78,7 +90,7 @@ class BasicPlayerActivity : AppCompatActivity() {
     val customerData = CustomerData(
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
-        title = "Mux Data SDK for Media3 Demo"
+        videoId = "A Custom ID"
       },
       CustomerViewData().apply { }
     )
