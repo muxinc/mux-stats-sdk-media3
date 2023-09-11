@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
   project.ext {
-    coreVersion = '0.9.0'
+    coreVersion = '0.9.1'
   }
 
   tasks.withType(DokkaTaskPartial.class) {
