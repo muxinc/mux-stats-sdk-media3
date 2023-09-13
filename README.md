@@ -107,10 +107,3 @@ the [android core](https://github.com/muxinc/stats-sdk-android)
 when
 the outer `MuxStatsSdkMeda3` object is created and unbound when that object is released.
 
-## Known Issues
-
-This SDK is still in beta as we continue development on it, and some gaps in functionality are known:
-
-* When used from a `Service` or `ViewModel`, screen and player dimensions cannot be detected
-* When used with Compose, screen and player dimensions cannot be detected even in UI components
-* Video metadata such as Title, Source URL, etc is not tracked automatically
