@@ -78,7 +78,7 @@ class MuxImAdsListenerTests : AbsRobolectricTest() {
       }
       val muxImaListener = MuxImaAdsListener.newListener(
         dummyMuxStats,
-        mockk(relaxed = true), // error listener not under test
+        mockk(relaxed = true), // event listener not under test
         customerAdErrorListener
       )
 
