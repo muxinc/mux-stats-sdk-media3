@@ -119,7 +119,7 @@ class MuxImaAdsListener private constructor(
           dispatchAdPlaybackEvent(
             AdFirstQuartileEvent(null),
             ad
-          ) // when (adEvent.type)
+          )
         }
 
         AdEvent.AdEventType.MIDPOINT -> {
