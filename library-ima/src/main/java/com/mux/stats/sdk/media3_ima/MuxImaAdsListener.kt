@@ -95,13 +95,13 @@ class MuxImaAdsListener private constructor(
           }
           sendPlayOnStarted = false
           adCollector.onStartPlayingAds()
-          if (!player.playWhenReady && player.currentPosition == 0L) {
+          if (player.playWhenReady || player.currentPosition != 0L) {
+            dispatchAdPlaybackEvent(AdBreakStartEvent(null), ad)
+            dispatchAdPlaybackEvent(AdPlayEvent(null), ad)
+          } else {
             // This is preroll ads when play when ready is set to false, we need to ignore these events
             missingAdBreakStartEvent = true
-            return
           }
-          dispatchAdPlaybackEvent(AdBreakStartEvent(null), ad)
-          dispatchAdPlaybackEvent(AdPlayEvent(null), ad)
         }
 
         AdEvent.AdEventType.STARTED -> {
@@ -115,18 +115,26 @@ class MuxImaAdsListener private constructor(
           dispatchAdPlaybackEvent(AdPlayingEvent(null), ad)
         }
 
-        AdEvent.AdEventType.FIRST_QUARTILE -> dispatchAdPlaybackEvent(
-          AdFirstQuartileEvent(null),
-          ad
-        )
+        AdEvent.AdEventType.FIRST_QUARTILE -> {
+          dispatchAdPlaybackEvent(
+            AdFirstQuartileEvent(null),
+            ad
+          ) // when (adEvent.type)
+        }
 
-        AdEvent.AdEventType.MIDPOINT -> dispatchAdPlaybackEvent(AdMidpointEvent(null), ad)
-        AdEvent.AdEventType.THIRD_QUARTILE -> dispatchAdPlaybackEvent(
-          AdThirdQuartileEvent(null),
-          ad
-        )
+        AdEvent.AdEventType.MIDPOINT -> {
+          dispatchAdPlaybackEvent(AdMidpointEvent(null), ad)
+        }
+        AdEvent.AdEventType.THIRD_QUARTILE -> {
+          dispatchAdPlaybackEvent(
+            AdThirdQuartileEvent(null),
+            ad
+          )
+        }
 
-        AdEvent.AdEventType.COMPLETED -> dispatchAdPlaybackEvent(AdEndedEvent(null), ad)
+        AdEvent.AdEventType.COMPLETED -> {
+          dispatchAdPlaybackEvent(AdEndedEvent(null), ad)
+        }
         AdEvent.AdEventType.CONTENT_RESUME_REQUESTED -> {
           dispatchAdPlaybackEvent(AdBreakEndEvent(null), ad)
           // ExoPlayer state doesn't change for client ads so fill in the blanks
@@ -136,16 +144,13 @@ class MuxImaAdsListener private constructor(
         }
 
         AdEvent.AdEventType.PAUSED -> {
-          if (!player.playWhenReady
-            && player.currentPosition == 0L
-          ) {
-            // This is preroll ads when play when ready is set to false, we need to ignore these events
-            return;
+          // This is preroll ads when play when ready is set to false, we need to ignore these events
+          if (player.playWhenReady || player.currentPosition != 0L) {
+            dispatchAdPlaybackEvent(AdPauseEvent(null), ad)
           }
-          dispatchAdPlaybackEvent(AdPauseEvent(null), ad)
         }
 
-        AdEvent.AdEventType.RESUMED ->
+        AdEvent.AdEventType.RESUMED -> {
           if (missingAdBreakStartEvent) {
             // This is special case when we have ad preroll and play when ready is set to false
             // in that case we need to dispatch AdBreakStartEvent first and resume the playback.
@@ -156,8 +161,9 @@ class MuxImaAdsListener private constructor(
             dispatchAdPlaybackEvent(AdPlayEvent(null), ad)
             dispatchAdPlaybackEvent(AdPlayingEvent(null), ad)
           }
+        }
         else -> { }
-      } // when (adEvent.type)
+      } // when()
     } // exoPlayer?.let ...
 
     customerAdEventListener.onAdEvent(adEvent)
