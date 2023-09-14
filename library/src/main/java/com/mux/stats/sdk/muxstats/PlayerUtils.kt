@@ -146,8 +146,8 @@ fun MuxStateCollector.handleMediaMetadata(mediaMetadata: MediaMetadata) {
   val title: CharSequence? = mediaMetadata.title
 
   val videoData  = VideoData().apply {
-    videoPosterUrl = posterUrl.toString()
-    videoTitle = title.toString()
+    posterUrl?.let { videoPosterUrl = it.toString() }
+    title?.let { videoTitle = it.toString() }
   }
   videoDataChange(videoData)
 }
