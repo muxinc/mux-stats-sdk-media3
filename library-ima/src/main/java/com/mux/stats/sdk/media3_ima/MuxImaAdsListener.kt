@@ -156,11 +156,9 @@ class MuxImaAdsListener private constructor(
             dispatchAdPlaybackEvent(AdPlayEvent(null), ad)
             dispatchAdPlaybackEvent(AdPlayingEvent(null), ad)
           }
-
-        AdEvent.AdEventType.ALL_ADS_COMPLETED -> {}
-        else -> return
-      }
-    }
+        else -> { }
+      } // when (adEvent.type)
+    } // exoPlayer?.let ...
 
     customerAdEventListener.onAdEvent(adEvent)
   }
