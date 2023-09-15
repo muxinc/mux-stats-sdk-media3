@@ -43,8 +43,6 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
   override fun bindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
     catchUpPlayState(player, collector)
 
-    player.stop()
-
     listener = MuxAnalyticsListener(
       player = player,
       collector = collector,
