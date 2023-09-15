@@ -97,7 +97,7 @@ muxDistribution {
 }
 
 dependencies {
-  api "com.mux.stats.sdk.muxstats:android:$coreVersion"
+  api "com.mux.stats.sdk.muxstats:android:dev-fix-sync-events-during-setup-f9ae9b8"
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
 
