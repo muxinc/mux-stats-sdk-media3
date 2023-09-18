@@ -79,10 +79,12 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
     if (player.playWhenReady) {
       // Captures auto-play & late-registration, setting state and sending 'viewstart'
       collector.play()
-    } else {
-      collector.pause()
     }
-    collector.handleExoPlaybackState(player.playbackState, player.playWhenReady)
+    // The player will be idle when we are first attached, so we don't need to say we paused
+    //  (which is how IDLE is handled during actual playback)
+    if (player.playbackState != Player.STATE_IDLE) {
+      collector.handleExoPlaybackState(player.playbackState, player.playWhenReady)
+    }
   }
 
   companion object {
