@@ -80,7 +80,7 @@ fun MuxStateCollector.watchPlayerPos(player: Player) {
  */
 @JvmSynthetic // Hidden from Java callers, since the only ones are external
 fun MuxStateCollector.handleExoPlaybackState(
-  playbackState: Int, // the @IntDef for player state omitted. Unavailable on all exo versions
+  @Player.State playbackState: Int,
   playWhenReady: Boolean
 ) {
   if (this.muxPlayerState == MuxPlayerState.PLAYING_ADS) {
@@ -146,8 +146,8 @@ fun MuxStateCollector.handleMediaMetadata(mediaMetadata: MediaMetadata) {
   val title: CharSequence? = mediaMetadata.title
 
   val videoData  = VideoData().apply {
-    videoPosterUrl = posterUrl.toString()
-    videoTitle = title.toString()
+    posterUrl?.let { videoPosterUrl = it.toString() }
+    title?.let { videoTitle = it.toString() }
   }
   videoDataChange(videoData)
 }

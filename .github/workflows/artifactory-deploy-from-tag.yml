@@ -16,6 +16,9 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
 
+    env:
+      AWS_EC2_METADATA_DISABLED: true
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up JDK
@@ -23,6 +26,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Parse the version out of the tag name
+        id: version
+        run: >
+          echo "version_name="$(echo ${{ github.event.release.tag_name }} | sed -E "s/^v//")"" >> $GITHUB_OUTPUT
       # This step will build all modules configured for publication and publish them
       # Does your project publish multiple libraries in a dependency chain? You'll have to add another copy of this step and build the dependency in the first one
       - name: Build and Publish to Dev Repo [Base]
@@ -43,3 +50,24 @@ jobs:
           ORG_GRADLE_PROJECT_artifactory_password: ${{ secrets.ARTIFACTORY_PASSWORD }}
           GH_USER: ${{ github.actor }}
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Configure AWS
+        run: >
+          aws configure set aws_access_key_id ${{ secrets.AWS_DOCS_KEY }};
+          aws configure set aws_secret_access_key ${{ secrets.AWS_DOCS_SECRET }}
+      # If you have a multi-module project or monorepo, you'll need to repeat these steps
+      # POSSIBLE CONFIGURATION: make sure the `arguments:` tag matches the correct task(s) for your project
+      - name: Build Dokka Docs
+        uses: gradle/gradle-build-action@v2.4.2
+        with:
+          arguments: 'dokkaHtmlMultiModule'
+      # REQUIRED CONFIGURATION: You have to change YOUR-LIB to a suitable URL slug for your project
+      - name: Update the docs AWS bucket
+        run: |
+          aws s3 rm --recursive "s3://mux-devdocs/media3-data/latest/"
+          aws s3 sync build/dokkaOutput s3://mux-devdocs/media3-data/${{ steps.version.outputs.version_name }}/
+          aws s3 sync build/dokkaOutput s3://mux-devdocs/media3-data/latest/
+      - name: Update the devdocs site
+        run: |
+          echo "${{ secrets.DOCS_REPO_PAT }}" | gh auth login --with-token
+          gh workflow run -R muxinc/devdocs-directory deploy-to-s3
+
