@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
   project.ext {
-    coreVersion = 'dev-fix-sync-events-during-setup-3db420c'
+    coreVersion = '1.0.0'
   }
 
   tasks.withType(DokkaTaskPartial.class) {
