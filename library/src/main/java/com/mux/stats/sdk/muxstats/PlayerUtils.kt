@@ -45,6 +45,7 @@ fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
       // Called when seeking starts. Player will move to READY when seeking is over
       seeking()
     }
+
     else -> {} // ignored
   }
 }
@@ -53,10 +54,17 @@ fun MuxStateCollector.handlePositionDiscontinuity(reason: Int) {
  * Handles changes to playWhenReady.
  */
 @JvmSynthetic
-fun MuxStateCollector.handlePlayWhenReady(playWhenReady: Boolean) {
+fun MuxStateCollector.handlePlayWhenReady(
+  playWhenReady: Boolean,
+  @Player.State playbackState: Int
+) {
   if (playWhenReady) {
     play()
-  } else if (muxPlayerState != MuxPlayerState.PAUSED){
+    if (playbackState == Player.STATE_READY) {
+      // If we were already READY when playWhenReady is set, then we are definitely also playing
+      playing()
+    }
+  } else if (muxPlayerState != MuxPlayerState.PAUSED) {
     pause()
   }
 }
@@ -93,11 +101,12 @@ fun MuxStateCollector.handleExoPlaybackState(
       MuxLogger.d(LOG_TAG, "entering BUFFERING")
       buffering()
     }
+
     Player.STATE_READY -> {
       MuxLogger.d(LOG_TAG, "entering READY")
 
       // We're done seeking after we get back to STATE_READY
-      if(muxPlayerState == MuxPlayerState.SEEKING) {
+      if (muxPlayerState == MuxPlayerState.SEEKING) {
         // TODO <em> playing() and pause() handle rebuffering, why not also seeking
         seeked()
       }
@@ -109,10 +118,12 @@ fun MuxStateCollector.handleExoPlaybackState(
         pause()
       }
     }
+
     Player.STATE_ENDED -> {
       MuxLogger.d(LOG_TAG, "entering ENDED")
       ended()
     }
+
     Player.STATE_IDLE -> {
       MuxLogger.d(LOG_TAG, "entering IDLE")
       if (muxPlayerState.oneOf(MuxPlayerState.PLAY, MuxPlayerState.PLAYING)) {
@@ -145,7 +156,7 @@ fun MuxStateCollector.handleMediaMetadata(mediaMetadata: MediaMetadata) {
   val posterUrl: Uri? = mediaMetadata.artworkUri
   val title: CharSequence? = mediaMetadata.title
 
-  val videoData  = VideoData().apply {
+  val videoData = VideoData().apply {
     posterUrl?.let { videoPosterUrl = it.toString() }
     title?.let { videoTitle = it.toString() }
   }
