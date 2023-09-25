@@ -68,6 +68,7 @@ class MuxImaAdsListener private constructor(
         exoPlayer?.getAdTagUrl()?.let { adData.adTagUrl = it }
         ad.adId?.let { adData.adId = it }
         ad.creativeId?.let { adData.adCreativeId = it }
+        @Suppress("DEPRECATION") // This is only deprecated on android, we need consistency
         ad.universalAdIdValue?.let { adData.adUniversalId = it }
       }
     }
@@ -84,7 +85,6 @@ class MuxImaAdsListener private constructor(
    */
   override fun onAdEvent(adEvent: AdEvent) {
     exoPlayer?.let { player ->
-      val event: PlaybackEvent? = null
       val ad = adEvent.ad
       when (adEvent.type) {
         AdEvent.AdEventType.LOADED -> {}

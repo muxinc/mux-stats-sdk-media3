@@ -8,6 +8,7 @@ import androidx.media3.common.Player.DISCONTINUITY_REASON_SEEK
 import androidx.media3.common.Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT
 import androidx.media3.common.Player.DISCONTINUITY_REASON_SKIP
 import androidx.media3.common.Player.DiscontinuityReason
+import androidx.media3.common.Player.STATE_IDLE
 import com.mux.core_android.test.tools.log
 import com.mux.stats.media3.test.tools.AbsRobolectricTest
 import io.mockk.every
@@ -46,11 +47,23 @@ class PlayerUtilsTests : AbsRobolectricTest() {
 
   @Test
   fun testHandlePlayWhenReadyBecomesTrue() {
-    val mockStateCollector = mockk<MuxStateCollector> {
-      every { play() } just runs
+    fun doTestCase(@Player.State playerState: Int, sendPlayingAlso: Boolean) {
+      log("testHandlePlayWhenReadyBecomesTrue", "Testing player state $playerState")
+      val mockStateCollector = mockk<MuxStateCollector> {
+        every { play() } just runs
+        every { playing() } just runs
+      }
+      mockStateCollector.handlePlayWhenReady(true, playerState)
+      verify { mockStateCollector.play() }
+      if (sendPlayingAlso) {
+        verify { mockStateCollector.playing() }
+      }
     }
-    mockStateCollector.handlePlayWhenReady(true)
-    verify { mockStateCollector.play() }
+
+    doTestCase(Player.STATE_READY, true)
+    doTestCase(Player.STATE_BUFFERING, false)
+    doTestCase(Player.STATE_ENDED, false)
+    doTestCase(Player.STATE_IDLE, false)
   }
 
   @Test
@@ -60,8 +73,9 @@ class PlayerUtilsTests : AbsRobolectricTest() {
         every { pause() } just runs
         every { muxPlayerState } returns from
       }
+      val dummyPlayerState = STATE_IDLE
 
-      mockStateCollector.handlePlayWhenReady(false)
+      mockStateCollector.handlePlayWhenReady(false, dummyPlayerState)
 
       val times = if (from == MuxPlayerState.PAUSED) 0 else 1
       verify(exactly = times) { mockStateCollector.pause() }
@@ -165,9 +179,9 @@ class PlayerUtilsTests : AbsRobolectricTest() {
       }
     }
 
-   for (state in MuxPlayerState.values()) {
-     testIdleFromState(state)
-   }
+    for (state in MuxPlayerState.values()) {
+      testIdleFromState(state)
+    }
   }
 
   @Test

@@ -108,7 +108,7 @@ private class MuxAnalyticsListener(
     playWhenReady: Boolean,
     reason: Int
   ) {
-    player?.let { collector.handlePlayWhenReady(playWhenReady) }
+    player?.let { collector.handlePlayWhenReady(playWhenReady, it.playbackState) }
   }
 
   override fun onPlaybackStateChanged(eventTime: AnalyticsListener.EventTime, state: Int) {
