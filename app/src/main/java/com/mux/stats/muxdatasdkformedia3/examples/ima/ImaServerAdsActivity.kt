@@ -46,6 +46,8 @@ class ImaServerAdsActivity : AppCompatActivity() {
 
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
+      setControllerHideDuringAds(false)
+      controllerAutoShow = true
     }
     window.addFlags(View.KEEP_SCREEN_ON)
 
