@@ -91,7 +91,9 @@ class MuxImaAdsListener private constructor(
 //      Log.d("ARGG", "onAdEvent: handling event with adCollector $adCollector")
       when (adEvent.type) {
         AdEvent.AdEventType.LOADED -> {}
-        AdEvent.AdEventType.CONTENT_PAUSE_REQUESTED -> {
+        AdEvent.AdEventType.CONTENT_PAUSE_REQUESTED, // for CSAI
+        AdEvent.AdEventType.AD_PERIOD_STARTED // for SSAI
+        -> {
           @Suppress("RedundantNullableReturnType") val ad: Ad? = adEvent.ad
 //          Log.d("ARGG", "onAdEvent: Ad is ${ad}")
           // Send pause event if we are currently playing or preparing to play content
@@ -154,7 +156,9 @@ class MuxImaAdsListener private constructor(
           dispatchAdPlaybackEvent(AdEndedEvent(null), ad)
         }
 
-        AdEvent.AdEventType.CONTENT_RESUME_REQUESTED -> {
+        AdEvent.AdEventType.CONTENT_RESUME_REQUESTED, // for CSAI
+        AdEvent.AdEventType.AD_PERIOD_ENDED // for SSAI
+        -> {
           @Suppress("RedundantNullableReturnType") // can be null during ssai
           val ad: Ad? = adEvent.ad
 //          Log.d("ARGG", "onAdEvent: Ad is ${ad}")
