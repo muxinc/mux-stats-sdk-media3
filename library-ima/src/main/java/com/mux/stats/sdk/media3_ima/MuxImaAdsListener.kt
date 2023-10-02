@@ -209,12 +209,12 @@ class MuxImaAdsListener private constructor(
      */
     @JvmStatic
     fun newListener(
-      muxSdk: () -> MuxStatsSdkMedia3<*>?,
+      muxSdk: MuxStatsSdkMedia3<*>,
       customerAdEventListener: AdEventListener = AdEventListener { },
       customerAdErrorListener: AdErrorListener = AdErrorListener { },
     ): MuxImaAdsListener {
       return MuxImaAdsListener(
-        Provider(muxSdk),
+        Provider { muxSdk },
         customerAdEventListener,
         customerAdErrorListener
       )
