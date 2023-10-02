@@ -21,8 +21,11 @@ import androidx.media3.exoplayer.ima.ImaServerSideAdInsertionMediaSource.AdsLoad
 import androidx.media3.exoplayer.ima.ImaServerSideAdInsertionUriBuilder
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
+import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
+import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerSsaiBinding
+import com.mux.stats.sdk.core.events.playback.AdEndedEvent
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
@@ -33,7 +36,7 @@ import com.mux.stats.sdk.muxstats.monitorWithMuxData
 
 class ImaServerAdsActivity : AppCompatActivity() {
 
-  private lateinit var view: ActivityPlayerBinding
+  private lateinit var view: ActivityPlayerSsaiBinding
   private var player: Player? = null
   private var muxStats: MuxStatsSdkMedia3<ExoPlayer>? = null
   private var adsLoader: AdsLoader? = null
@@ -42,13 +45,17 @@ class ImaServerAdsActivity : AppCompatActivity() {
   @OptIn(UnstableApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    view = ActivityPlayerBinding.inflate(layoutInflater)
+    view = ActivityPlayerSsaiBinding.inflate(layoutInflater)
     setContentView(view.root)
 
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
       setControllerHideDuringAds(false)
       controllerAutoShow = true
+    }
+    view.skipAd.setOnClickListener {
+      // Will end the ad break
+      player?.seekForward()
     }
     window.addFlags(View.KEEP_SCREEN_ON)
 
@@ -89,7 +96,14 @@ class ImaServerAdsActivity : AppCompatActivity() {
         .apply { state?.let { adsLoaderState = it } }
         .monitorWith(
           { muxStats }, // This is safe, will only be called while playing
-          { /*your ad event handling here*/ },
+          {
+            /*your ad event handling here*/
+          when (it.type) {
+            AdEvent.AdEventType.AD_PERIOD_STARTED -> view.skipAd.visibility = View.VISIBLE
+            AdEvent.AdEventType.AD_PERIOD_ENDED -> view.skipAd.visibility = View.GONE
+            else -> { /* ignore */ }
+          }
+          },
           { /*your ad error handling here*/ },
         )
         .build()
@@ -104,7 +118,8 @@ class ImaServerAdsActivity : AppCompatActivity() {
       stopPlaying()
       player
     } else {
-      @Suppress("NAME_SHADOWING") val adsLoader = adsLoader ?: createAdsLoaderIfNull(adsLoaderState, view.playerView)
+      @Suppress("NAME_SHADOWING") val adsLoader =
+        adsLoader ?: createAdsLoaderIfNull(adsLoaderState, view.playerView)
       createPlayer(adsLoader).also { newPlayer ->
         muxStats = monitorPlayer(newPlayer)
         view.playerView.player = newPlayer
