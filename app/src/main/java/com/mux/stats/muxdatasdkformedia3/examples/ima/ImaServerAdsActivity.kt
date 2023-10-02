@@ -61,15 +61,14 @@ class ImaServerAdsActivity : AppCompatActivity() {
     )
   }
 
-//  override fun onPause() {
-//    stopPlaying()
-//    super.onPause()
-//  }
+  override fun onPause() {
+    stopPlaying()
+    super.onPause()
+  }
 
   @OptIn(UnstableApi::class)
   override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
     stopPlaying()
-    adsLoaderState = adsLoader?.release()
     adsLoaderState?.let {
       outState.putBundle(EXTRA_ADS_LOADER_STATE, it.toBundle())
     }
@@ -126,6 +125,7 @@ class ImaServerAdsActivity : AppCompatActivity() {
       oldPlayer.release()
     }
     // Make sure to release() your muxStats whenever the user is done with the player
+    adsLoaderState = adsLoader?.release()
     muxStats?.release()
   }
 
