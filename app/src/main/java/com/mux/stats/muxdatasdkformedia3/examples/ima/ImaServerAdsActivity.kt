@@ -83,13 +83,12 @@ class ImaServerAdsActivity : AppCompatActivity() {
   private fun createAdsLoaderIfNull(
     state: AdsLoader.State?,
     playerView: PlayerView,
-    muxStats: MuxStatsSdkMedia3<*>,
   ): AdsLoader {
     return adsLoader
       ?: AdsLoader.Builder(this, playerView)
         .apply { state?.let { adsLoaderState = it } }
         .monitorWith(
-          { muxStats },
+          { muxStats }, // This is safe, will only be called while playing
           { /*your ad event handling here*/ },
           { /*your ad error handling here*/ },
         )
@@ -105,7 +104,7 @@ class ImaServerAdsActivity : AppCompatActivity() {
       stopPlaying()
       player
     } else {
-      @Suppress("NAME_SHADOWING") val adsLoader = adsLoader ?: createAdsLoaderIfNull(adsLoaderState, view.playerView, muxStats!!)
+      @Suppress("NAME_SHADOWING") val adsLoader = adsLoader ?: createAdsLoaderIfNull(adsLoaderState, view.playerView)
       createPlayer(adsLoader).also { newPlayer ->
         muxStats = monitorPlayer(newPlayer)
         view.playerView.player = newPlayer

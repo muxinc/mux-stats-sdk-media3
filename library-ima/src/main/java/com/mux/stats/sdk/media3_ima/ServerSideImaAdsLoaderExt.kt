@@ -22,7 +22,7 @@ import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 @JvmSynthetic
 fun AdsLoader.Builder.monitorWith(
   // TODO: Add backward-compatible overload too
-  muxStatsProvider: () -> MuxStatsSdkMedia3<*>,
+  muxStatsProvider: () -> MuxStatsSdkMedia3<*>?,
   customerAdEventListener: AdEventListener = AdEventListener { },
   customerAdErrorListener: AdErrorListener = AdErrorListener { },
 ): AdsLoader.Builder {

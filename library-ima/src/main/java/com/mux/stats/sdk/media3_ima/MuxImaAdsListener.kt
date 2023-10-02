@@ -193,7 +193,7 @@ class MuxImaAdsListener private constructor(
      */
     @JvmStatic
     fun newListener(
-      muxSdk: () -> MuxStatsSdkMedia3<*>,
+      muxSdk: () -> MuxStatsSdkMedia3<*>?,
       customerAdEventListener: AdEventListener = AdEventListener { },
       customerAdErrorListener: AdErrorListener = AdErrorListener { },
     ): MuxImaAdsListener {
@@ -206,7 +206,7 @@ class MuxImaAdsListener private constructor(
   }
 }
 
-private class Provider(sdkProvider: () -> MuxStatsSdkMedia3<*>) {
+private class Provider(sdkProvider: () -> MuxStatsSdkMedia3<*>?) {
   private val provider by weak(sdkProvider)
   val boundPlayer get() = provider?.invoke()?.boundPlayer
   val adCollector get() = provider?.invoke()?.adCollector
