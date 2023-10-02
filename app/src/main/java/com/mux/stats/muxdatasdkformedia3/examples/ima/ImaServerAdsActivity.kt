@@ -35,8 +35,8 @@ class ImaServerAdsActivity : AppCompatActivity() {
   private lateinit var view: ActivityPlayerBinding
   private var player: Player? = null
   private var muxStats: MuxStatsSdkMedia3<ExoPlayer>? = null
-  private var adsLoader: ImaServerSideAdInsertionMediaSource.AdsLoader? = null
-  private var adsLoaderState: ImaServerSideAdInsertionMediaSource.AdsLoader.State? = null
+  private var adsLoader: AdsLoader? = null
+  private var adsLoaderState: AdsLoader.State? = null
 
   @OptIn(UnstableApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +50,7 @@ class ImaServerAdsActivity : AppCompatActivity() {
     window.addFlags(View.KEEP_SCREEN_ON)
 
     adsLoaderState = savedInstanceState?.getBundle(EXTRA_ADS_LOADER_STATE)
-      ?.let { ImaServerSideAdInsertionMediaSource.AdsLoader.State.CREATOR.fromBundle(it) }
+      ?.let { AdsLoader.State.CREATOR.fromBundle(it) }
   }
 
   override fun onResume() {
@@ -61,13 +61,15 @@ class ImaServerAdsActivity : AppCompatActivity() {
     )
   }
 
-  override fun onPause() {
-    stopPlaying()
-    super.onPause()
-  }
+//  override fun onPause() {
+//    stopPlaying()
+//    super.onPause()
+//  }
 
   @OptIn(UnstableApi::class)
   override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
+    stopPlaying()
+    adsLoaderState = adsLoader?.release()
     adsLoaderState?.let {
       outState.putBundle(EXTRA_ADS_LOADER_STATE, it.toBundle())
     }
@@ -77,10 +79,10 @@ class ImaServerAdsActivity : AppCompatActivity() {
 
   @OptIn(UnstableApi::class)
   private fun createAdsLoaderIfNull(
-    state: ImaServerSideAdInsertionMediaSource.AdsLoader.State?,
+    state: AdsLoader.State?,
     playerView: PlayerView
-  ): ImaServerSideAdInsertionMediaSource.AdsLoader {
-    return ImaServerSideAdInsertionMediaSource.AdsLoader.Builder(this, playerView)
+  ): AdsLoader {
+    return AdsLoader.Builder(this, playerView)
       .apply { state?.let { adsLoaderState = it } }
       .build()
   }
@@ -88,7 +90,7 @@ class ImaServerAdsActivity : AppCompatActivity() {
   @OptIn(UnstableApi::class)
   private fun startPlaying(
     adTagUri: String,
-    adsLoader: ImaServerSideAdInsertionMediaSource.AdsLoader
+    adsLoader: AdsLoader
   ) {
     player = if (player != null) {
       stopPlaying()
