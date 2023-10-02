@@ -89,7 +89,7 @@ class ImaServerAdsActivity : AppCompatActivity() {
       ?: AdsLoader.Builder(this, playerView)
         .apply { state?.let { adsLoaderState = it } }
         .monitorWith(
-          muxStats,
+          { muxStats },
           { /*your ad event handling here*/ },
           { /*your ad error handling here*/ },
         )

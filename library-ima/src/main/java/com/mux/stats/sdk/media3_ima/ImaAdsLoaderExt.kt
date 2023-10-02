@@ -25,7 +25,7 @@ fun ImaAdsLoader.Builder.monitorWith(
   customerAdErrorListener: AdErrorListener = AdErrorListener { },
 ): ImaAdsLoader.Builder {
   val adsListener = MuxImaAdsListener.newListener(
-    muxStats,
+    { muxStats },
     customerAdEventListener,
     customerAdErrorListener
   )

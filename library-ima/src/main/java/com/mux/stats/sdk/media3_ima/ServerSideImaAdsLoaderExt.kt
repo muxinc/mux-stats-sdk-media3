@@ -21,12 +21,13 @@ import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 @OptIn(UnstableApi::class)
 @JvmSynthetic
 fun AdsLoader.Builder.monitorWith(
-  muxStats: MuxStatsSdkMedia3<*>,
+  // TODO: Add backward-compatible overload too
+  muxStatsProvider: () -> MuxStatsSdkMedia3<*>,
   customerAdEventListener: AdEventListener = AdEventListener { },
   customerAdErrorListener: AdErrorListener = AdErrorListener { },
 ): AdsLoader.Builder {
   val adsListener = MuxImaAdsListener.newListener(
-    muxStats,
+    muxStatsProvider,
     customerAdEventListener,
     customerAdErrorListener
   )
