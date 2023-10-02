@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.media3.common.C.CONTENT_TYPE_HLS
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaItem.AdsConfiguration
 import androidx.media3.common.PlaybackException
@@ -16,6 +17,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ima.ImaServerSideAdInsertionMediaSource
+import androidx.media3.exoplayer.ima.ImaServerSideAdInsertionMediaSource.AdsLoader
+import androidx.media3.exoplayer.ima.ImaServerSideAdInsertionUriBuilder
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import com.mux.stats.muxdatasdkformedia3.Constants
@@ -53,9 +56,8 @@ class ImaServerAdsActivity : AppCompatActivity() {
   override fun onResume() {
     super.onResume()
     startPlaying(
-      Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY,
       Constants.AD_TAG_COMPLEX,
-      createAdsLoaderIfNull(adsLoaderState)
+      createAdsLoaderIfNull(adsLoaderState, view.playerView)
     )
   }
 
@@ -73,13 +75,18 @@ class ImaServerAdsActivity : AppCompatActivity() {
     super.onSaveInstanceState(outState, outPersistentState)
   }
 
-  private fun createAdsLoaderIfNull(state: ImaServerSideAdInsertionMediaSource.AdsLoader.State?)
-  : ImaServerSideAdInsertionMediaSource.AdsLoader {
+  @OptIn(UnstableApi::class)
+  private fun createAdsLoaderIfNull(
+    state: ImaServerSideAdInsertionMediaSource.AdsLoader.State?,
+    playerView: PlayerView
+  ): ImaServerSideAdInsertionMediaSource.AdsLoader {
+    return ImaServerSideAdInsertionMediaSource.AdsLoader.Builder(this, playerView)
+      .apply { state?.let { adsLoaderState = it } }
+      .build()
   }
 
   @OptIn(UnstableApi::class)
   private fun startPlaying(
-    mediaUrl: String,
     adTagUri: String,
     adsLoader: ImaServerSideAdInsertionMediaSource.AdsLoader
   ) {
@@ -87,30 +94,27 @@ class ImaServerAdsActivity : AppCompatActivity() {
       stopPlaying()
       player
     } else {
-      createPlayer().also { newPlayer ->
+      createPlayer(adsLoader).also { newPlayer ->
         muxStats = monitorPlayer(newPlayer)
-//        adsLoader = ImaAdsLoader.Builder(this)
-//          .monitorWith(
-//            muxStats = muxStats!!,
-//            customerAdErrorListener = { /*Optional parameter, your custom logic*/ },
-//            customerAdEventListener = { /*Optional parameter, your custom logic*/ },
-//          )
-//          .build()
-//          .apply { setPlayer(newPlayer) }
-
-        adsLoader.setPlayer(newPlayer)
         view.playerView.player = newPlayer
+        adsLoader.setPlayer(newPlayer)
+
+        val ssaiStreamUri = ImaServerSideAdInsertionUriBuilder()
+          .setAssetKey(Constants.SSAI_ASSET_TAG_BUCK)
+          .setFormat(CONTENT_TYPE_HLS)
+          .build()
+
         newPlayer.setMediaItem(
           MediaItem.Builder()
-            .setUri(Uri.parse(mediaUrl))
+            .setUri(ssaiStreamUri)
             .setAdsConfiguration(AdsConfiguration.Builder(Uri.parse(adTagUri)).build())
             .build()
         )
-        newPlayer.prepare()
-        newPlayer.playWhenReady = true
       }
-    } // if (player != null) else { ....
-
+    }.also {
+      it?.prepare()
+      it?.playWhenReady = true
+    }
   }
 
   @OptIn(UnstableApi::class)
@@ -142,10 +146,12 @@ class ImaServerAdsActivity : AppCompatActivity() {
   }
 
   @OptIn(UnstableApi::class)
-  private fun createPlayer(): ExoPlayer {
+  private fun createPlayer(adsLoader: AdsLoader): ExoPlayer {
     val mediaSrcFactory = DefaultMediaSourceFactory(DefaultDataSource.Factory(this))
-      //.setLocalAdInsertionComponents({ adsLoader }, view.playerView)
-      .setServerSideAdInsertionMediaSourceFactory()
+    //.setLocalAdInsertionComponents({ adsLoader }, view.playerView)
+    mediaSrcFactory.setServerSideAdInsertionMediaSourceFactory(
+      ImaServerSideAdInsertionMediaSource.Factory(adsLoader, mediaSrcFactory)
+    )
 
     return ExoPlayer.Builder(this)
       .setMediaSourceFactory(mediaSrcFactory)
