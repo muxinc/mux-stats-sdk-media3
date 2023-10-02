@@ -60,7 +60,7 @@ class ImaServerAdsActivity : AppCompatActivity() {
     super.onResume()
     startPlaying(
       Constants.AD_TAG_COMPLEX,
-      createAdsLoaderIfNull(adsLoaderState, view.playerView, muxStats!!)
+      null
     )
   }
 
@@ -99,12 +99,13 @@ class ImaServerAdsActivity : AppCompatActivity() {
   @OptIn(UnstableApi::class)
   private fun startPlaying(
     adTagUri: String,
-    adsLoader: AdsLoader
+    adsLoader: AdsLoader?
   ) {
     player = if (player != null) {
       stopPlaying()
       player
     } else {
+      @Suppress("NAME_SHADOWING") val adsLoader = adsLoader ?: createAdsLoaderIfNull(adsLoaderState, view.playerView, muxStats!!)
       createPlayer(adsLoader).also { newPlayer ->
         muxStats = monitorPlayer(newPlayer)
         view.playerView.player = newPlayer
