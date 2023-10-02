@@ -219,6 +219,21 @@ class MuxImaAdsListener private constructor(
         customerAdErrorListener
       )
     }
+      /**
+       * Creates a new [MuxImaAdsListener] based on the given [MuxStatsSdkMedia3]
+       */
+      @JvmStatic
+      fun newListener(
+        muxSdkProvider:() -> MuxStatsSdkMedia3<*>?,
+        customerAdEventListener: AdEventListener = AdEventListener { },
+        customerAdErrorListener: AdErrorListener = AdErrorListener { },
+      ): MuxImaAdsListener {
+        return MuxImaAdsListener(
+          Provider { muxSdkProvider() },
+          customerAdEventListener,
+          customerAdErrorListener
+        )
+      }
   }
 }
 
