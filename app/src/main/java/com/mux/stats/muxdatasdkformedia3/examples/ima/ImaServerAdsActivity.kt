@@ -27,6 +27,7 @@ import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
+import com.mux.stats.sdk.media3_ima.monitorWith
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
 
@@ -59,7 +60,7 @@ class ImaServerAdsActivity : AppCompatActivity() {
     super.onResume()
     startPlaying(
       Constants.AD_TAG_COMPLEX,
-      createAdsLoaderIfNull(adsLoaderState, view.playerView)
+      createAdsLoaderIfNull(adsLoaderState, view.playerView, muxStats!!)
     )
   }
 
@@ -81,11 +82,18 @@ class ImaServerAdsActivity : AppCompatActivity() {
   @OptIn(UnstableApi::class)
   private fun createAdsLoaderIfNull(
     state: AdsLoader.State?,
-    playerView: PlayerView
+    playerView: PlayerView,
+    muxStats: MuxStatsSdkMedia3<*>,
   ): AdsLoader {
-    return AdsLoader.Builder(this, playerView)
-      .apply { state?.let { adsLoaderState = it } }
-      .build()
+    return adsLoader
+      ?: AdsLoader.Builder(this, playerView)
+        .apply { state?.let { adsLoaderState = it } }
+        .monitorWith(
+          muxStats,
+          { /*your ad event handling here*/ },
+          { /*your ad error handling here*/ },
+        )
+        .build()
   }
 
   @OptIn(UnstableApi::class)
