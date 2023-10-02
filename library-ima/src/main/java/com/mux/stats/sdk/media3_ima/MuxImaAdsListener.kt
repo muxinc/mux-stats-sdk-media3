@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.media3_ima
 
+import android.util.Log
 import androidx.media3.common.Player
 import com.google.ads.interactivemedia.v3.api.Ad
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
@@ -84,11 +85,15 @@ class MuxImaAdsListener private constructor(
    * @param adEvent
    */
   override fun onAdEvent(adEvent: AdEvent) {
+    Log.d("ARGG", "onAdEvent: adEvent type ${adEvent.type.name}")
     exoPlayer?.let { player ->
-      val ad = adEvent.ad
+      Log.d("ARGG", "onAdEvent: handling event with exoplayer $player")
+      Log.d("ARGG", "onAdEvent: handling event with adCollector $adCollector")
       when (adEvent.type) {
         AdEvent.AdEventType.LOADED -> {}
         AdEvent.AdEventType.CONTENT_PAUSE_REQUESTED -> {
+          @Suppress("RedundantNullableReturnType") val ad: Ad? = adEvent.ad
+          Log.d("ARGG", "onAdEvent: Ad is ${ad}")
           // Send pause event if we are currently playing or preparing to play content
           if (adCollector?.muxPlayerState.oneOf(MuxPlayerState.PLAY, MuxPlayerState.PLAYING)) {
             adCollector?.onPausedForAds()
@@ -107,6 +112,8 @@ class MuxImaAdsListener private constructor(
         AdEvent.AdEventType.STARTED -> {
           // On the first STARTED, do not send AdPlay, as it was handled in
           // CONTENT_PAUSE_REQUESTED
+          @Suppress("RedundantNullableReturnType") val ad: Ad? = adEvent.ad
+          Log.d("ARGG", "onAdEvent: Ad is ${ad}")
           if (sendPlayOnStarted) {
             dispatchAdPlaybackEvent(AdPlayEvent(null), ad)
           } else {
@@ -116,6 +123,8 @@ class MuxImaAdsListener private constructor(
         }
 
         AdEvent.AdEventType.FIRST_QUARTILE -> {
+          @Suppress("RedundantNullableReturnType") val ad: Ad? = adEvent.ad
+          Log.d("ARGG", "onAdEvent: Ad is ${ad}")
           dispatchAdPlaybackEvent(
             AdFirstQuartileEvent(null),
             ad
@@ -123,10 +132,15 @@ class MuxImaAdsListener private constructor(
         }
 
         AdEvent.AdEventType.MIDPOINT -> {
+          @Suppress("RedundantNullableReturnType") val ad: Ad? = adEvent.ad
+          Log.d("ARGG", "onAdEvent: Ad is ${ad}")
           dispatchAdPlaybackEvent(AdMidpointEvent(null), ad)
         }
 
         AdEvent.AdEventType.THIRD_QUARTILE -> {
+          @Suppress("RedundantNullableReturnType") // can be null during ssai
+          val ad: Ad? = adEvent.ad
+          Log.d("ARGG", "onAdEvent: Ad is ${ad}")
           dispatchAdPlaybackEvent(
             AdThirdQuartileEvent(null),
             ad
@@ -134,10 +148,16 @@ class MuxImaAdsListener private constructor(
         }
 
         AdEvent.AdEventType.COMPLETED -> {
+          @Suppress("RedundantNullableReturnType") // can be null during ssai
+          val ad: Ad? = adEvent.ad
+          Log.d("ARGG", "onAdEvent: Ad is ${ad}")
           dispatchAdPlaybackEvent(AdEndedEvent(null), ad)
         }
 
         AdEvent.AdEventType.CONTENT_RESUME_REQUESTED -> {
+          @Suppress("RedundantNullableReturnType") // can be null during ssai
+          val ad: Ad? = adEvent.ad
+          Log.d("ARGG", "onAdEvent: Ad is ${ad}")
           dispatchAdPlaybackEvent(AdBreakEndEvent(null), ad)
           // ExoPlayer state doesn't change for client ads so fill in the blanks
           val willPlayImmediately = player.playWhenReady
@@ -148,6 +168,9 @@ class MuxImaAdsListener private constructor(
         AdEvent.AdEventType.PAUSED -> {
           // This is preroll ads when play when ready is set to false, we need to ignore these events
           if (player.playWhenReady || player.currentPosition != 0L) {
+            @Suppress("RedundantNullableReturnType") // can be null during ssai
+            val ad: Ad? = adEvent.ad
+            Log.d("ARGG", "onAdEvent: Ad is ${ad}")
             dispatchAdPlaybackEvent(AdPauseEvent(null), ad)
           } else {
 
@@ -155,6 +178,9 @@ class MuxImaAdsListener private constructor(
         }
 
         AdEvent.AdEventType.RESUMED -> {
+          @Suppress("RedundantNullableReturnType") // can be null during ssai
+          val ad: Ad? = adEvent.ad
+          Log.d("ARGG", "onAdEvent: Ad is ${ad}")
           if (missingAdBreakStartEvent) {
             // This is special case when we have ad preroll and play when ready is set to false
             // in that case we need to dispatch AdBreakStartEvent first and resume the playback.
@@ -206,8 +232,7 @@ class MuxImaAdsListener private constructor(
   }
 }
 
-private class Provider(sdkProvider: () -> MuxStatsSdkMedia3<*>?) {
-  private val provider by weak(sdkProvider)
-  val boundPlayer get() = provider?.invoke()?.boundPlayer
-  val adCollector get() = provider?.invoke()?.adCollector
+private class Provider(val provider: () -> MuxStatsSdkMedia3<*>?) {
+  val boundPlayer get() = provider.invoke()?.boundPlayer
+  val adCollector get() = provider.invoke()?.adCollector
 }
