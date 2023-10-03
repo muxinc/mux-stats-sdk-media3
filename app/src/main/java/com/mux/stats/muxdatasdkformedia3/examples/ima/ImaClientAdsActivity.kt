@@ -27,7 +27,7 @@ import com.mux.stats.sdk.media3_ima.monitorWith
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
 
-class ImaAdsActivity : AppCompatActivity() {
+class ImaClientAdsActivity : AppCompatActivity() {
 
   private lateinit var view: ActivityPlayerBinding
   private var player: Player? = null
@@ -42,6 +42,7 @@ class ImaAdsActivity : AppCompatActivity() {
 
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
+      controllerAutoShow = true
     }
     window.addFlags(View.KEEP_SCREEN_ON)
   }
@@ -123,7 +124,7 @@ class ImaAdsActivity : AppCompatActivity() {
         addListener(object : Player.Listener {
           override fun onPlayerError(error: PlaybackException) {
             Log.e(javaClass.simpleName, "player error!", error)
-            Toast.makeText(this@ImaAdsActivity, error.localizedMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@ImaClientAdsActivity, error.localizedMessage, Toast.LENGTH_SHORT).show()
           }
         })
       }
