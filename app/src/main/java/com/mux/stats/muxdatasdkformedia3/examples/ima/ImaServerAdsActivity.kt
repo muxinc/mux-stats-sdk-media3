@@ -137,9 +137,10 @@ class ImaServerAdsActivity : AppCompatActivity() {
             .build()
         )
       }
-    }.also {
-      it?.prepare()
-      it?.playWhenReady = true
+    }
+    player?.let {
+      it.prepare()
+      it.playWhenReady = true
     }
   }
 
