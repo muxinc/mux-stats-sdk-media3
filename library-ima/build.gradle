@@ -91,16 +91,19 @@ dependencies {
   debugImplementation project(':library')
   
   // note- 3.30.0 and 3.30.1 are marked as broken by google, so don't use
-  api 'com.google.ads.interactivemedia.v3:interactivemedia:3.29.0'
+//  api 'com.google.ads.interactivemedia.v3:interactivemedia:3.29.0'
   // implementation is used so it doesn't pollute customers namespace
   implementation "com.mux:utils-kt:$coreVersion"
 
   //noinspection GradleDependency
   at_1_0Api "androidx.media3:media3-exoplayer-ima:1.0.0"
+  at_1_0Api "androidx.media3:media3-exoplayer:1.0.0"
   //noinspection GradleDependency
-  at_1_1Api "androidx.media3:media3-exoplayer-ima:1.1.0"
+  at_1_1Api "androidx.media3:media3-exoplayer-ima:1.1.1"
   //noinspection GradleDependency
-  at_latestApi "androidx.media3:media3-exoplayer-ima:1.1.0"
+  at_1_1Api "androidx.media3:media3-exoplayer:1.1.1"
+  at_latestApi "androidx.media3:media3-exoplayer-ima:1.1.1"
+  at_latestApi "androidx.media3:media3-exoplayer:1.1.1"
 
   implementation 'androidx.core:core-ktx:1.10.1'
   implementation 'androidx.appcompat:appcompat:1.6.1'

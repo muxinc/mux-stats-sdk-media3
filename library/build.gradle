@@ -83,7 +83,7 @@ muxDistribution {
     inceptionYear = "2022"
     url = "https://github.com/muxinc/mux-stats-sdk-media3"
     organization {
-      name =  "Mux, Inc"
+      name = "Mux, Inc"
       url = "https://www.mux.com"
     }
     developers {

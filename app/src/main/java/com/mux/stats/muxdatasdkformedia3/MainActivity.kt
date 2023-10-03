@@ -3,7 +3,6 @@ package com.mux.stats.muxdatasdkformedia3
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityMainBinding
 import com.mux.stats.muxdatasdkformedia3.databinding.ListitemExampleBinding
-import com.mux.stats.muxdatasdkformedia3.examples.background.BackgroundPlayActivity
 import com.mux.stats.muxdatasdkformedia3.examples.basic.BasicPlayerActivity
-import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaAdsActivity
+import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaClientAdsActivity
+import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaServerAdsActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,8 +33,12 @@ class MainActivity : AppCompatActivity() {
       destination = Intent(this, BasicPlayerActivity::class.java)
     ),
     Example(
-      title = "IMA Ads",
-      destination = Intent(this, ImaAdsActivity::class.java)
+      title = "IMA Ads (CSAI, most common)",
+      destination = Intent(this, ImaClientAdsActivity::class.java)
+    ),
+    Example(
+      title = "IMA Ads (DAI/SSAI, less common)",
+      destination = Intent(this, ImaServerAdsActivity::class.java)
     ),
     Example(
       title = "Live Playback",
