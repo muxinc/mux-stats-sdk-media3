@@ -8,6 +8,8 @@ import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.AdEvent
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 
 /**
  * TODO: doc out of date
@@ -30,6 +32,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   player: P,
   playerView: View? = null,
   customOptions: CustomOptions? = null,
+  network: INetworkRequest? = null,
   playerBinding: MuxPlayerAdapter.PlayerBinding<P>,
 ) : MuxDataSdk<P, View>(
   context = context,
@@ -47,7 +50,8 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
     muxPluginName = "mux-media3",
     muxPluginVersion = BuildConfig.LIB_VERSION,
     playerSoftware = "media3-generic",
-  )
+  ),
+  makeNetworkRequest = { device -> network ?: MuxNetwork(device, CoroutineScope(Dispatchers.IO))}
 ) {
   /**
    * Collects events related to ad playback and reports them. If you are using Google IMA, you don't
