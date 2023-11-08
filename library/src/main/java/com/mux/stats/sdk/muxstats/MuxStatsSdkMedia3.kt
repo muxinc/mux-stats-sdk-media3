@@ -51,7 +51,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
     muxPluginVersion = BuildConfig.LIB_VERSION,
     playerSoftware = "media3-generic",
   ),
-  makeNetworkRequest = { device -> network ?: MuxNetwork(device, CoroutineScope(Dispatchers.IO))}
+  makeNetworkRequest = { device -> network ?: MuxNetwork(device, CoroutineScope(Dispatchers.IO)) }
 ) {
   /**
    * Collects events related to ad playback and reports them. If you are using Google IMA, you don't
