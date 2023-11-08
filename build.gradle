@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
   project.ext {
-    coreVersion = '1.0.1'
+    coreVersion = 'dev-testing-add-mux-network-factory-f5d69ac'
   }
 
   tasks.withType(DokkaTaskPartial.class) {
