@@ -22,6 +22,8 @@ import kotlinx.coroutines.Dispatchers
  * @param player the player you wish to observe
  * @param playerView the View showing your video content
  * @param customOptions Options that affect the behavior of the SDK
+ * @param network Optional. A custom [INetworkRequest] to use instead of the default.
+ * @param device Optional. A custom [IDevice] to use instead of the default.
  * @param playerBinding a [MuxPlayerAdapter.PlayerBinding] that can observe the state of your player
  * @param P The type of player being monitored.
  */
@@ -33,6 +35,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   playerView: View? = null,
   customOptions: CustomOptions? = null,
   network: INetworkRequest? = null,
+  device: IDevice? = null,
   playerBinding: MuxPlayerAdapter.PlayerBinding<P>,
 ) : MuxDataSdk<P, View>(
   context = context,
@@ -44,14 +47,14 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   logLevel = LogcatLevel.DEBUG,
   trackFirstFrame = true,
   playerBinding = playerBinding,
-  device = AndroidDevice(
+  device = device ?: AndroidDevice(
     ctx = context,
-    playerVersion = BuildConfig.MEDIA3_VERSION, /* TODO: Dynamic would be better if possible*/
+    playerVersion = BuildConfig.MEDIA3_VERSION, /* TODO: dynamically detecting would be better*/
     muxPluginName = "mux-media3",
     muxPluginVersion = BuildConfig.LIB_VERSION,
     playerSoftware = "media3-generic",
   ),
-  makeNetworkRequest = { device -> network ?: MuxNetwork(device, CoroutineScope(Dispatchers.IO)) }
+  makeNetworkRequest = { iDevice -> network ?: MuxNetwork(iDevice, CoroutineScope(Dispatchers.IO)) }
 ) {
   /**
    * Collects events related to ad playback and reports them. If you are using Google IMA, you don't
