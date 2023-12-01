@@ -22,6 +22,7 @@ android {
     // We still need to declare different flavors so we can create version-specific variants
     at_1_0 { dimension "media3" }
     at_1_1 { dimension "media3" }
+    at_1_2 { dimension "media3" }
     at_latest { dimension "media3" }
   }
 
@@ -104,9 +105,14 @@ dependencies {
   at_1_1CompileOnly "androidx.media3:media3-exoplayer-hls:1.1.0"
 
   //noinspection GradleDependency
-  at_latestApi "androidx.media3:media3-exoplayer:1.1.0"
+  at_1_2Api "androidx.media3:media3-exoplayer:1.2.0"
   //noinspection GradleDependency
-  at_latestCompileOnly "androidx.media3:media3-exoplayer-hls:1.1.0"
+  at_1_2CompileOnly "androidx.media3:media3-exoplayer-hls:1.2.0"
+
+  //noinspection GradleDependency
+  at_latestApi "androidx.media3:media3-exoplayer:1.2.0"
+  //noinspection GradleDependency
+  at_latestCompileOnly "androidx.media3:media3-exoplayer-hls:1.2.0"
 
   implementation 'androidx.core:core-ktx:1.12.0'
   implementation 'androidx.appcompat:appcompat:1.6.1'
