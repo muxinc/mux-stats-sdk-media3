@@ -28,9 +28,13 @@ android {
       dimension "media3"
       buildConfigField "String", "MEDIA3_VERSION", "\"1.1.x\""
     }
+    at_1_2 {
+      dimension "media3"
+      buildConfigField "String", "MEDIA3_VERSION", "\"1.2.x\""
+    }
     at_latest {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.1.x\""
+      buildConfigField "String", "MEDIA3_VERSION", "\"1.2.x\""
     }
   }
 
@@ -105,8 +109,8 @@ dependencies {
   at_1_0Api "androidx.media3:media3-common:1.0.0"
   //noinspection GradleDependency
   at_1_1Api "androidx.media3:media3-common:1.1.0"
-  //noinspection GradleDependency
-  at_latestApi "androidx.media3:media3-common:1.1.0"
+  at_1_2Api "androidx.media3:media3-common:1.2.0"
+  at_latestApi "androidx.media3:media3-common:1.2.0"
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 
