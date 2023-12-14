@@ -28,11 +28,13 @@ import java.util.regex.Pattern
  * point both HLS and DASH segments are processed in same way so all metrics are collected here.
  */
 internal open class BandwidthMetrics(
-  private val player: ExoPlayer,
+  player: ExoPlayer,
   private val collector: MuxStateCollector
 ) {
   /** Available qualities. */
   var availableTracks: List<Group>? = null
+
+  private val player by weak(player)
 
   /**
    * Each segment that started loading is stored here until the segment ceases loading.
@@ -89,12 +91,14 @@ internal open class BandwidthMetrics(
   ): BandwidthMetricData {
     // Populate segment time details.
     synchronized(currentTimelineWindow) {
-      try {
-        player.currentTimeline
-          .getWindow(player.currentWindowIndex, currentTimelineWindow)
-      } catch (e: Exception) {
-        // Failed to obtain data, ignore, we will get it on next call
-        MuxLogger.exception(e, "BandwidthMetrics", "Failed to get current timeline")
+      player?.let { safePlayer ->
+        try {
+          safePlayer.currentTimeline
+            .getWindow(safePlayer.currentWindowIndex, currentTimelineWindow)
+        } catch (e: Exception) {
+          // Failed to obtain data, ignore, we will get it on next call
+          MuxLogger.exception(e, "BandwidthMetrics", "Failed to get current timeline")
+        }
       }
     }
     val segmentData = BandwidthMetricData()
