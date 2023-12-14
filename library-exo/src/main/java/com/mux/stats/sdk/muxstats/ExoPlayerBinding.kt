@@ -96,9 +96,11 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 @OptIn(UnstableApi::class)
 private class MuxAnalyticsListener(
   player: ExoPlayer,
-  val bandwidthMetrics: BandwidthMetricDispatcher,
+  bandwidthMetrics: BandwidthMetricDispatcher,
   val collector: MuxStateCollector,
 ) : AnalyticsListener {
+
+  private val bandwidthMetrics by weak(bandwidthMetrics)
   private val player by weak(player)
 
   override fun onPlayWhenReadyChanged(
