@@ -28,13 +28,11 @@ import java.util.regex.Pattern
  * point both HLS and DASH segments are processed in same way so all metrics are collected here.
  */
 internal open class BandwidthMetrics(
-  player: ExoPlayer,
+  private val player: ExoPlayer,
   private val collector: MuxStateCollector
 ) {
   /** Available qualities. */
   var availableTracks: List<Group>? = null
-
-  private val player by weak(player)
 
   /**
    * Each segment that started loading is stored here until the segment ceases loading.
@@ -91,14 +89,12 @@ internal open class BandwidthMetrics(
   ): BandwidthMetricData {
     // Populate segment time details.
     synchronized(currentTimelineWindow) {
-      player?.let { safePlayer ->
-        try {
-          safePlayer.currentTimeline
-            .getWindow(safePlayer.currentWindowIndex, currentTimelineWindow)
-        } catch (e: Exception) {
-          // Failed to obtain data, ignore, we will get it on next call
-          MuxLogger.exception(e, "BandwidthMetrics", "Failed to get current timeline")
-        }
+      try {
+        player.currentTimeline
+          .getWindow(player.currentWindowIndex, currentTimelineWindow)
+      } catch (e: Exception) {
+        // Failed to obtain data, ignore, we will get it on next call
+        MuxLogger.exception(e, "BandwidthMetrics", "Failed to get current timeline")
       }
     }
     val segmentData = BandwidthMetricData()
@@ -415,9 +411,7 @@ internal class BandwidthMetricDispatcher(
       }
 
       val headerValues: List<String> = responseHeaders[headerName]!!
-      if (headerValues.isEmpty()) {
-        headers[headerName] = ""
-      } else if (headerValues.size == 1) {
+      if (headerValues.size == 1) {
         headers[headerName] = headerValues[0]
       } else if (headerValues.size > 1) {
         // In the case that there is more than one header, we squash
