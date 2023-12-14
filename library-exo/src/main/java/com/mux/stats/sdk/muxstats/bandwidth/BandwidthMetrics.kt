@@ -411,7 +411,9 @@ internal class BandwidthMetricDispatcher(
       }
 
       val headerValues: List<String> = responseHeaders[headerName]!!
-      if (headerValues.size == 1) {
+      if (headerValues.isEmpty()) {
+        headers[headerName] = ""
+      } else if (headerValues.size == 1) {
         headers[headerName] = headerValues[0]
       } else if (headerValues.size > 1) {
         // In the case that there is more than one header, we squash
