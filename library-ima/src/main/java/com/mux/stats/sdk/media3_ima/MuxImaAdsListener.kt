@@ -60,8 +60,12 @@ class MuxImaAdsListener private constructor(
     val viewData = ViewData()
     val adData = AdData();
     if (ad != null) {
-      viewData.viewPrerollAdId = ad.adId
-      viewData.viewPrerollCreativeId = ad.creativeId
+      adCollector?.let {
+        if (it.playbackPositionMillis < 1000L) {
+          viewData.viewPrerollAdId = ad.adId
+          viewData.viewPrerollCreativeId = ad.creativeId
+        }
+      }
 
       exoPlayer?.getAdTagUrl()?.let { adData.adTagUrl = it }
       ad.adId?.let { adData.adId = it }
