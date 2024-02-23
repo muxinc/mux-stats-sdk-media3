@@ -108,13 +108,6 @@ private fun createPlayer(context: Context): ExoPlayer {
     }
 }
 
-// todo:
-//  remember mediaUri by rememberUpdatedState & LaunchedEffect(or DisposableEffect?), change
-//    MediaItem when it changes This LaunchedEffect(or DisposableEffect?) sets the MediaItem
-//  rememberUpdatedState on the playerProvider, but doesn't need to be key on LaunchedEffect
-//  one level up: put an exoplayer + muxStats into a DisposableEffect. (each their own maybe?)
-//    When the mediaUri changes, call videoChange (or dispose of the MuxStats)
-
 val videoList = listOf(
   VideoInformation(Uri.parse(Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY), "Sintel"),
   VideoInformation(Uri.parse(Constants.VOD_TEST_URL_BIG_BUCK_BUNNY), "Big Buck Bunny"),
@@ -157,14 +150,6 @@ fun VideoSwitchingScreen(
         .fillMaxWidth()
         .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
-//      Text(
-//        text = buildAnnotatedString {
-//          withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { "Current Video: " }
-//          videoInformation.title
-//        }
-//
-//      )
-
 
       VideoPlayer(
         info = videoInformation,
