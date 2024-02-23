@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityMainBinding
 import com.mux.stats.muxdatasdkformedia3.databinding.ListitemExampleBinding
 import com.mux.stats.muxdatasdkformedia3.examples.basic.BasicPlayerActivity
+import com.mux.stats.muxdatasdkformedia3.examples.basic.ComposeUiExampleActivity
 import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaClientAdsActivity
 import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaServerAdsActivity
 
@@ -49,6 +50,10 @@ class MainActivity : AppCompatActivity() {
         )
       }
     ),
+    Example(
+      title = "Compose UI With Shared Player",
+      destination = Intent(this, ComposeUiExampleActivity::class.java)
+    )
     // TODO: post-beta, add APIs for talking to a `MediaSessionService`
 //    Example(
 //      title = "Background playback",
