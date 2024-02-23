@@ -214,7 +214,8 @@ fun VideoPlayer(
 
           // todo - or reset the muxStats, but you'd have to pass it back up
           muxStats?.videoChange(CustomerVideoData().apply {
-            videoSourceUrl = info.toString()
+            videoSourceUrl = info.uri.toString()
+            videoTitle = info.title
           })
 
           player.setMediaItem(MediaItem.fromUri(info.uri))
