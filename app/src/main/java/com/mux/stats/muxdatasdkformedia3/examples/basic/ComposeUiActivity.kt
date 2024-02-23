@@ -30,6 +30,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -151,27 +152,19 @@ fun VideoSwitchingScreen(
   Column(modifier) {
     val videoInformation = videoList[currentVideoIdx.intValue]
 
-    Row(
+    Box(
       modifier = modifier
         .fillMaxWidth()
         .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
-      Text(
-        buildAnnotatedString {
-          withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { "Current Video: " }
-          videoInformation.title
-        }
-      )
-      Button(onClick = {
-        val nextIdx = if (currentVideoIdx.intValue >= videoList.size) {
-          0
-        } else {
-          currentVideoIdx.intValue + 1
-        }
-        currentVideoIdx.intValue = nextIdx
-      }) {
-        Text("Change video")
-      }
+//      Text(
+//        text = buildAnnotatedString {
+//          withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) { "Current Video: " }
+//          videoInformation.title
+//        }
+//
+//      )
+
 
       VideoPlayer(
         info = videoInformation,
@@ -182,6 +175,18 @@ fun VideoSwitchingScreen(
           .fillMaxWidth()
           .height(500.dp)
       )
+      Button(onClick = {
+        val nextIdx = if (currentVideoIdx.intValue >= videoList.size) {
+          0
+        } else {
+          currentVideoIdx.intValue + 1
+        }
+        currentVideoIdx.intValue = nextIdx
+      },
+        modifier = Modifier.align(Alignment.TopCenter).padding(all = 12.dp)
+      ) {
+        Text("Change video")
+      }
     }
   }
 }
