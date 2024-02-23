@@ -75,7 +75,7 @@ class ExampleListAdapter(
     )
     return Holder(
       viewBinding = viewBinding,
-      itemView = viewBinding.root
+      root = viewBinding.root
     )
   }
 
@@ -84,11 +84,11 @@ class ExampleListAdapter(
   override fun onBindViewHolder(holder: Holder, position: Int) {
     val example = examples[position]
     holder.viewBinding.exampleName.text = example.title
-    holder.itemView.setOnClickListener { context.startActivity(example.destination) }
+    holder.viewBinding.root.setOnClickListener { context.startActivity(example.destination) }
   }
 
   class Holder(
-    val itemView: View,
+    root: View,
     val viewBinding: ListitemExampleBinding
-  ) : RecyclerView.ViewHolder(itemView)
+  ) : RecyclerView.ViewHolder(root)
 }
