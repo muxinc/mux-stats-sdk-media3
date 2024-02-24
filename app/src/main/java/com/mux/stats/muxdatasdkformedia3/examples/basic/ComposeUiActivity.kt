@@ -233,38 +233,3 @@ data class VideoInformation(
   val uri: Uri,
   val title: String
 )
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-  Text(
-    text = "Hello $name!",
-    modifier = modifier
-  )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-  MuxDataSDKForMedia3Theme {
-    Greeting("Android")
-  }
-}
-
-class PlayerPool(val size: Int) {
-  private val deque = Queues.newArrayBlockingQueue<ExoPlayer>(size)
-
-  fun obtain(): ExoPlayer? {
-    return deque.poll()
-  }
-
-  fun giveBack(player: ExoPlayer): Boolean {
-    return deque.offer(player)
-  }
-
-  fun releaseAllPlayers() {
-    deque.forEach {
-      it.stop()
-      it.release()
-    }
-  }
-}
