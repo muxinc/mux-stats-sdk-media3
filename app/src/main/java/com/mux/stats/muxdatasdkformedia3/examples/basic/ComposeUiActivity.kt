@@ -1,9 +1,12 @@
 package com.mux.stats.muxdatasdkformedia3.examples.basic
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -48,6 +51,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import com.google.common.collect.Queues
 import com.mux.stats.muxdatasdkformedia3.Constants
+import com.mux.stats.muxdatasdkformedia3.R
 import com.mux.stats.muxdatasdkformedia3.examples.basic.ui.theme.MuxDataSDKForMedia3Theme
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
@@ -176,6 +180,7 @@ fun VideoSwitchingScreen(
   }
 }
 
+@SuppressLint("InflateParams") // we are inflating from VideoPlayer
 @Composable
 fun VideoPlayer(
   info: VideoInformation,
@@ -211,8 +216,10 @@ fun VideoPlayer(
       AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = { context ->
-          val view = PlayerView(context)
-          configurePlayerView(view)
+          // Inflate the PlayerView from a layout to configure its surface_type
+          val view = LayoutInflater.from(context).inflate(R.layout.include_player_view, null)
+          // Let the caller configure the PlayerView
+          configurePlayerView(view as PlayerView)
           view
         },
         update = { view -> view.player = player },
