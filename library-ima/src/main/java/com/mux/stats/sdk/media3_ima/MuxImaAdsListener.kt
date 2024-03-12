@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.media3_ima
 
+import android.util.Log
 import androidx.media3.common.Player
 import com.google.ads.interactivemedia.v3.api.Ad
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
@@ -85,6 +86,11 @@ class MuxImaAdsListener private constructor(
    * @param adEvent
    */
   override fun onAdEvent(adEvent: AdEvent) {
+    if (adEvent.type != AdEvent.AdEventType.AD_PROGRESS) {
+      Log.d("ADTEST", "onAdEvent: ${adEvent.type}")
+      Log.d("ADTEST", "\t metadata: ${adEvent.adData}")
+    }
+
     exoPlayer?.let { player ->
       when (adEvent.type) {
         AdEvent.AdEventType.LOADED -> {}

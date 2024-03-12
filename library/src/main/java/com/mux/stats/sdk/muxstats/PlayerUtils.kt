@@ -1,6 +1,7 @@
 package com.mux.stats.sdk.muxstats
 
 import android.net.Uri
+import android.util.Log
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -62,6 +63,7 @@ fun MuxStateCollector.handlePlayWhenReady(
     play()
     if (playbackState == Player.STATE_READY) {
       // If we were already READY when playWhenReady is set, then we are definitely also playing
+      Log.i("ADTEST", "playing() when playWhenReady changed")
       playing()
     }
   } else if (muxPlayerState != MuxPlayerState.PAUSED) {
@@ -113,6 +115,7 @@ fun MuxStateCollector.handleExoPlaybackState(
 
       // If playWhenReady && READY, we're playing or else we're paused
       if (playWhenReady) {
+        Log.i("ADTEST", "now playing from state-change")
         playing()
       } else if (muxPlayerState != MuxPlayerState.PAUSED) {
         pause()
