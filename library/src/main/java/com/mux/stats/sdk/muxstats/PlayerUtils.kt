@@ -2,11 +2,13 @@ package com.mux.stats.sdk.muxstats
 
 import android.net.Uri
 import android.util.Log
+import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Tracks
+import androidx.media3.common.util.UnstableApi
 import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.model.VideoData
 import com.mux.stats.sdk.core.util.MuxLogger
@@ -17,6 +19,7 @@ private const val LOG_TAG = "PlayerUtils"
 /**
  * Returns true if any media track in the given [Tracks] object had a video MIME type
  */
+@OptIn(UnstableApi::class)
 fun Tracks.hasAtLeastOneVideoTrack(): Boolean {
   return groups.map { it.mediaTrackGroup }
     .filter { trackGroup -> trackGroup.length > 0 }
@@ -93,6 +96,16 @@ fun MuxStateCollector.handleExoPlaybackState(
   @Player.State playbackState: Int,
   playWhenReady: Boolean
 ) {
+  val stateStr = playbackState.let {
+    when(it) {
+      Player.STATE_BUFFERING -> "BUFFERING"
+      Player.STATE_READY -> "READY"
+      Player.STATE_IDLE -> "IDLE"
+      Player.STATE_ENDED -> "ENDED"
+      else -> "unknown"
+    }
+  }
+  Log.v("ADTEST", "handleExoPlaybackState(). New state is $stateStr")
   if (this.muxPlayerState == MuxPlayerState.PLAYING_ADS) {
     // Normal playback events are ignored during ad playback.
     return

@@ -50,6 +50,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
   override fun onResume() {
     super.onResume()
     startPlaying(Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY, Constants.AD_TAG_COMPLEX)
+//    startPlaying(Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY, Constants.AD_TAG_SIMPLE_W_MID_ROLL)
   }
 
   override fun onPause() {
@@ -99,7 +100,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
     val customerData = CustomerData(
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
-        title = "Media3 IAM CSAI"
+        title = "Media3 IMA CSAI"
       },
       CustomerViewData().apply { }
     )

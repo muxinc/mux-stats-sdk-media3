@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.muxstats
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
@@ -218,6 +219,7 @@ private class MuxAnalyticsListener(
     error: IOException,
     wasCanceled: Boolean
   ) {
+    Log.w("ADTEST", "chunk: onLoadError")
     bandwidthMetrics?.onLoadError(
       loadTaskId = loadEventInfo.loadTaskId,
       segmentUrl = loadEventInfo.uri.path,
@@ -230,6 +232,7 @@ private class MuxAnalyticsListener(
     loadEventInfo: LoadEventInfo,
     mediaLoadData: MediaLoadData
   ) {
+    Log.w("ADTEST", "request: onLoadCanceled")
     bandwidthMetrics?.onLoadCanceled(
       loadTaskId = loadEventInfo.loadTaskId,
       segmentUrl = loadEventInfo.uri.path,
@@ -242,6 +245,8 @@ private class MuxAnalyticsListener(
     loadEventInfo: LoadEventInfo,
     mediaLoadData: MediaLoadData
   ) {
+    Log.w("ADTEST", "request: onLoadStarted")
+    Log.w("ADTEST", "\t loading ${loadEventInfo.uri}")
     var segmentMimeType = "unknown"
     var segmentWidth = 0
     var segmentHeight = 0
@@ -263,6 +268,8 @@ private class MuxAnalyticsListener(
     loadEventInfo: LoadEventInfo,
     mediaLoadData: MediaLoadData
   ) {
+    Log.w("ADTEST", "request: onLoadCompleted")
+    Log.w("ADTEST", "\t loading ${loadEventInfo.uri}")
     @Suppress("SENSELESS_COMPARISON")
     if (loadEventInfo.uri != null) {
       bandwidthMetrics?.onLoadCompleted(
