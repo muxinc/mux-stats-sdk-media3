@@ -17,6 +17,9 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ima.ImaAdsLoader
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
+import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
+import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
 import com.mux.stats.sdk.core.model.CustomerData
@@ -58,6 +61,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
     super.onPause()
   }
 
+  @OptIn(UnstableApi::class)
   private fun startPlaying(mediaUrl: String, adTagUri: String) {
     stopPlaying()
 

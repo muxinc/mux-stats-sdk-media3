@@ -94,6 +94,7 @@ class MuxImaAdsListener private constructor(
     exoPlayer?.let { player ->
       when (adEvent.type) {
         AdEvent.AdEventType.LOADED -> {}
+
         AdEvent.AdEventType.CONTENT_PAUSE_REQUESTED, // for CSAI
         AdEvent.AdEventType.AD_PERIOD_STARTED // for SSAI
         -> {
@@ -106,6 +107,7 @@ class MuxImaAdsListener private constructor(
           adCollector?.onStartPlayingAds()
           if (player.playWhenReady || player.currentPosition != 0L) {
             dispatchAdPlaybackEvent(AdBreakStartEvent(null), ad)
+            Log.v("ADTEST", "adPlay from content pause")
             dispatchAdPlaybackEvent(AdPlayEvent(null), ad)
           } else {
             // This is preroll ads when play when ready is set to false, we need to ignore these events
@@ -118,6 +120,7 @@ class MuxImaAdsListener private constructor(
           // CONTENT_PAUSE_REQUESTED
           @Suppress("RedundantNullableReturnType") val ad: Ad? = adEvent.ad
           if (sendPlayOnStarted) {
+            Log.v("ADTEST", "adPlay from content pause")
             dispatchAdPlaybackEvent(AdPlayEvent(null), ad)
           } else {
             sendPlayOnStarted = true
@@ -183,9 +186,11 @@ class MuxImaAdsListener private constructor(
             // This is special case when we have ad preroll and play when ready is set to false
             // in that case we need to dispatch AdBreakStartEvent first and resume the playback.
             dispatchAdPlaybackEvent(AdBreakStartEvent(null), ad)
+            Log.v("ADTEST", "adPlay from content pause")
             dispatchAdPlaybackEvent(AdPlayEvent(null), ad)
             missingAdBreakStartEvent = false
           } else {
+            Log.v("ADTEST", "adPlay from content pause")
             dispatchAdPlaybackEvent(AdPlayEvent(null), ad)
             dispatchAdPlaybackEvent(AdPlayingEvent(null), ad)
           }
