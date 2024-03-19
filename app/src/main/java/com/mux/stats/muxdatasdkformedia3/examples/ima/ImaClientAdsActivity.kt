@@ -12,7 +12,14 @@ import androidx.media3.common.MediaItem.AdsConfiguration
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.BaseDataSource
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.HttpDataSource
+import androidx.media3.datasource.HttpDataSource.HttpDataSourceException
+import androidx.media3.datasource.TransferListener
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.ima.ImaAdsLoader
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
@@ -29,6 +36,7 @@ import com.mux.stats.sdk.core.model.CustomerViewData
 import com.mux.stats.sdk.media3_ima.monitorWith
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
+import java.io.IOException
 
 class ImaClientAdsActivity : AppCompatActivity() {
 
@@ -119,7 +127,8 @@ class ImaClientAdsActivity : AppCompatActivity() {
 
   @OptIn(UnstableApi::class)
   private fun createPlayer(): ExoPlayer {
-    val mediaSrcFactory = DefaultMediaSourceFactory(DefaultDataSource.Factory(this))
+//    val mediaSrcFactory = DefaultMediaSourceFactory(DefaultDataSource.Factory(this))
+    val mediaSrcFactory = DefaultMediaSourceFactory { TestDataSource(DefaultDataSource.Factory(this)) }
       .setLocalAdInsertionComponents({ adsLoader }, view.playerView)
 
     return ExoPlayer.Builder(this)
@@ -134,4 +143,55 @@ class ImaClientAdsActivity : AppCompatActivity() {
         })
       }
   }
+}
+
+@OptIn(UnstableApi::class)
+private class TestDataSource(
+  val fac: DataSource.Factory
+): BaseDataSource(true) {
+
+  var httpDataSource: DataSource? = null
+  var dataSpec: DataSpec? = null
+
+  override fun read(buffer: ByteArray, offset: Int, length: Int): Int {
+    if (failForTestingReasons(dataSpec!!) && false) {
+      throw Exception("failed")
+    } else {
+      return httpDataSource?.read(buffer, offset, length) ?: 0
+    }
+  }
+
+  override fun open(dataSpec: DataSpec): Long {
+    if (failForTestingReasons(dataSpec)) {
+      //throw IOException("failed generically")
+      throw Exception("failed really generically")
+    } else {
+      val src = fac.createDataSource()
+      this.httpDataSource = src
+      this.dataSpec = dataSpec
+      return src.open(dataSpec)
+    }
+   }
+
+  override fun getUri(): Uri? {
+    return httpDataSource?.uri
+  }
+
+  override fun close() {
+    httpDataSource?.close()
+  }
+
+  private fun failForTestingReasons(dataSpec: DataSpec): Boolean {
+    val uri = dataSpec.uri
+
+    // ima csai sample
+    val filename = "file.mp4"
+    // todo - ssai - i wonder if segments & manifests are handled differently
+    return if (uri.lastPathSegment == filename) {
+      true
+    } else {
+      false
+    }
+  }
+
 }

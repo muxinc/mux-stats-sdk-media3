@@ -93,7 +93,10 @@ class MuxImaAdsListener private constructor(
 
     exoPlayer?.let { player ->
       when (adEvent.type) {
-        AdEvent.AdEventType.LOADED -> {}
+        AdEvent.AdEventType.LOADED -> {
+          // note: Don't use LOADED for anything, it doesn't correspond to any actual loading
+          // todo - explain more
+        }
 
         AdEvent.AdEventType.CONTENT_PAUSE_REQUESTED, // for CSAI
         AdEvent.AdEventType.AD_PERIOD_STARTED // for SSAI
