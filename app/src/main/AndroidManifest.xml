@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +17,11 @@
         android:theme="@style/Theme.MuxDataSDKForMedia3"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".examples.basic.ComposeUiExampleActivity"
+            android:exported="false"
+            android:label="@string/title_activity_compose_ui_example"
+            android:theme="@style/Theme.MuxDataSDKForMedia3" />
         <activity
             android:name=".examples.ima.ImaClientAdsActivity"
             android:exported="false" />
@@ -47,6 +52,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".examples.basic.BasicPlayerActivity" />
+
     </application>
 
 </manifest>

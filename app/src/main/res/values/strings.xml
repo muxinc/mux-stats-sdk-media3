@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Mux Data SDK for Media3</string>
+    <string name="title_activity_compose_ui_example">ComposeUiExampleActivity</string>
 </resources>
