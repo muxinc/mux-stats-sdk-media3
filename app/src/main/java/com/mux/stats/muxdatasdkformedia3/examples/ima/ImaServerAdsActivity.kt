@@ -26,6 +26,9 @@ import androidx.media3.exoplayer.ima.ImaServerSideAdInsertionUriBuilder
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import com.google.ads.interactivemedia.v3.api.AdEvent
+import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
+import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerSsaiBinding
@@ -257,4 +260,38 @@ private class TestDataSourceSsai(
     }
   }
 
+}
+
+// note - dai doesn't have the thing
+private class ServerVideoPlayerAdCallback : VideoAdPlayer.VideoAdPlayerCallback {
+  override fun onAdProgress(p0: AdMediaInfo, p1: VideoProgressUpdate) {
+  }
+
+  override fun onBuffering(p0: AdMediaInfo) {
+  }
+
+  override fun onContentComplete() {
+  }
+
+  override fun onEnded(p0: AdMediaInfo) {
+  }
+
+  override fun onError(p0: AdMediaInfo) {
+  }
+
+  override fun onLoaded(p0: AdMediaInfo) {
+    Log.d("ADTEST", "VideoPlayerAdCallback says onLoaded: ${p0.url}")
+  }
+
+  override fun onPause(p0: AdMediaInfo) {
+  }
+
+  override fun onPlay(p0: AdMediaInfo) {
+  }
+
+  override fun onResume(p0: AdMediaInfo) {
+  }
+
+  override fun onVolumeChanged(p0: AdMediaInfo, p1: Int) {
+  }
 }

@@ -91,6 +91,7 @@ class BasicPlayerActivity : AppCompatActivity() {
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
         videoId = "A Custom ID"
+        videoSourceUrl = Constants.HERE_IS_ONE
       },
       CustomerViewData().apply { }
     )

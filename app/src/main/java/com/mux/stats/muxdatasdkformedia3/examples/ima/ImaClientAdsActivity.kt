@@ -26,6 +26,7 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
 import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer
+import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
 import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
@@ -76,6 +77,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
     player = createPlayer().also { newPlayer ->
       muxStats = monitorPlayer(newPlayer)
       adsLoader = ImaAdsLoader.Builder(this)
+        .setVideoAdPlayerCallback(ClientVideoPlayerAdCallback())
         .monitorWith(
           muxStats = muxStats!!,
           customerAdErrorListener = { /*Optional parameter, your custom logic*/ },
@@ -162,7 +164,7 @@ private class TestDataSource(
   }
 
   override fun open(dataSpec: DataSpec): Long {
-    if (failForTestingReasons(dataSpec)) {
+    if (failForTestingReasons(dataSpec) && false) {
       //throw IOException("failed generically")
       throw Exception("failed really generically")
     } else {
@@ -194,4 +196,37 @@ private class TestDataSource(
     }
   }
 
+}
+
+private class ClientVideoPlayerAdCallback : VideoAdPlayerCallback {
+  override fun onAdProgress(p0: AdMediaInfo, p1: VideoProgressUpdate) {
+  }
+
+  override fun onBuffering(p0: AdMediaInfo) {
+  }
+
+  override fun onContentComplete() {
+  }
+
+  override fun onEnded(p0: AdMediaInfo) {
+  }
+
+  override fun onError(p0: AdMediaInfo) {
+  }
+
+  override fun onLoaded(p0: AdMediaInfo) {
+    Log.d("ADTEST", "VideoPlayerAdCallback says onLoaded: ${p0.url}")
+  }
+
+  override fun onPause(p0: AdMediaInfo) {
+  }
+
+  override fun onPlay(p0: AdMediaInfo) {
+  }
+
+  override fun onResume(p0: AdMediaInfo) {
+  }
+
+  override fun onVolumeChanged(p0: AdMediaInfo, p1: Int) {
+  }
 }
