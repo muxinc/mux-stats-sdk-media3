@@ -10,10 +10,12 @@ import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.events.playback.*
 import com.mux.stats.sdk.core.model.AdData
 import com.mux.stats.sdk.core.model.ViewData
+import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.AdCollector
 import com.mux.stats.sdk.muxstats.MuxPlayerState
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.core.events.playback.AdEvent as MuxAdEvent
+import com.mux.stats.sdk.core.events.playback.AdErrorEvent as MuxAdErrorEvent
 
 /**
  * Listens for [AdErrorEvent] and [AdEvent]s from an IMA Ads loader.
@@ -39,12 +41,12 @@ class MuxImaAdsListener private constructor(
   private var missingAdBreakStartEvent = false
 
   /**
-   * Handles Ad errors
+   * Handles VAST and other manifest-fetching errors
    *
    * @param adErrorEvent, Error to be handled.
    */
   override fun onAdError(adErrorEvent: AdErrorEvent) {
-    val event = AdErrorEvent(null)
+    val event = MuxAdErrorEvent(null)
     setupAdViewData(event, null)
     adCollector?.dispatch(event)
     customerAdErrorListener.onAdError(adErrorEvent)
@@ -87,7 +89,24 @@ class MuxImaAdsListener private constructor(
   override fun onAdEvent(adEvent: AdEvent) {
     exoPlayer?.let { player ->
       when (adEvent.type) {
-        AdEvent.AdEventType.LOADED -> {}
+        AdEvent.AdEventType.LOADED -> {
+          // note that this event only means "data is available" and can be fired multiple times
+          //  for the same successful ad. VideoPlayerAdCallback can be more reliable
+        }
+
+        AdEvent.AdEventType.LOG -> {
+          val data = adEvent.adData
+          // theoretically LOG could be for things other than errors so at least do this check
+          if (data["errorMessage"] != null
+            || data["errorCode"] != null
+            || data["innerError"] != null
+          ) {
+            dispatchAdPlaybackEvent(MuxAdErrorEvent(null), adEvent.ad)
+          } else {
+            MuxLogger.d(TAG, "Logged IMA event: $adEvent")
+          }
+        }
+
         AdEvent.AdEventType.CONTENT_PAUSE_REQUESTED, // for CSAI
         AdEvent.AdEventType.AD_PERIOD_STARTED // for SSAI
         -> {
