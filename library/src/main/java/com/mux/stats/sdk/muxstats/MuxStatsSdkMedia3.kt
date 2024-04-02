@@ -101,6 +101,15 @@ class AdCollector private constructor(
    * Call when ad playback starts
    */
   fun onStartPlayingAds() {
+    // edge case: if an IMA mid/postroll ad fails to load in time, the ExoPlayer will go into the
+    //   BUFFERING state and we'll be in REBUFFERING, for one final attempt to get the ads.
+    //   If that fails, the player will go into an adbreak for a few millis and then continue with
+    //   content. The events all really happen and there really is a short playback interuption so
+    //   it's good to count it all
+    if (muxPlayerState == MuxPlayerState.REBUFFERING) {
+      stateCollector.pause()
+    }
+
     stateCollector.playingAds()
   }
 
