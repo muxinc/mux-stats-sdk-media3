@@ -160,7 +160,6 @@ private class MuxAnalyticsListener(
       TAG, "onVideoInputFormatChanged: new format: bitrate ${format.bitrate}" +
           " and frameRate ${format.frameRate} "
     )
-    Log.v(TAG, "onVideoInputFormatChanged: new format: $format}")
     // Situations like looping or ad breaks can result in this callback being called for the same
     //  format multiple times over the course of a View. These aren't really rendition changes, and
     //  are not abr-related so we ignore them in this case
