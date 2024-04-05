@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.muxstats
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
@@ -155,8 +156,9 @@ private class MuxAnalyticsListener(
   ) {
     MuxLogger.d(
       TAG, "onVideoInputFormatChanged: new format: bitrate ${format.bitrate}" +
-              " and frameRate ${format.frameRate} "
+          " and frameRate ${format.frameRate} "
     )
+    Log.v(TAG, "onVideoInputFormatChanged: new format: $format}" )
     val cleanBitrate = format.bitrate.takeIf { it >= 0 } ?: 0
     val cleanFrameRate = format.frameRate.takeIf { it >= 0 } ?: 0F
 
