@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.muxstats
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
@@ -99,7 +100,9 @@ private class MuxAnalyticsListener(
   val bandwidthMetrics: BandwidthMetricDispatcher,
   val collector: MuxStateCollector,
 ) : AnalyticsListener {
+
   private val player by weak(player)
+  private var lastVideoFormat: Format? = null
 
   override fun onPlayWhenReadyChanged(
     eventTime: AnalyticsListener.EventTime,
@@ -155,17 +158,24 @@ private class MuxAnalyticsListener(
   ) {
     MuxLogger.d(
       TAG, "onVideoInputFormatChanged: new format: bitrate ${format.bitrate}" +
-              " and frameRate ${format.frameRate} "
+          " and frameRate ${format.frameRate} "
     )
-    val cleanBitrate = format.bitrate.takeIf { it >= 0 } ?: 0
-    val cleanFrameRate = format.frameRate.takeIf { it >= 0 } ?: 0F
+    // Situations like looping or ad breaks can result in this callback being called for the same
+    //  format multiple times over the course of a View. These aren't really rendition changes, and
+    //  are not abr-related so we ignore them in this case
+    if (this.lastVideoFormat == null || format != this.lastVideoFormat) {
+      val cleanBitrate = format.bitrate.takeIf { it >= 0 } ?: 0
+      val cleanFrameRate = format.frameRate.takeIf { it >= 0 } ?: 0F
 
-    collector.renditionChange(
-      advertisedBitrate = cleanBitrate,
-      advertisedFrameRate = cleanFrameRate,
-      sourceWidth = format.width,
-      sourceHeight = format.height
-    )
+      collector.renditionChange(
+        advertisedBitrate = cleanBitrate,
+        advertisedFrameRate = cleanFrameRate,
+        sourceWidth = format.width,
+        sourceHeight = format.height
+      )
+
+      this.lastVideoFormat = format
+    }
   }
 
   override fun onTracksChanged(eventTime: AnalyticsListener.EventTime, tracks: Tracks) {
