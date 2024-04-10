@@ -18,6 +18,10 @@ android {
 
   flavorDimensions = ["media3"]
   productFlavors {
+    At_latest {
+      dimension "media3"
+      buildConfigField "String", "MEDIA3_VERSION", "\"1.2.x\""
+    }
     // This module does not currently need different src sets for different media3 versions.
     // We still need to declare different flavors so we can create version-specific variants
     at_1_0 {
@@ -35,10 +39,6 @@ android {
     at_1_3 {
       dimension "media3"
       buildConfigField "String", "MEDIA3_VERSION", "\"1.3.x\""
-    }
-    at_latest {
-      dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.2.x\""
     }
   }
 
@@ -115,7 +115,7 @@ dependencies {
   at_1_1Api "androidx.media3:media3-common:1.1.0"
   at_1_2Api "androidx.media3:media3-common:1.2.0"
   at_1_3Api "androidx.media3:media3-common:1.3.0"
-  at_latestApi "androidx.media3:media3-common:1.3.0"
+  At_latestApi "androidx.media3:media3-common:1.3.0"
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 
