@@ -3,6 +3,7 @@ package com.mux.stats.sdk.muxstats.internal
 import androidx.annotation.OptIn
 import androidx.media3.common.Timeline
 import androidx.media3.common.Timeline.Window
+import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.hls.HlsManifest
 import com.mux.stats.sdk.core.util.MuxLogger
@@ -18,7 +19,13 @@ private val hlsExtensionAvailable: Boolean by lazy {
   try {
     Class.forName(HlsManifest::class.java.canonicalName!!)
     true
-  } catch (e: Exception) {
+  } catch (e: ClassNotFoundException) {
+    MuxLogger.w("isHlsExtensionAvailable", "HLS extension not found. Some features may not work")
+    false
+  } catch (e: LinkageError) {
+    MuxLogger.w("isHlsExtensionAvailable", "HLS extension not found. Some features may not work")
+    false
+  } catch (e: ExceptionInInitializerError) {
     MuxLogger.w("isHlsExtensionAvailable", "HLS extension not found. Some features may not work")
     false
   }

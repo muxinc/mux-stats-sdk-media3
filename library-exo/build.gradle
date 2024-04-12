@@ -20,10 +20,11 @@ android {
   productFlavors {
     // This module does not currently need different src sets for different media3 versions.
     // We still need to declare different flavors so we can create version-specific variants
+    At_latest { dimension "media3" }
     at_1_0 { dimension "media3" }
     at_1_1 { dimension "media3" }
     at_1_2 { dimension "media3" }
-    at_latest { dimension "media3" }
+    at_1_3 { dimension "media3" }
   }
 
   buildTypes {
@@ -110,9 +111,14 @@ dependencies {
   at_1_2CompileOnly "androidx.media3:media3-exoplayer-hls:1.2.0"
 
   //noinspection GradleDependency
-  at_latestApi "androidx.media3:media3-exoplayer:1.2.0"
+  at_1_3Api "androidx.media3:media3-exoplayer:1.3.0"
   //noinspection GradleDependency
-  at_latestCompileOnly "androidx.media3:media3-exoplayer-hls:1.2.0"
+  at_1_3CompileOnly "androidx.media3:media3-exoplayer-hls:1.3.0"
+
+  //noinspection GradleDependency
+  At_latestApi "androidx.media3:media3-exoplayer:1.3.0"
+  //noinspection GradleDependency
+  At_latestCompileOnly "androidx.media3:media3-exoplayer-hls:1.3.0"
 
   testImplementation 'junit:junit:4.13.2'
   androidTestImplementation 'androidx.test.ext:junit:1.1.5'
