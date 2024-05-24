@@ -55,6 +55,17 @@ android {
   kotlinOptions {
     jvmTarget = '1.8'
   }
+
+  packagingOptions {
+    //merges.add("$projectDir/src/main/resources/META-INF/com/mux/stats/sdk/muxstats/data-media3/verification.properties")
+    merge "**/verification.properties"
+  }
+  sourceSets {
+    main.resources {
+//      srcDir "$projectDir/src/main/resources/META-INF"
+      srcDir "$projectDir/src/main/resources"
+    }
+  }
 }
 
 muxDistribution {
