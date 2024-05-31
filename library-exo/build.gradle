@@ -12,6 +12,9 @@ android {
     minSdk 16
     targetSdk 34
 
+    // our deps almost blow the dex limit by themselves, media3 doc/examples all use multidex
+    multiDexEnabled true
+
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles "consumer-rules.pro"
   }
