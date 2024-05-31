@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
  * @param network Optional. A custom [INetworkRequest] to use instead of the default.
  * @param device Optional. A custom [IDevice] to use instead of the default.
  * @param playerBinding a [MuxPlayerAdapter.PlayerBinding] that can observe the state of your player
+ * @param logLevel The log level to use.
  * @param P The type of player being monitored.
  */
 class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
@@ -36,6 +37,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   customOptions: CustomOptions? = null,
   network: INetworkRequest? = null,
   device: IDevice? = null,
+  logLevel: LogcatLevel = LogcatLevel.NONE,
   playerBinding: MuxPlayerAdapter.PlayerBinding<P>,
 ) : MuxDataSdk<P, View>(
   context = context,
@@ -44,7 +46,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   playerView = playerView,
   customerData = customerData,
   customOptions = customOptions ?: CustomOptions(),
-  logLevel = LogcatLevel.DEBUG,
+  logLevel = logLevel,
   trackFirstFrame = true,
   playerBinding = playerBinding,
   device = device ?: AndroidDevice(
