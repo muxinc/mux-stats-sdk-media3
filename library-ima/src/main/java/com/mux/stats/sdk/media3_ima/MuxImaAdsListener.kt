@@ -2,10 +2,14 @@ package com.mux.stats.sdk.media3_ima
 
 import androidx.media3.common.Player
 import com.google.ads.interactivemedia.v3.api.Ad
+import com.google.ads.interactivemedia.v3.api.AdError
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
+import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.events.playback.*
 import com.mux.stats.sdk.core.model.AdData
@@ -24,7 +28,8 @@ class MuxImaAdsListener private constructor(
   private val provider: Provider,
   private val customerAdEventListener: AdEventListener = AdEventListener { },
   private val customerAdErrorListener: AdErrorListener = AdErrorListener { },
-) : AdErrorListener, AdEventListener {
+  private val customerVideoAdPlayerCallback: VideoAdPlayerCallback? = null,
+) : AdErrorListener, AdEventListener, VideoAdPlayerCallback {
 
   /** The ExoPlayer that is playing the ads */
   private val exoPlayer: Player? get() = provider.boundPlayer
@@ -233,11 +238,13 @@ class MuxImaAdsListener private constructor(
       muxSdk: MuxStatsSdkMedia3<*>,
       customerAdEventListener: AdEventListener = AdEventListener { },
       customerAdErrorListener: AdErrorListener = AdErrorListener { },
+      customerVideoAdPlayerCallback: VideoAdPlayerCallback? = null,
     ): MuxImaAdsListener {
       return MuxImaAdsListener(
         Provider { muxSdk },
         customerAdEventListener,
-        customerAdErrorListener
+        customerAdErrorListener,
+        customerVideoAdPlayerCallback
       )
     }
       /**
@@ -255,6 +262,49 @@ class MuxImaAdsListener private constructor(
           customerAdErrorListener
         )
       }
+  }
+
+  /** VideoAdPlayerCallback */
+  override fun onAdProgress(p0: AdMediaInfo, p1: VideoProgressUpdate) {
+    customerVideoAdPlayerCallback?.onAdProgress(p0, p1)
+  }
+
+  override fun onBuffering(p0: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onBuffering(p0)
+  }
+
+  override fun onContentComplete() {
+    customerVideoAdPlayerCallback?.onContentComplete()
+  }
+
+  override fun onEnded(p0: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onEnded(p0)
+  }
+
+  override fun onError(p0: AdMediaInfo) {
+    adCollector?.dispatch(MuxAdErrorEvent(null))
+    customerVideoAdPlayerCallback?.onError(p0)
+  }
+
+  override fun onLoaded(p0: AdMediaInfo) {
+    adCollector?.dispatch(AdResponseEvent(null))
+    customerVideoAdPlayerCallback?.onLoaded(p0)
+  }
+
+  override fun onPause(p0: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onPause(p0)
+  }
+
+  override fun onPlay(p0: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onPlay(p0)
+  }
+
+  override fun onResume(p0: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onResume(p0)
+  }
+
+  override fun onVolumeChanged(p0: AdMediaInfo, p1: Int) {
+    customerVideoAdPlayerCallback?.onVolumeChanged(p0, p1)
   }
 }
 
