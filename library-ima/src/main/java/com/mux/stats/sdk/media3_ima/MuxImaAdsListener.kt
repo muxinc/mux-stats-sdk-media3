@@ -13,6 +13,7 @@ import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.events.playback.*
 import com.mux.stats.sdk.core.model.AdData
+import com.mux.stats.sdk.core.model.PlayerData
 import com.mux.stats.sdk.core.model.ViewData
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.AdCollector
@@ -282,7 +283,10 @@ class MuxImaAdsListener private constructor(
   }
 
   override fun onError(p0: AdMediaInfo) {
-    adCollector?.dispatch(MuxAdErrorEvent(null))
+    val pData = PlayerData()
+    pData.playerErrorContext = "Ad playback error"
+    pData.setPlayerErrorSeverity(ErrorEvent.ErrorSeverity.ErrorSeverityWarning.name)
+    adCollector?.dispatch(MuxAdErrorEvent(pData))
     customerVideoAdPlayerCallback?.onError(p0)
   }
 
