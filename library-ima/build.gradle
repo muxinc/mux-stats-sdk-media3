@@ -10,7 +10,7 @@ android {
 
   defaultConfig {
     targetSdk 34
-    minSdk 16
+    minSdk 19
 
     // our deps almost blow the dex limit by themselves, media3 doc/examples all use multidex
     multiDexEnabled true
