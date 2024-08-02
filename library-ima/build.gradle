@@ -8,6 +8,10 @@ android {
   namespace 'com.mux.stats.sdk.media3_ima'
   compileSdk 34
 
+  buildFeatures {
+    buildConfig = true
+  }
+
   defaultConfig {
     targetSdk 34
     minSdk 16
