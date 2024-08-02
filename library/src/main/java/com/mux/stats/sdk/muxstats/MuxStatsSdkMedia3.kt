@@ -1,6 +1,7 @@
 package com.mux.stats.sdk.muxstats
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import androidx.media3.common.Player
 import com.mux.stats.sdk.core.CustomOptions
@@ -69,6 +70,13 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
    * The player bound to this object
    */
   val boundPlayer: P get() { return player }
+
+  override fun enable(customerData: CustomerData) {
+    // call-through to start the new view
+    super.enable(customerData)
+    // catch-up player state in case we missed prepare()
+    catchUpPlayState(player, collector)
+  }
 }
 
 /**

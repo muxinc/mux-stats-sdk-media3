@@ -35,6 +35,21 @@ fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
   return retList
 }
 
+// Catches the Collector up to the current play state if the user registers after prepare()
+@JvmSynthetic
+fun catchUpPlayState(player: Player, collector: MuxStateCollector) {
+  MuxLogger.d("PlayerUtils", "catchUpPlayState: Called. pwr is ${player.playWhenReady}")
+  if (player.playWhenReady) {
+    // Captures auto-play & late-registration, setting state and sending 'viewstart'
+    collector.play()
+  }
+  // The player will be idle when we are first attached, so we don't need to say we paused
+  //  (which is how IDLE is handled during actual playback)
+  if (player.playbackState != Player.STATE_IDLE) {
+    collector.handleExoPlaybackState(player.playbackState, player.playWhenReady)
+  }
+}
+
 /**
  * Handles an ExoPlayer position discontinuity
  */
