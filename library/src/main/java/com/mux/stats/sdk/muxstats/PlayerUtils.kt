@@ -48,7 +48,6 @@ fun catchUpPlayState(player: Player, collector: MuxStateCollector) {
   //  (which is how IDLE is handled during actual playback)
   if (player.playbackState != Player.STATE_IDLE) {
     collector.handleExoPlaybackState(player.playbackState, player.playWhenReady)
-    player.currentTimeline?.let {  }
   }
 }
 
