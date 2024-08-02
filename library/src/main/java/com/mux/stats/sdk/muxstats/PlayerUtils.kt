@@ -5,6 +5,7 @@ import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
+import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
 import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.model.VideoData
@@ -47,7 +48,22 @@ fun catchUpPlayState(player: Player, collector: MuxStateCollector) {
   //  (which is how IDLE is handled during actual playback)
   if (player.playbackState != Player.STATE_IDLE) {
     collector.handleExoPlaybackState(player.playbackState, player.playWhenReady)
+    player.currentTimeline?.let {  }
   }
+}
+
+@JvmSynthetic
+fun catchUpStreamData(player: Player, collector: MuxStateCollector) {
+  player.currentTimeline.takeIf { it.windowCount > 0 }?.let { tl ->
+    val window = Timeline.Window().apply { tl.getWindow(0, this) }
+    collector.sourceDurationMs = window.durationMs
+  }
+  @Suppress("UNNECESSARY_SAFE_CALL")
+  player.videoSize?.let {
+    collector.sourceWidth = it.width
+    collector.sourceHeight = it.height
+  }
+  player.currentMediaItem?.let { collector.handleMediaItemChanged(it) }
 }
 
 /**

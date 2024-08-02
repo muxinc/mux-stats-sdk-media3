@@ -1,6 +1,5 @@
 package com.mux.stats.sdk.muxstats
 
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
@@ -43,6 +42,7 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 
   override fun bindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
     catchUpPlayState(player, collector)
+    catchUpStreamData(player, collector)
 
     listener = MuxAnalyticsListener(
       player = player,
@@ -72,20 +72,6 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
     // Also delegate to sub-bindings
     sessionDataBinding.unbindPlayer(player, collector)
     errorBinding.unbindPlayer(player, collector)
-  }
-
-  // Catches the Collector up to the current play state if the user registers after prepare()
-  private fun catchUpPlayState(player: ExoPlayer, collector: MuxStateCollector) {
-    MuxLogger.d("PlayerUtils", "catchUpPlayState: Called. pwr is ${player.playWhenReady}")
-    if (player.playWhenReady) {
-      // Captures auto-play & late-registration, setting state and sending 'viewstart'
-      collector.play()
-    }
-    // The player will be idle when we are first attached, so we don't need to say we paused
-    //  (which is how IDLE is handled during actual playback)
-    if (player.playbackState != Player.STATE_IDLE) {
-      collector.handleExoPlaybackState(player.playbackState, player.playWhenReady)
-    }
   }
 
   companion object {
