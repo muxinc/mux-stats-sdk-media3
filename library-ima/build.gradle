@@ -8,9 +8,13 @@ android {
   namespace 'com.mux.stats.sdk.media3_ima'
   compileSdk 34
 
+  buildFeatures {
+    buildConfig = true
+  }
+
   defaultConfig {
     targetSdk 34
-    minSdk 16
+    minSdk 19
 
     // our deps almost blow the dex limit by themselves, media3 doc/examples all use multidex
     multiDexEnabled true
