@@ -69,6 +69,7 @@ class BasicPlayerActivity : AppCompatActivity() {
 
       lifecycleScope.launch(Dispatchers.Main) {
         val useEnable = true
+        val stopBeforeThirdVideo = false
 
         delay(10_000)
         Log.d("ENABLEDISABLE", "disabling")
@@ -93,7 +94,9 @@ class BasicPlayerActivity : AppCompatActivity() {
         // debugging: stop() the player => play,playing,pause,...,[actual start]
         // debugging: don't stop() the player => play,...,rebufferstart,....[actual start]
         // both cases should not sent playing (should result in 'starting up' always
-        newPlayer.stop()
+        if (stopBeforeThirdVideo) {
+          newPlayer.stop()
+        }
 
         // with the resetState() method: not-calling stop() will work
 
