@@ -11,7 +11,7 @@ plugins {
 allprojects {
   project.ext {
 //    coreVersion = '1.3.0'
-    coreVersion = 'dev-fix-reset-the-msc-4012c78'
+    coreVersion = 'dev-fix-reset-the-msc-e9bd70c'
   }
 
   tasks.withType(DokkaTaskPartial.class) {

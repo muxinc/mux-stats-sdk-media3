@@ -107,6 +107,7 @@ class BasicPlayerActivity : AppCompatActivity() {
           })
         } else {
           Log.d("ENABLEDISABLE", "calling enable()")
+          Log.i("ENABLEDISABLE", "before enabling, the playhead is at ${newPlayer.currentPosition}")
           muxStats?.enable(CustomerData().apply {
             customerVideoData = CustomerVideoData().apply {
               videoTitle = "Big Buck Bunny (Third)"
@@ -115,6 +116,7 @@ class BasicPlayerActivity : AppCompatActivity() {
         }
         Log.d("ENABLEDISABLE", "About to prepare the player. The current state is ${newPlayer.playbackState}")
         newPlayer.prepare()
+        Log.i("ENABLEDISABLE", "after preparing, the playhead is at ${newPlayer.currentPosition}")
         Log.d("ENABLEDISABLE", "Just called prepare on the player. The current state is ${newPlayer.playbackState}")
         newPlayer.play()
         // debugging: Maybe try calling enable() _after_
