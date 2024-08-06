@@ -91,7 +91,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
    * the player lib for this I thought
    *
    * Anyway, we can catch-up state on videoChange also and that seems to make videoChange better
-   * Customers have to call videoChange() after setting the new MediaItem(s), before calling prepare()(?)
+   * Customers have to call videoChange() after setting the new MediaItem(s), which I think is fine
    */
 
   override fun enable(customerData: CustomerData) {
