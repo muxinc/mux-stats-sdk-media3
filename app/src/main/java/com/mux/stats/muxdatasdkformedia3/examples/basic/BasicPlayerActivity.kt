@@ -89,7 +89,6 @@ class BasicPlayerActivity : AppCompatActivity() {
         newPlayer.play()
         delay(10_000)
 
-        delay(10_000)
         Log.d("ENABLEDISABLE", "re-enabling with new MediaItem (or 2nd video change)")
         // debugging: stop() the player => play,playing,pause,...,[actual start]
         // debugging: don't stop() the player => play,...,rebufferstart,....[actual start]
