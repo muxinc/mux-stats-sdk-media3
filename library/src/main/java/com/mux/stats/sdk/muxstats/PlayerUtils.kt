@@ -1,6 +1,7 @@
 package com.mux.stats.sdk.muxstats
 
 import android.net.Uri
+import android.util.Log
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -40,7 +41,9 @@ fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
 @JvmSynthetic
 fun catchUpPlayState(player: Player, collector: MuxStateCollector) {
   MuxLogger.d("PlayerUtils", "catchUpPlayState: Called. pwr is ${player.playWhenReady}")
+  MuxLogger.d("PlayerUtils", "catchUpPlayState: Called. state is ${player.playbackState}")
   if (player.playWhenReady) {
+    MuxLogger.d("PlayerUtils", "catchUpPlayState: dispatching play")
     // Captures auto-play & late-registration, setting state and sending 'viewstart'
     collector.play()
   }
@@ -88,9 +91,13 @@ fun MuxStateCollector.handlePlayWhenReady(
   playWhenReady: Boolean,
   @Player.State playbackState: Int
 ) {
+  Log.w("PlayerUtils", "handlePlayWhenReady: Called. pwr is $playWhenReady")
+  Log.w("PlayerUtils", "handlePlayWhenReady: Called. state is $playbackState")
   if (playWhenReady) {
+    Log.i("PlayerUtils", "handlePlayWhenReady: dispatching play")
     play()
     if (playbackState == Player.STATE_READY) {
+      Log.i("PlayerUtils", "handlePlayWhenReady: dispatching playing")
       // If we were already READY when playWhenReady is set, then we are definitely also playing
       playing()
     }
@@ -109,7 +116,10 @@ fun MuxStateCollector.watchPlayerPos(player: Player) {
     PLAYER_STATE_POLL_MS,
     this,
     player
-  ) { it, _ -> it.currentPosition }
+  ) { it, _ ->
+//    Log.d("PlayerUtils", "watchPlayerPos: currentPosition is ${it.currentPosition}")
+    it.currentPosition
+  }
   playerWatcher?.start()
 }
 
@@ -129,6 +139,7 @@ fun MuxStateCollector.handleExoPlaybackState(
   when (playbackState) {
     Player.STATE_BUFFERING -> {
       MuxLogger.d(LOG_TAG, "entering BUFFERING")
+      MuxLogger.d(LOG_TAG, "muxPlayerState is $muxPlayerState")
       buffering()
     }
 
@@ -143,6 +154,7 @@ fun MuxStateCollector.handleExoPlaybackState(
 
       // If playWhenReady && READY, we're playing or else we're paused
       if (playWhenReady) {
+        MuxLogger.d(LOG_TAG, "entered READY && pwr is true, dispatching playing()")
         playing()
       } else if (muxPlayerState != MuxPlayerState.PAUSED) {
         pause()

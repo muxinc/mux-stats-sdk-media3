@@ -70,6 +70,24 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
    */
   val boundPlayer: P get() { return player }
 
+  /*
+   * Ok so the problem is, probably, that we don't have
+   *
+   * So it's not necessarily that we are getting old data, it's really more that the monitor has
+   * stale state data. Like, we dispatch rebufferend because we get playing() and we mistook the
+   * BUFFERING from changing items as simple rebuffering. What we want to send in response to that
+   * change to BUFFERING, is 'play'. Then 'playing' later doesn't send rebufferend.
+   *
+   * It looks like that case is entering BUFFERING while MSC is in PLAYING, so we definitely start
+   * rebuffering here. We want to be in the 'buffering' state, and send 'play'
+   * We need to reset the MSC when we get enable()
+   *
+   * Yeah, definitely that helped with the case where the player was not stopped
+   * It may have also helped with the case where the player was stopped but I couldn't reproduce
+   * that case anyway
+   *
+   */
+
   override fun enable(customerData: CustomerData) {
     // call-through to start the new view
     super.enable(customerData)
