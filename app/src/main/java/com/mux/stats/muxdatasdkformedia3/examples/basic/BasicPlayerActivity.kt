@@ -68,7 +68,7 @@ class BasicPlayerActivity : AppCompatActivity() {
       muxStats = monitorPlayer(newPlayer)
 
       lifecycleScope.launch(Dispatchers.Main) {
-        val useEnable = true
+        val useEnable = false
         val stopBeforeThirdVideo = false
 
         delay(10_000)
@@ -77,14 +77,15 @@ class BasicPlayerActivity : AppCompatActivity() {
           muxStats?.disable()
         }
 
+        Log.d("ENABLEDISABLE", "playing without monitoring (or 1st video change)")
+        newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_STEVE)))
         if (!useEnable) {
           Log.d("ENABLEDISABLE", "calling videoChange() 1")
           muxStats?.videoChange(CustomerVideoData().apply {
             videoTitle = "Steve (Second)"
           })
         }
-        Log.d("ENABLEDISABLE", "playing without monitoring (or 1st video change)")
-        newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_STEVE)))
+//        Log.d("ENABLEDISABLE", "preparing from above video change")
         newPlayer.prepare()
         newPlayer.play()
         delay(10_000)
@@ -122,7 +123,7 @@ class BasicPlayerActivity : AppCompatActivity() {
         // debugging: Maybe try calling enable() _after_
 
         delay(10_000)
-        Log.d("ENABLEDISABLE", "test over")
+        Log.w("ENABLEDISABLE", "test over")
         muxStats?.disable()
       }
 

@@ -7,6 +7,7 @@ import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.AdEvent
 import com.mux.stats.sdk.core.model.CustomerData
+import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -86,12 +87,23 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
    * It may have also helped with the case where the player was stopped but I couldn't reproduce
    * that case anyway
    *
+   * oh wow videoChange here does crazy things. How long as this been like this? We have tests in
+   * the player lib for this I thought
+   *
+   * Anyway, we can catch-up state on videoChange also and that seems to make videoChange better
+   * Customers have to call videoChange() after setting the new MediaItem(s), before calling prepare()(?)
    */
 
   override fun enable(customerData: CustomerData) {
     // call-through to start the new view
     super.enable(customerData)
     // catch-up player state in case we missed prepare()
+    catchUpPlayState(player, collector)
+    catchUpStreamData(player, collector)
+  }
+
+  override fun videoChange(videoData: CustomerVideoData) {
+    super.videoChange(videoData)
     catchUpPlayState(player, collector)
     catchUpStreamData(player, collector)
   }
