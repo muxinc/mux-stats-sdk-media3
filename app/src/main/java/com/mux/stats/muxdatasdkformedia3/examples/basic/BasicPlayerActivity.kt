@@ -1,10 +1,12 @@
 package com.mux.stats.muxdatasdkformedia3.examples.basic
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
@@ -21,8 +23,13 @@ import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
+import com.mux.stats.sdk.muxstats.MuxDataSdk
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.time.Duration
 
 class BasicPlayerActivity : AppCompatActivity() {
 
@@ -59,6 +66,45 @@ class BasicPlayerActivity : AppCompatActivity() {
 
     player = createPlayer().also { newPlayer ->
       muxStats = monitorPlayer(newPlayer)
+
+      lifecycleScope.launch(Dispatchers.Main) {
+        delay(10_000)
+        Log.d("ENABLEDISABLE", "disabling")
+        muxStats?.disable()
+
+        Log.d("ENABLEDISABLE", "playing without monitoring")
+        newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_STEVE)))
+        newPlayer.prepare()
+        newPlayer.play()
+        delay(10_000)
+
+        delay(10_000)
+        Log.d("ENABLEDISABLE", "re-enabling with new MediaItem")
+        // debugging: stop() the player => play,playing,pause,...,[actual start]
+        // debugging: don't stop() the player => play,...,rebufferstart,....[actual start]
+        // both cases should not sent playing (should result in 'starting up' always
+        newPlayer.stop()
+
+        // with the resetState() method: not-calling stop() will work
+
+        newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_BIG_BUCK_BUNNY)))
+        Log.d("ENABLEDISABLE", "calling enable()")
+        muxStats?.enable(CustomerData().apply {
+          customerVideoData = CustomerVideoData().apply {
+            videoTitle = "Big Buck Bunny (Third)"
+          }
+        })
+        Log.d("ENABLEDISABLE", "About to prepare the player. The current state is ${newPlayer.playbackState}")
+        newPlayer.prepare()
+        Log.d("ENABLEDISABLE", "Just called prepare on the player. The current state is ${newPlayer.playbackState}")
+        newPlayer.play()
+        // debugging: Maybe try calling enable() _after_
+
+        delay(10_000)
+        Log.d("ENABLEDISABLE", "test over")
+        muxStats?.disable()
+      }
+
       view.playerView.player = newPlayer
       newPlayer.setMediaItem(createMediaItem(mediaUrl))
       newPlayer.prepare()
@@ -91,6 +137,7 @@ class BasicPlayerActivity : AppCompatActivity() {
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
         videoId = "A Custom ID"
+        videoTitle = "Sintel (First)"
       },
       CustomerViewData().apply { }
     )
@@ -99,7 +146,8 @@ class BasicPlayerActivity : AppCompatActivity() {
       context = this,
       envKey = Constants.MUX_DATA_ENV_KEY,
       customerData = customerData,
-      playerView = view.playerView
+      playerView = view.playerView,
+      logLevel = MuxDataSdk.LogcatLevel.DEBUG,
     )
   }
 
