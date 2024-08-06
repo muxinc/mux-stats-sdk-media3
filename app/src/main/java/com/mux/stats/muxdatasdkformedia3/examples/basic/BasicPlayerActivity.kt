@@ -68,18 +68,28 @@ class BasicPlayerActivity : AppCompatActivity() {
       muxStats = monitorPlayer(newPlayer)
 
       lifecycleScope.launch(Dispatchers.Main) {
+        val useEnable = true
+
         delay(10_000)
         Log.d("ENABLEDISABLE", "disabling")
-        muxStats?.disable()
+        if (useEnable) {
+          muxStats?.disable()
+        }
 
-        Log.d("ENABLEDISABLE", "playing without monitoring")
+        if (!useEnable) {
+          Log.d("ENABLEDISABLE", "calling videoChange() 1")
+          muxStats?.videoChange(CustomerVideoData().apply {
+            videoTitle = "Steve (Second)"
+          })
+        }
+        Log.d("ENABLEDISABLE", "playing without monitoring (or 1st video change)")
         newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_STEVE)))
         newPlayer.prepare()
         newPlayer.play()
         delay(10_000)
 
         delay(10_000)
-        Log.d("ENABLEDISABLE", "re-enabling with new MediaItem")
+        Log.d("ENABLEDISABLE", "re-enabling with new MediaItem (or 2nd video change)")
         // debugging: stop() the player => play,playing,pause,...,[actual start]
         // debugging: don't stop() the player => play,...,rebufferstart,....[actual start]
         // both cases should not sent playing (should result in 'starting up' always
@@ -88,12 +98,19 @@ class BasicPlayerActivity : AppCompatActivity() {
         // with the resetState() method: not-calling stop() will work
 
         newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_BIG_BUCK_BUNNY)))
-        Log.d("ENABLEDISABLE", "calling enable()")
-        muxStats?.enable(CustomerData().apply {
-          customerVideoData = CustomerVideoData().apply {
+        if (!useEnable) {
+          Log.d("ENABLEDISABLE", "calling videoChange() 2")
+          muxStats?.videoChange(CustomerVideoData().apply {
             videoTitle = "Big Buck Bunny (Third)"
-          }
-        })
+          })
+        } else {
+          Log.d("ENABLEDISABLE", "calling enable()")
+          muxStats?.enable(CustomerData().apply {
+            customerVideoData = CustomerVideoData().apply {
+              videoTitle = "Big Buck Bunny (Third)"
+            }
+          })
+        }
         Log.d("ENABLEDISABLE", "About to prepare the player. The current state is ${newPlayer.playbackState}")
         newPlayer.prepare()
         Log.d("ENABLEDISABLE", "Just called prepare on the player. The current state is ${newPlayer.playbackState}")
