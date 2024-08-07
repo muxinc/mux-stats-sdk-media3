@@ -72,58 +72,55 @@ class BasicPlayerActivity : AppCompatActivity() {
         val stopBeforeThirdVideo = false
 
         delay(10_000)
-        Log.d("ENABLEDISABLE", "disabling")
+        Log.d("TestingEnable", "disabling")
         if (useEnable) {
           muxStats?.disable()
         }
 
-        Log.d("ENABLEDISABLE", "playing without monitoring (or 1st video change)")
+        Log.d("TestingEnable", "playing without monitoring (or 1st video change)")
         newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_STEVE)))
         if (!useEnable) {
-          Log.d("ENABLEDISABLE", "calling videoChange() 1")
+          Log.d("TestingEnable", "calling videoChange() 1")
           muxStats?.videoChange(CustomerVideoData().apply {
             videoTitle = "Steve (Second)"
           })
         }
-//        Log.d("ENABLEDISABLE", "preparing from above video change")
         newPlayer.prepare()
         newPlayer.play()
         delay(10_000)
 
-        Log.d("ENABLEDISABLE", "re-enabling with new MediaItem (or 2nd video change)")
+        Log.d("TestingEnable", "re-enabling with new MediaItem (or 2nd video change)")
         // debugging: stop() the player => play,playing,pause,...,[actual start]
-        // debugging: don't stop() the player => play,...,rebufferstart,....[actual start]
-        // both cases should not sent playing (should result in 'starting up' always
+        // debugging: don't stop() the player => play,...,rebufferstart,....,rebufferend,[actual start]
+        // both cases should not send playing (should result in 'starting up' always)
         if (stopBeforeThirdVideo) {
           newPlayer.stop()
         }
 
-        // with the resetState() method: not-calling stop() will work
-
         newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_BIG_BUCK_BUNNY)))
         if (!useEnable) {
-          Log.d("ENABLEDISABLE", "calling videoChange() 2")
+          Log.d("TestingEnable", "calling videoChange() 2")
           muxStats?.videoChange(CustomerVideoData().apply {
             videoTitle = "Big Buck Bunny (Third)"
           })
         } else {
-          Log.d("ENABLEDISABLE", "calling enable()")
-          Log.i("ENABLEDISABLE", "before enabling, the playhead is at ${newPlayer.currentPosition}")
+          Log.d("TestingEnable", "calling enable()")
+          Log.i("TestingEnable", "before enabling, the playhead is at ${newPlayer.currentPosition}")
           muxStats?.enable(CustomerData().apply {
             customerVideoData = CustomerVideoData().apply {
               videoTitle = "Big Buck Bunny (Third)"
             }
           })
         }
-        Log.d("ENABLEDISABLE", "About to prepare the player. The current state is ${newPlayer.playbackState}")
+        Log.d("TestingEnable", "About to prepare the player. The current state is ${newPlayer.playbackState}")
         newPlayer.prepare()
-        Log.i("ENABLEDISABLE", "after preparing, the playhead is at ${newPlayer.currentPosition}")
-        Log.d("ENABLEDISABLE", "Just called prepare on the player. The current state is ${newPlayer.playbackState}")
+        Log.i("TestingEnable", "after preparing, the playhead is at ${newPlayer.currentPosition}")
+        Log.d("TestingEnable", "Just called prepare on the player. The current state is ${newPlayer.playbackState}")
         newPlayer.play()
         // debugging: Maybe try calling enable() _after_
 
         delay(10_000)
-        Log.w("ENABLEDISABLE", "test over")
+        Log.w("TestingEnable", "test over")
         muxStats?.disable()
       }
 
