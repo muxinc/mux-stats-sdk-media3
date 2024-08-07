@@ -71,37 +71,6 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
    */
   val boundPlayer: P get() { return player }
 
-  /*
-   * Ok so the problem is, probably, that we don't have
-   *
-   * So it's not necessarily that we are getting old data, it's really more that the monitor has
-   * stale state data. Like, we dispatch rebufferend because we get playing() and we mistook the
-   * BUFFERING from changing items as simple rebuffering. What we want to send in response to that
-   * change to BUFFERING, is 'play'. Then 'playing' later doesn't send rebufferend.
-   *
-   * It looks like that case is entering BUFFERING while MSC is in PLAYING, so we definitely start
-   * rebuffering here. We want to be in the 'buffering' state, and send 'play'
-   * We need to reset the MSC when we get enable()
-   *
-   * Yeah, definitely that helped with the case where the player was not stopped
-   * It may have also helped with the case where the player was stopped but I couldn't reproduce
-   * that case anyway
-   *
-   * oh wow videoChange here does crazy things. How long as this been like this? We have tests in
-   * the player lib for this I thought
-   *
-   * Anyway, we can catch-up state on videoChange also and that seems to make videoChange better
-   * Customers have to call videoChange() after setting the new MediaItem(s), which I think is fine
-   *
-   * And you have to call enable() or videoChange() *after* setting the MediaItem, or else you'll
-   * capture the old MediaItem's play state.
-   *  (this isn't a problem for the 'old' mode of operation because the player was not reused)
-   *
-   * So like we need to change the documented usage too. Something like, "Reusing your player and
-   * monitor for multiple MediaItems," where we describe `videoChange` and `disable/enable` and
-   * explain how the usage is different when you reuse your player.
-   */
-
   override fun enable(customerData: CustomerData) {
     // call-through to start the new view
     super.enable(customerData)

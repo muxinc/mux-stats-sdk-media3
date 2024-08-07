@@ -116,10 +116,7 @@ fun MuxStateCollector.watchPlayerPos(player: Player) {
     PLAYER_STATE_POLL_MS,
     this,
     player
-  ) { it, _ ->
-//    Log.d("PlayerUtils", "watchPlayerPos: currentPosition is ${it.currentPosition}")
-    it.currentPosition
-  }
+  ) { it, _ -> it.currentPosition }
   playerWatcher?.start()
 }
 
