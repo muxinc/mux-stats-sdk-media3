@@ -67,6 +67,11 @@ class BasicPlayerActivity : AppCompatActivity() {
     player = createPlayer().also { newPlayer ->
       muxStats = monitorPlayer(newPlayer)
 
+      view.playerView.player = newPlayer
+      newPlayer.setMediaItem(createMediaItem(mediaUrl))
+      newPlayer.prepare()
+      newPlayer.playWhenReady = true
+
       lifecycleScope.launch(Dispatchers.Main) {
         val useEnable = false
         val stopBeforeThirdVideo = false
@@ -77,19 +82,19 @@ class BasicPlayerActivity : AppCompatActivity() {
           muxStats?.disable()
         }
 
-        Log.d("TestingEnable", "playing without monitoring (or 1st video change)")
+        Log.d("TestingEnable", "playing Steve video")
         newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_STEVE)))
         if (!useEnable) {
           Log.d("TestingEnable", "calling videoChange() 1")
           muxStats?.videoChange(CustomerVideoData().apply {
-            videoTitle = "Steve (Second)"
+            videoTitle = "Old Keynote (Second)"
           })
         }
         newPlayer.prepare()
         newPlayer.play()
         delay(10_000)
 
-        Log.d("TestingEnable", "re-enabling with new MediaItem (or 2nd video change)")
+        Log.d("TestingEnable", "playing Big Buck Bunny")
         // debugging: stop() the player => play,playing,pause,...,[actual start]
         // debugging: don't stop() the player => play,...,rebufferstart,....,rebufferend,[actual start]
         // both cases should not send playing (should result in 'starting up' always)
@@ -105,7 +110,6 @@ class BasicPlayerActivity : AppCompatActivity() {
           })
         } else {
           Log.d("TestingEnable", "calling enable()")
-          Log.i("TestingEnable", "before enabling, the playhead is at ${newPlayer.currentPosition}")
           muxStats?.enable(CustomerData().apply {
             customerVideoData = CustomerVideoData().apply {
               videoTitle = "Big Buck Bunny (Third)"
@@ -114,7 +118,6 @@ class BasicPlayerActivity : AppCompatActivity() {
         }
         Log.d("TestingEnable", "About to prepare the player. The current state is ${newPlayer.playbackState}")
         newPlayer.prepare()
-        Log.i("TestingEnable", "after preparing, the playhead is at ${newPlayer.currentPosition}")
         Log.d("TestingEnable", "Just called prepare on the player. The current state is ${newPlayer.playbackState}")
         newPlayer.play()
         // debugging: Maybe try calling enable() _after_
@@ -123,11 +126,6 @@ class BasicPlayerActivity : AppCompatActivity() {
         Log.w("TestingEnable", "test over")
         muxStats?.disable()
       }
-
-      view.playerView.player = newPlayer
-      newPlayer.setMediaItem(createMediaItem(mediaUrl))
-      newPlayer.prepare()
-      newPlayer.playWhenReady = true
     }
   }
 
