@@ -92,6 +92,14 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
    *
    * Anyway, we can catch-up state on videoChange also and that seems to make videoChange better
    * Customers have to call videoChange() after setting the new MediaItem(s), which I think is fine
+   *
+   * And you have to call enable() or videoChange() *after* setting the MediaItem, or else you'll
+   * capture the old MediaItem's play state.
+   *  (this isn't a problem for the 'old' mode of operation because the player was not reused)
+   *
+   * So like we need to change the documented usage too. Something like, "Reusing your player and
+   * monitor for multiple MediaItems," where we describe `videoChange` and `disable/enable` and
+   * explain how the usage is different when you reuse your player.
    */
 
   override fun enable(customerData: CustomerData) {
