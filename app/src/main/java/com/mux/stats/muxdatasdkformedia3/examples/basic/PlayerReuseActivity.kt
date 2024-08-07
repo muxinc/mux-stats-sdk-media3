@@ -72,7 +72,7 @@ class PlayerReuseActivity : AppCompatActivity() {
 
       // now change the video a couple of times
       lifecycleScope.launch(Dispatchers.Main) {
-        val usingEnableAndDisable = false // If false, will use videoChange instead
+        val usingEnableAndDisable = true // If false, will use videoChange instead
 
         delay(10_000)
         Log.d(TAG, "disabling")
