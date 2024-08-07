@@ -73,7 +73,6 @@ class PlayerReuseActivity : AppCompatActivity() {
       // now change the video a couple of times
       lifecycleScope.launch(Dispatchers.Main) {
         val usingEnableAndDisable = false // If false, will use videoChange instead
-        val stopBeforeThirdVideo = false
 
         delay(10_000)
         Log.d(TAG, "disabling")
@@ -94,12 +93,8 @@ class PlayerReuseActivity : AppCompatActivity() {
         delay(10_000)
 
         Log.d(TAG, "playing Big Buck Bunny")
-        // debugging: stop() the player => play,playing,pause,...,[actual start]
-        // debugging: don't stop() the player => play,...,rebufferstart,....,rebufferend,[actual start]
-        // both cases should not send playing (should result in 'starting up' always)
-        if (stopBeforeThirdVideo) {
-          newPlayer.stop()
-        }
+        // stop() is optional
+        //newPlayer.stop()
 
         newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_BIG_BUCK_BUNNY)))
         if (!usingEnableAndDisable) {
