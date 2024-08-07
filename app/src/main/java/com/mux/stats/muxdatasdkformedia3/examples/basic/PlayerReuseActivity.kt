@@ -1,10 +1,12 @@
 package com.mux.stats.muxdatasdkformedia3.examples.basic
 
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
@@ -23,8 +25,11 @@ import com.mux.stats.sdk.core.model.CustomerViewData
 import com.mux.stats.sdk.muxstats.MuxDataSdk
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class BasicPlayerActivity : AppCompatActivity() {
+class PlayerReuseActivity : AppCompatActivity() {
 
   private lateinit var view: ActivityPlayerBinding
   private var player: Player? = null
@@ -64,6 +69,62 @@ class BasicPlayerActivity : AppCompatActivity() {
       newPlayer.setMediaItem(createMediaItem(mediaUrl))
       newPlayer.prepare()
       newPlayer.playWhenReady = true
+
+      // now change the video a couple of times
+      lifecycleScope.launch(Dispatchers.Main) {
+        val usingEnableAndDisable = false // If false, will use videoChange instead
+        val stopBeforeThirdVideo = false
+
+        delay(10_000)
+        Log.d(TAG, "disabling")
+        if (usingEnableAndDisable) {
+          muxStats?.disable()
+        }
+
+        Log.d(TAG, "playing Steve video")
+        newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_STEVE)))
+        if (!usingEnableAndDisable) {
+          Log.d(TAG, "calling videoChange() 1")
+          muxStats?.videoChange(CustomerVideoData().apply {
+            videoTitle = "Old Keynote (Second)"
+          })
+        }
+        newPlayer.prepare()
+        newPlayer.play()
+        delay(10_000)
+
+        Log.d(TAG, "playing Big Buck Bunny")
+        // debugging: stop() the player => play,playing,pause,...,[actual start]
+        // debugging: don't stop() the player => play,...,rebufferstart,....,rebufferend,[actual start]
+        // both cases should not send playing (should result in 'starting up' always)
+        if (stopBeforeThirdVideo) {
+          newPlayer.stop()
+        }
+
+        newPlayer.setMediaItem(MediaItem.fromUri(Uri.parse(Constants.VOD_TEST_URL_BIG_BUCK_BUNNY)))
+        if (!usingEnableAndDisable) {
+          Log.d(TAG, "calling videoChange() 2")
+          muxStats?.videoChange(CustomerVideoData().apply {
+            videoTitle = "Big Buck Bunny (Third)"
+          })
+        } else {
+          Log.d(TAG, "calling enable()")
+          muxStats?.enable(CustomerData().apply {
+            customerVideoData = CustomerVideoData().apply {
+              videoTitle = "Big Buck Bunny (Third)"
+            }
+          })
+        }
+        Log.d(TAG, "About to prepare the player. The current state is ${newPlayer.playbackState}")
+        newPlayer.prepare()
+        Log.d(TAG, "Just called prepare on the player. The current state is ${newPlayer.playbackState}")
+        newPlayer.play()
+        // debugging: Maybe try calling enable() _after_
+
+        delay(10_000)
+        Log.w(TAG, "test over")
+        muxStats?.disable()
+      }
     }
   }
 
@@ -112,7 +173,7 @@ class BasicPlayerActivity : AppCompatActivity() {
         addListener(object : Player.Listener {
           override fun onPlayerError(error: PlaybackException) {
             Log.e(javaClass.simpleName, "player error!", error)
-            Toast.makeText(this@BasicPlayerActivity, error.localizedMessage, Toast.LENGTH_SHORT)
+            Toast.makeText(this@PlayerReuseActivity, error.localizedMessage, Toast.LENGTH_SHORT)
               .show()
           }
         })
@@ -121,5 +182,6 @@ class BasicPlayerActivity : AppCompatActivity() {
 
   companion object {
     const val EXTRA_URL: String = "com.mux.video.url"
+    const val TAG = "PlayerReuseActivity"
   }
 }
