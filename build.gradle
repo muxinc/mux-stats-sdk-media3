@@ -21,8 +21,10 @@ def deployModules = tasks.register("deployModules") {
 //    dependsOn deployBase
 //    mustRunAfter deployBase
 
-//  finalizedBy ':library-exo:artifactoryPublish'
-//  finalizedBy ':library-ima:artifactoryPublish'
+  finalizedBy ':library-exo:artifactoryPublish'
+  finalizedBy ':library-ima:artifactoryPublish'
+
+  mustRunAfter ':library:artifactoryPublish'
 
   mustRunAfter "deployBase"
   dependsOn "deployBase"
