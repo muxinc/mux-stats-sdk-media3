@@ -8,43 +8,41 @@ plugins {
   id "org.jetbrains.dokka" version "1.6.10"
 }
 
-//findProject("library").tasks.named("artifactoryDeploy") {
-//}
-
-//afterEvaluate {
-//  project.findProject(":library-exo")
-//          .tasks.findByName("artifactoryDeploy")
-//          .dependsOn project.tasks.findByName("artifactoryDeploy")
-//      dependsOn findProject("library").tasks.findByName("artifactoryDeploy")
-//  }
-
-//  project.findProject("library-exo").tasks.register("")
-
-  // so I think mustRunAfter deployBase means that deployBase will always invoke deployModules
-
-  def deployBase = tasks.register("deployBase") {
-    dependsOn ':library:artifactoryPublish'
-    mustRunAfter ':library:artifactoryPublish'
-
-    group 'publishing'
-  }
-  def deployModules = tasks.register("deployModules") {
-    dependsOn ':library-exo:artifactoryPublish'
-    dependsOn ':library-ima:artifactoryPublish'
+def deployModules = tasks.register("deployModules") {
+//  dependsOn ':library-exo:assembleRelease'
+//  dependsOn ':library-ima:assembleRelease'
+//  dependsOn ':library-exo:artifactoryPublish'
+//  dependsOn ':library-ima:artifactoryPublish'
 //    finalizedBy ':library-exo:artifactoryPublish'
 //    finalizedBy ':library-ima:artifactoryPublish'
 //    mustRunAfter ':library-exo:artifactoryPublish'
 //    mustRunAfter ':library-ima:artifactoryPublish'
 
-    dependsOn deployBase
-    mustRunAfter deployBase
+//    dependsOn deployBase
+//    mustRunAfter deployBase
 
-    group 'publishing'
-  }
+  finalizedBy ':library-exo:artifactoryPublish'
+  finalizedBy ':library-ima:artifactoryPublish'
+
+  mustRunAfter "deployBase"
+  dependsOn "deployBase"
+
+  group 'publishing'
+}
+
+def deployBase = tasks.register("deployBase") {
+  dependsOn ':library:artifactoryPublish'
+  mustRunAfter ':library:artifactoryPublish'
+
+//  finalizedBy deployModules
+//  finalizedBy "deployModules"
+
+  group 'publishing'
+}
 
 
-  tasks.register("deployInOrder") {
-  }
+//  tasks.register("deployInOrder") {
+//  }
 //}
 //project.findProject(":library-ima").tasks.named("artifactoryDelpoy") {
 //  dependsOn findProject("library").tasks.named("artifactoryDeploy")
