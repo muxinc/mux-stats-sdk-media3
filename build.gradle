@@ -29,8 +29,8 @@ plugins {
   def deployModules = tasks.register("deployModules") {
 //    dependsOn ':library-exo:artifactoryPublish'
 //    dependsOn ':library-ima:artifactoryPublish'
-    finalizedBy ':library-exo:artifactoryPublish'
-    finalizedBy ':library-ima:artifactoryPublish'
+//    finalizedBy ':library-exo:artifactoryPublish'
+//    finalizedBy ':library-ima:artifactoryPublish'
 //    mustRunAfter ':library-exo:artifactoryPublish'
 //    mustRunAfter ':library-ima:artifactoryPublish'
     dependsOn deployBase
