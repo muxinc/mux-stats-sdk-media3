@@ -21,13 +21,11 @@ def deployModules = tasks.register("deployModules") {
 //    dependsOn deployBase
 //    mustRunAfter deployBase
 
-  finalizedBy ':library-exo:artifactoryPublish'
-  finalizedBy ':library-ima:artifactoryPublish'
-
-  mustRunAfter ':library:artifactoryPublish'
+  dependsOn ':library-exo:artifactoryPublish'
+  dependsOn ':library-ima:artifactoryPublish'
 
   mustRunAfter "deployBase"
-  dependsOn "deployBase"
+//  dependsOn "deployBase"
 
   group 'publishing'
 }
@@ -42,6 +40,9 @@ def deployBase = tasks.register("deployBase") {
   group 'publishing'
 }
 
+deployBase.configure {
+//  finalizedBy deployModules
+}
 
 //  tasks.register("deployInOrder") {
 //  }
