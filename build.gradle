@@ -20,6 +20,8 @@ plugins {
 
 //  project.findProject("library-exo").tasks.register("")
 
+  // so I think mustRunAfter deployBase means that deployBase will always invoke deployModules
+
   def deployBase = tasks.register("deployBase") {
     dependsOn ':library:artifactoryPublish'
     mustRunAfter ':library:artifactoryPublish'
