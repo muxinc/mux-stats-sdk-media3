@@ -26,7 +26,7 @@ plugins {
     dependsOn ':library:artifactoryPublish'
     mustRunAfter ':library:artifactoryPublish'
 
-    group 'Mux'
+    group 'publishing'
   }
   def deployModules = tasks.register("deployModules") {
 //    dependsOn ':library-exo:artifactoryPublish'
@@ -38,7 +38,7 @@ plugins {
     dependsOn deployBase
     mustRunAfter deployBase
 
-    group 'Mux'
+    group 'publishing'
   }
 
 
