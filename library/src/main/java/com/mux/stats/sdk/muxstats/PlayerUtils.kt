@@ -1,12 +1,14 @@
 package com.mux.stats.sdk.muxstats
 
 import android.net.Uri
+import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
+import androidx.media3.common.util.UnstableApi
 import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.model.VideoData
 import com.mux.stats.sdk.core.util.MuxLogger
@@ -17,6 +19,7 @@ private const val LOG_TAG = "PlayerUtils"
 /**
  * Returns true if any media track in the given [Tracks] object had a video MIME type
  */
+@OptIn(UnstableApi::class)
 fun Tracks.hasAtLeastOneVideoTrack(): Boolean {
   return groups.map { it.mediaTrackGroup }
     .filter { trackGroup -> trackGroup.length > 0 }
@@ -40,7 +43,9 @@ fun <R> Tracks.Group.mapFormats(block: (Format) -> R): List<R> {
 @JvmSynthetic
 fun catchUpPlayState(player: Player, collector: MuxStateCollector) {
   MuxLogger.d("PlayerUtils", "catchUpPlayState: Called. pwr is ${player.playWhenReady}")
+  MuxLogger.d("PlayerUtils", "catchUpPlayState: Called. state is ${player.playbackState}")
   if (player.playWhenReady) {
+    MuxLogger.d("PlayerUtils", "catchUpPlayState: dispatching play")
     // Captures auto-play & late-registration, setting state and sending 'viewstart'
     collector.play()
   }
@@ -88,9 +93,12 @@ fun MuxStateCollector.handlePlayWhenReady(
   playWhenReady: Boolean,
   @Player.State playbackState: Int
 ) {
+  MuxLogger.d("PlayerUtils", "handlePlayWhenReady: Called. pwr is $playWhenReady")
   if (playWhenReady) {
+    MuxLogger.d("PlayerUtils", "handlePlayWhenReady: dispatching play")
     play()
     if (playbackState == Player.STATE_READY) {
+      MuxLogger.d("PlayerUtils", "handlePlayWhenReady: dispatching playing")
       // If we were already READY when playWhenReady is set, then we are definitely also playing
       playing()
     }
@@ -129,6 +137,7 @@ fun MuxStateCollector.handleExoPlaybackState(
   when (playbackState) {
     Player.STATE_BUFFERING -> {
       MuxLogger.d(LOG_TAG, "entering BUFFERING")
+      MuxLogger.d(LOG_TAG, "muxPlayerState is $muxPlayerState")
       buffering()
     }
 
@@ -143,6 +152,7 @@ fun MuxStateCollector.handleExoPlaybackState(
 
       // If playWhenReady && READY, we're playing or else we're paused
       if (playWhenReady) {
+        MuxLogger.d(LOG_TAG, "entered READY && pwr is true, dispatching playing()")
         playing()
       } else if (muxPlayerState != MuxPlayerState.PAUSED) {
         pause()

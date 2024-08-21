@@ -7,6 +7,7 @@ import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.AdEvent
 import com.mux.stats.sdk.core.model.CustomerData
+import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +75,12 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
     // call-through to start the new view
     super.enable(customerData)
     // catch-up player state in case we missed prepare()
+    catchUpPlayState(player, collector)
+    catchUpStreamData(player, collector)
+  }
+
+  override fun videoChange(videoData: CustomerVideoData) {
+    super.videoChange(videoData)
     catchUpPlayState(player, collector)
     catchUpStreamData(player, collector)
   }
