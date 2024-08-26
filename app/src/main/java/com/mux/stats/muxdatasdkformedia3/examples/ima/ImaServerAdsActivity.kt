@@ -60,7 +60,7 @@ class ImaServerAdsActivity : AppCompatActivity() {
     window.addFlags(View.KEEP_SCREEN_ON)
 
     adsLoaderState = savedInstanceState?.getBundle(EXTRA_ADS_LOADER_STATE)
-      ?.let { AdsLoader.State.CREATOR.fromBundle(it) }
+      ?.let { AdsLoader.State.fromBundle(it) }
   }
 
   override fun onResume() {
