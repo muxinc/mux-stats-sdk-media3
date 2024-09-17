@@ -26,7 +26,7 @@ fun Tracks.hasAtLeastOneVideoTrack(): Boolean {
     .filter { trackGroup -> trackGroup.length > 0 }
     .flatMap { trackGroup -> trackGroup.iterateFormats() }
     .find { format -> format.sampleMimeType?.contains("video") ?: false }
-    .let { foundVideoTrack -> foundVideoTrack != null }
+    .let { theFormat -> theFormat != null }
 }
 
 @OptIn(UnstableApi::class)
