@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.muxstats
 
+import androidx.media3.common.Format
 import androidx.media3.common.Player
 import androidx.media3.common.Player.DISCONTINUITY_REASON_AUTO_TRANSITION
 import androidx.media3.common.Player.DISCONTINUITY_REASON_INTERNAL
@@ -9,16 +10,76 @@ import androidx.media3.common.Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT
 import androidx.media3.common.Player.DISCONTINUITY_REASON_SKIP
 import androidx.media3.common.Player.DiscontinuityReason
 import androidx.media3.common.Player.STATE_IDLE
+import androidx.media3.common.TrackGroup
+import androidx.media3.common.Tracks
+import com.google.common.collect.ImmutableList
 import com.mux.core_android.test.tools.log
 import com.mux.stats.media3.test.tools.AbsRobolectricTest
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import io.mockk.slot
 import io.mockk.verify
+import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
 class PlayerUtilsTests : AbsRobolectricTest() {
+  
+  // todo - perfect, tests seem all broken? Maybe gradle icon vs tube icon
+  //  yep that's what it is
+
+  @Test
+  fun testHasAtLeastOneVideoTrack() {
+    val tracksWithVideoTrack: Tracks = mockk {
+      every { groups } returns
+        ImmutableList.of(
+          buildGroup("audio/aac"),
+          buildGroup("audio/aac"),
+          buildGroup("video/avc"),
+          buildGroup("text/vtt"),
+        )
+    }
+    val tracksWithNoVideoTrack: Tracks = mockk {
+      every { groups } returns
+          ImmutableList.of(
+            buildGroup("audio/aac"),
+            buildGroup("audio/aac"),
+            buildGroup("text/vtt"),
+          )
+    }
+
+    assertTrue(
+      "if there is a video track, it should be found",
+      tracksWithVideoTrack.hasAtLeastOneVideoTrack()
+    )
+    assertFalse(
+      "if there is a video track, it should be found",
+      tracksWithNoVideoTrack.hasAtLeastOneVideoTrack()
+    )
+  }
+
+  private fun buildGroup(vararg trackFormats: String): Tracks.Group {
+    val formats = trackFormats.map {
+      fmtType -> mockk<Format> {
+        every { sampleMimeType } returns fmtType
+      }
+    }.toTypedArray()
+
+    return mockk<Tracks.Group> {
+      every { mediaTrackGroup } returns mockk<TrackGroup> {
+        every { length } returns formats.size
+        val slot = slot<Int>()
+        every { getFormat(capture(slot)) } returns formats[slot.captured]
+      }
+
+      // todo - need these lines?
+      every { length } returns formats.size
+      val indexSlot = slot<Int>()
+      every { getTrackFormat(capture((indexSlot))) } returns formats[indexSlot.captured]
+    }
+  }
 
   @Test
   fun testHandlePositionDiscontinuity() {
