@@ -15,11 +15,11 @@ import androidx.media3.common.Tracks
 import com.google.common.collect.ImmutableList
 import com.mux.core_android.test.tools.log
 import com.mux.stats.media3.test.tools.AbsRobolectricTest
+import com.mux.stats.media3.test.tools.testdoubles.mockGroup
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
-import io.mockk.slot
 import io.mockk.verify
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
@@ -27,26 +27,23 @@ import org.junit.Test
 
 class PlayerUtilsTests : AbsRobolectricTest() {
 
-  // todo - perfect, tests seem all broken? Maybe gradle icon vs tube icon
-  //  yep that's what it is
-
   @Test
   fun testHasAtLeastOneVideoTrack() {
     val tracksWithVideoTrack: Tracks = mockk {
       every { groups } returns
           ImmutableList.of(
-            buildGroup("audio/aac"),
-            buildGroup("audio/aac"),
-            buildGroup("video/avc"),
-            buildGroup("text/vtt"),
+            mockGroup("audio/aac"),
+            mockGroup("audio/aac"),
+            mockGroup("text/vtt"),
+            mockGroup("video/avc"),
           )
     }
     val tracksWithNoVideoTrack: Tracks = mockk {
       every { groups } returns
           ImmutableList.of(
-            buildGroup("audio/aac"),
-            buildGroup("audio/aac"),
-            buildGroup("text/vtt"),
+            mockGroup("audio/aac"),
+            mockGroup("audio/aac"),
+            mockGroup("text/vtt"),
           )
     }
 
@@ -55,25 +52,9 @@ class PlayerUtilsTests : AbsRobolectricTest() {
       tracksWithVideoTrack.hasAtLeastOneVideoTrack()
     )
     assertFalse(
-      "if there is a video track, it should be found",
+      "if there is no video track, return false",
       tracksWithNoVideoTrack.hasAtLeastOneVideoTrack()
     )
-  }
-
-  private fun buildGroup(vararg trackFormats: String): Tracks.Group {
-    val formats = trackFormats.map { fmtType ->
-      Format.Builder().apply {
-        setSampleMimeType(fmtType)
-      }.build()
-    }.toTypedArray()
-
-    return mockk<Tracks.Group> {
-      every { mediaTrackGroup } returns mockTrackGroup(formats)
-    }
-  }
-
-  private fun mockTrackGroup(formats: Array<Format>): TrackGroup {
-    return TrackGroup(*formats)
   }
 
   @Test

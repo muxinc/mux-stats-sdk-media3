@@ -10,6 +10,9 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.view.View
+import androidx.media3.common.Format
+import androidx.media3.common.TrackGroup
+import androidx.media3.common.Tracks
 import com.mux.stats.sdk.muxstats.*
 import io.mockk.*
 import java.io.ByteArrayInputStream
@@ -25,6 +28,22 @@ const val MOCK_INSET_Y = 100
 
 const val MOCK_PLAYER_WIDTH = 1080
 const val MOCK_PLAYER_HEIGHT = 700
+
+fun mockGroup(vararg trackFormats: String): Tracks.Group {
+  val formats = trackFormats.map { fmtType ->
+    Format.Builder().apply {
+      setSampleMimeType(fmtType)
+    }.build()
+  }.toTypedArray()
+
+  return mockk<Tracks.Group> {
+    every { mediaTrackGroup } returns mockTrackGroup(formats)
+  }
+}
+
+fun mockTrackGroup(formats: Array<Format>): TrackGroup {
+  return TrackGroup(*formats)
+}
 
 /**
  * Mocks an [IPlayerListener], with no mocked methods
