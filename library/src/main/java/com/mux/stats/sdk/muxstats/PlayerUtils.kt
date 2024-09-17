@@ -24,7 +24,7 @@ private const val LOG_TAG = "PlayerUtils"
 fun Tracks.hasAtLeastOneVideoTrack(): Boolean {
   return groups.map { it.mediaTrackGroup }
     .filter { trackGroup -> trackGroup.length > 0 }
-    .flatMap {trackGroup -> trackGroup.iterateFormats() }
+    .flatMap { trackGroup -> trackGroup.iterateFormats() }
     .find { format -> format.sampleMimeType?.contains("video") ?: false }
     .let { foundVideoTrack -> foundVideoTrack != null }
 }
