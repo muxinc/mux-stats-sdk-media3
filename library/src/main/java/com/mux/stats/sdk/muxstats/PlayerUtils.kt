@@ -5,6 +5,7 @@ import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
+import androidx.media3.common.TrackGroup
 import androidx.media3.common.Tracks
 import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.model.VideoData
@@ -19,9 +20,30 @@ private const val LOG_TAG = "PlayerUtils"
 fun Tracks.hasAtLeastOneVideoTrack(): Boolean {
   return groups.map { it.mediaTrackGroup }
     .filter { trackGroup -> trackGroup.length > 0 }
-    .map { trackGroup -> trackGroup.getFormat(0) }
+//    .map { trackGroup -> trackGroup.getFormat(0) }
+    .flatMap {trackGroup -> trackGroup.iterateFormats() }
     .find { format -> format.sampleMimeType?.contains("video") ?: false }
     .let { foundVideoTrack -> foundVideoTrack != null }
+}
+
+@OptIn(UnstableApi::class)
+fun TrackGroup.iterateFormats(): Iterable<Format> {
+  val group = this
+  return object: Iterable<Format> {
+    override fun iterator(): Iterator<Format> {
+      return object: Iterator<Format> {
+        private var current: Int = 0
+        override fun hasNext(): Boolean {
+          return current < group.length
+        }
+        override fun next(): Format {
+          val format = group.getFormat(current)
+          current += 1;
+          return format
+        }
+      }
+    }
+  }
 }
 
 /**
