@@ -26,7 +26,7 @@ import junit.framework.TestCase.assertTrue
 import org.junit.Test
 
 class PlayerUtilsTests : AbsRobolectricTest() {
-  
+
   // todo - perfect, tests seem all broken? Maybe gradle icon vs tube icon
   //  yep that's what it is
 
@@ -34,12 +34,12 @@ class PlayerUtilsTests : AbsRobolectricTest() {
   fun testHasAtLeastOneVideoTrack() {
     val tracksWithVideoTrack: Tracks = mockk {
       every { groups } returns
-        ImmutableList.of(
-          buildGroup("audio/aac"),
-          buildGroup("audio/aac"),
-          buildGroup("video/avc"),
-          buildGroup("text/vtt"),
-        )
+          ImmutableList.of(
+            buildGroup("audio/aac"),
+            buildGroup("audio/aac"),
+            buildGroup("video/avc"),
+            buildGroup("text/vtt"),
+          )
     }
     val tracksWithNoVideoTrack: Tracks = mockk {
       every { groups } returns
@@ -61,24 +61,19 @@ class PlayerUtilsTests : AbsRobolectricTest() {
   }
 
   private fun buildGroup(vararg trackFormats: String): Tracks.Group {
-    val formats = trackFormats.map {
-      fmtType -> mockk<Format> {
-        every { sampleMimeType } returns fmtType
-      }
+    val formats = trackFormats.map { fmtType ->
+      Format.Builder().apply {
+        setSampleMimeType(fmtType)
+      }.build()
     }.toTypedArray()
 
     return mockk<Tracks.Group> {
-      every { mediaTrackGroup } returns mockk<TrackGroup> {
-        every { length } returns formats.size
-        val slot = slot<Int>()
-        every { getFormat(capture(slot)) } returns formats[slot.captured]
-      }
-
-      // todo - need these lines?
-      every { length } returns formats.size
-      val indexSlot = slot<Int>()
-      every { getTrackFormat(capture((indexSlot))) } returns formats[indexSlot.captured]
+      every { mediaTrackGroup } returns mockTrackGroup(formats)
     }
+  }
+
+  private fun mockTrackGroup(formats: Array<Format>): TrackGroup {
+    return TrackGroup(*formats)
   }
 
   @Test
