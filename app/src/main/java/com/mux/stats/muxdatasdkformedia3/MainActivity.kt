@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityMainBinding
 import com.mux.stats.muxdatasdkformedia3.databinding.ListitemExampleBinding
 import com.mux.stats.muxdatasdkformedia3.examples.basic.BasicPlayerActivity
+import com.mux.stats.muxdatasdkformedia3.examples.basic.ComposeUiExampleActivity
+import com.mux.stats.muxdatasdkformedia3.examples.basic.PlayerReuseActivity
 import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaClientAdsActivity
 import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaServerAdsActivity
 
@@ -49,6 +51,14 @@ class MainActivity : AppCompatActivity() {
         )
       }
     ),
+    Example(
+      title = "Compose UI With Shared Player",
+      destination = Intent(this, ComposeUiExampleActivity::class.java)
+    ),
+    Example(
+      title = "Reusing a Player for multiple MediaItems",
+      destination = Intent(this, PlayerReuseActivity::class.java),
+    ),
     // TODO: post-beta, add APIs for talking to a `MediaSessionService`
 //    Example(
 //      title = "Background playback",
@@ -75,7 +85,7 @@ class ExampleListAdapter(
     )
     return Holder(
       viewBinding = viewBinding,
-      itemView = viewBinding.root
+      root = viewBinding.root
     )
   }
 
@@ -84,11 +94,11 @@ class ExampleListAdapter(
   override fun onBindViewHolder(holder: Holder, position: Int) {
     val example = examples[position]
     holder.viewBinding.exampleName.text = example.title
-    holder.itemView.setOnClickListener { context.startActivity(example.destination) }
+    holder.viewBinding.root.setOnClickListener { context.startActivity(example.destination) }
   }
 
   class Holder(
-    val itemView: View,
+    root: View,
     val viewBinding: ListitemExampleBinding
-  ) : RecyclerView.ViewHolder(itemView)
+  ) : RecyclerView.ViewHolder(root)
 }

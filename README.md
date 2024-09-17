@@ -25,7 +25,13 @@ repositories {
 Add a dependency on this SDK
 
 ```groovy
-api 'com.mux.stats.sdk.muxstats:data-media3:0.7.2'
+api 'com.mux.stats.sdk.muxstats:data-media3:1.2.2'
+```
+
+To include a specific version of the Media3 library, append `-at_x_y` to the artifact ID in the dependency. For example:
+
+```groovy
+api "com.mux.stats.sdk.muxstats:data-media3-at_1_1:1.2.2"
 ```
 
 ### Monitor your player

@@ -25,7 +25,8 @@ fun Player.monitorWithMuxData(
   envKey: String,
   customerData: CustomerData,
   playerView: View? = null,
-  customOptions: CustomOptions? = null
+  customOptions: CustomOptions? = null,
+  logLevel: MuxDataSdk.LogcatLevel = MuxDataSdk.LogcatLevel.NONE,
 ): MuxStatsSdkMedia3<*> {
   return if (this is ExoPlayer) {
     MuxStatsSdkMedia3(
@@ -35,6 +36,7 @@ fun Player.monitorWithMuxData(
       player = this,
       playerView = playerView,
       customOptions = customOptions,
+      logLevel = logLevel,
       playerBinding = ExoPlayerBinding()
     )
   } else {

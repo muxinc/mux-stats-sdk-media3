@@ -1,16 +1,15 @@
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-  id 'com.android.application' version '8.1.2' apply false
-  id 'com.android.library' version '8.1.2' apply false
-  id 'org.jetbrains.kotlin.android' version '1.7.20' apply false
-  id 'com.mux.gradle.android.mux-android-distribution' version '1.1.2' apply false
+  id 'com.android.application' version '8.5.2' apply false
+  id 'com.android.library' version '8.5.2' apply false
+  id 'org.jetbrains.kotlin.android' version '1.9.24' apply false
+  id 'com.mux.gradle.android.mux-android-distribution' version '1.2.1' apply false
   id "org.jetbrains.dokka" version "1.6.10"
 }
 
 allprojects {
   project.ext {
-    coreVersion = '1.1.0'
+    coreVersion = '1.3.1'
   }
 
   tasks.withType(DokkaTaskPartial.class) {

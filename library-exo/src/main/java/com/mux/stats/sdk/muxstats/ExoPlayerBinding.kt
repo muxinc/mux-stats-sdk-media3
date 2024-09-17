@@ -42,6 +42,7 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 
   override fun bindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
     catchUpPlayState(player, collector)
+    catchUpStreamData(player, collector)
 
     listener = MuxAnalyticsListener(
       player = player,
@@ -73,20 +74,6 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
     errorBinding.unbindPlayer(player, collector)
   }
 
-  // Catches the Collector up to the current play state if the user registers after prepare()
-  private fun catchUpPlayState(player: ExoPlayer, collector: MuxStateCollector) {
-    MuxLogger.d("PlayerUtils", "catchUpPlayState: Called. pwr is ${player.playWhenReady}")
-    if (player.playWhenReady) {
-      // Captures auto-play & late-registration, setting state and sending 'viewstart'
-      collector.play()
-    }
-    // The player will be idle when we are first attached, so we don't need to say we paused
-    //  (which is how IDLE is handled during actual playback)
-    if (player.playbackState != Player.STATE_IDLE) {
-      collector.handleExoPlaybackState(player.playbackState, player.playWhenReady)
-    }
-  }
-
   companion object {
     @Suppress("unused")
     private const val TAG = "ExoPlayerBinding"
@@ -96,12 +83,12 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
 @OptIn(UnstableApi::class)
 private class MuxAnalyticsListener(
   player: ExoPlayer,
-  bandwidthMetrics: BandwidthMetricDispatcher,
+  val bandwidthMetrics: BandwidthMetricDispatcher,
   val collector: MuxStateCollector,
 ) : AnalyticsListener {
 
-  private val bandwidthMetrics by weak(bandwidthMetrics)
   private val player by weak(player)
+  private var lastVideoFormat: Format? = null
 
   override fun onPlayWhenReadyChanged(
     eventTime: AnalyticsListener.EventTime,
@@ -157,17 +144,24 @@ private class MuxAnalyticsListener(
   ) {
     MuxLogger.d(
       TAG, "onVideoInputFormatChanged: new format: bitrate ${format.bitrate}" +
-              " and frameRate ${format.frameRate} "
+          " and frameRate ${format.frameRate} "
     )
-    val cleanBitrate = format.bitrate.takeIf { it >= 0 } ?: 0
-    val cleanFrameRate = format.frameRate.takeIf { it >= 0 } ?: 0F
+    // Situations like looping or ad breaks can result in this callback being called for the same
+    //  format multiple times over the course of a View. These aren't really rendition changes, and
+    //  are not abr-related so we ignore them in this case
+    if (this.lastVideoFormat == null || format != this.lastVideoFormat) {
+      val cleanBitrate = format.bitrate.takeIf { it >= 0 } ?: 0
+      val cleanFrameRate = format.frameRate.takeIf { it >= 0 } ?: 0F
 
-    collector.renditionChange(
-      advertisedBitrate = cleanBitrate,
-      advertisedFrameRate = cleanFrameRate,
-      sourceWidth = format.width,
-      sourceHeight = format.height
-    )
+      collector.renditionChange(
+        advertisedBitrate = cleanBitrate,
+        advertisedFrameRate = cleanFrameRate,
+        sourceWidth = format.width,
+        sourceHeight = format.height
+      )
+
+      this.lastVideoFormat = format
+    }
   }
 
   override fun onTracksChanged(eventTime: AnalyticsListener.EventTime, tracks: Tracks) {

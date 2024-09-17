@@ -7,6 +7,7 @@ import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.AdEvent
 import com.mux.stats.sdk.core.model.CustomerData
+import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
  * @param network Optional. A custom [INetworkRequest] to use instead of the default.
  * @param device Optional. A custom [IDevice] to use instead of the default.
  * @param playerBinding a [MuxPlayerAdapter.PlayerBinding] that can observe the state of your player
+ * @param logLevel The log level to use.
  * @param P The type of player being monitored.
  */
 class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
@@ -36,6 +38,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   customOptions: CustomOptions? = null,
   network: INetworkRequest? = null,
   device: IDevice? = null,
+  logLevel: LogcatLevel = LogcatLevel.NONE,
   playerBinding: MuxPlayerAdapter.PlayerBinding<P>,
 ) : MuxDataSdk<P, View>(
   context = context,
@@ -44,7 +47,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   playerView = playerView,
   customerData = customerData,
   customOptions = customOptions ?: CustomOptions(),
-  logLevel = LogcatLevel.DEBUG,
+  logLevel = logLevel,
   trackFirstFrame = true,
   playerBinding = playerBinding,
   device = device ?: AndroidDevice(
@@ -67,6 +70,20 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
    * The player bound to this object
    */
   val boundPlayer: P get() { return player }
+
+  override fun enable(customerData: CustomerData) {
+    // call-through to start the new view
+    super.enable(customerData)
+    // catch-up player state in case we missed prepare()
+    catchUpPlayState(player, collector)
+    catchUpStreamData(player, collector)
+  }
+
+  override fun videoChange(videoData: CustomerVideoData) {
+    super.videoChange(videoData)
+    catchUpPlayState(player, collector)
+    catchUpStreamData(player, collector)
+  }
 }
 
 /**
@@ -101,6 +118,15 @@ class AdCollector private constructor(
    * Call when ad playback starts
    */
   fun onStartPlayingAds() {
+    // edge case: if an IMA mid/postroll ad fails to load in time, the ExoPlayer will go into the
+    //   BUFFERING state and we'll be in REBUFFERING, for one final attempt to get the ads.
+    //   If that fails, the player will go into an adbreak for a few millis and then continue with
+    //   content. The events all really happen and there really is a short playback interuption so
+    //   it's good to count it all
+    if (muxPlayerState == MuxPlayerState.REBUFFERING) {
+      stateCollector.pause()
+    }
+
     stateCollector.playingAds()
   }
 
