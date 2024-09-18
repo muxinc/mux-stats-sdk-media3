@@ -32,7 +32,7 @@ android {
 
   sourceSets {
     At_latest {
-      java.srcDirs += "src/compatFrom1_4/java"
+      java.srcDirs += "src/compatFrom1_3/java"
     }
     at_1_0 {
       java.srcDirs += "src/compatFrom1_0/java"
