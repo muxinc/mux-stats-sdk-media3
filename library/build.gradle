@@ -24,29 +24,23 @@ android {
   productFlavors {
     At_latest {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.3.x\""
     }
     // This module does not currently need different src sets for different media3 versions.
     // We still need to declare different flavors so we can create version-specific variants
     at_1_0 {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.0.x\""
     }
     at_1_1 {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.1.x\""
     }
     at_1_2 {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.2.x\""
     }
     at_1_3 {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.3.x\""
     }
     at_1_4 {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.4.x\""
     }
   }
 
