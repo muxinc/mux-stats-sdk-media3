@@ -108,8 +108,6 @@ muxDistribution {
 
 dependencies {
   api "com.mux.stats.sdk.muxstats:android:${coreVersion}"
-  // implementation is used so it doesn't pollute customers namespace
-  implementation "com.mux:utils-kt:$coreVersion"
 
   //noinspection GradleDependency
   at_1_0Api "androidx.media3:media3-common:1.0.0"
