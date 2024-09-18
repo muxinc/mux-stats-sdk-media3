@@ -2,7 +2,10 @@ package com.mux.stats.sdk.muxstats
 
 import android.content.Context
 import android.view.View
+import androidx.annotation.OptIn
+import androidx.media3.common.MediaLibraryInfo
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.AdEvent
@@ -13,7 +16,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
 /**
- * TODO: doc out of date
  * Monitors a generic [Player] with Mux Data, reporting data about the View to the environment
  * specified by the env key.
  *
@@ -29,7 +31,7 @@ import kotlinx.coroutines.Dispatchers
  * @param logLevel The log level to use.
  * @param P The type of player being monitored.
  */
-class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
+class MuxStatsSdkMedia3<P : Player> @OptIn(UnstableApi::class) @JvmOverloads constructor(
   context: Context,
   envKey: String,
   customerData: CustomerData,
@@ -52,7 +54,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   playerBinding = playerBinding,
   device = device ?: AndroidDevice(
     ctx = context,
-    playerVersion = BuildConfig.MEDIA3_VERSION, /* TODO: dynamically detecting would be better*/
+    playerVersion = MediaLibraryInfo.VERSION,
     muxPluginName = "mux-media3",
     muxPluginVersion = BuildConfig.LIB_VERSION,
     playerSoftware = "media3-generic",
@@ -62,7 +64,7 @@ class MuxStatsSdkMedia3<P : Player> @JvmOverloads constructor(
   /**
    * Collects events related to ad playback and reports them. If you are using Google IMA, you don't
    * need to interact with this class directly. Instead, use the `media3-ima` library provided by
-   * Mux (TODO: Doc link)
+   * Mux
    */
   val adCollector by lazy { AdCollector.create(collector, eventBus) }
 
