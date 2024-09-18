@@ -44,6 +44,10 @@ android {
       dimension "media3"
       buildConfigField "String", "MEDIA3_VERSION", "\"1.3.x\""
     }
+    at_1_4 {
+      dimension "media3"
+      buildConfigField "String", "MEDIA3_VERSION", "\"1.4.x\""
+    }
   }
 
   buildTypes {
@@ -76,7 +80,7 @@ muxDistribution {
   publicReleaseIf releaseIfCmdFlag("publicRelease")
 
   // TODO: This is kinda clumsy, packageJavadocs should be a function not a property probably
-  packageJavadocs = releaseOnTag().call()
+  packageJavadocs = releaseIfCmdFlag("publicRelease").call()
   publishIf { it.containsIgnoreCase("release") }
   artifactoryConfig {
     contextUrl = "https://muxinc.jfrog.io/artifactory/"
@@ -117,9 +121,12 @@ dependencies {
   at_1_0Api "androidx.media3:media3-common:1.0.0"
   //noinspection GradleDependency
   at_1_1Api "androidx.media3:media3-common:1.1.0"
+  //noinspection GradleDependency
   at_1_2Api "androidx.media3:media3-common:1.2.0"
+  //noinspection GradleDependency
   at_1_3Api "androidx.media3:media3-common:1.3.0"
-  At_latestApi "androidx.media3:media3-common:1.3.0"
+  at_1_4Api "androidx.media3:media3-common:1.4.0"
+  At_latestApi "androidx.media3:media3-common:1.4.0"
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 
