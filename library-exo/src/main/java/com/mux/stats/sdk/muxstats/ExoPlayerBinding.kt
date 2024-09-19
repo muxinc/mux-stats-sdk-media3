@@ -22,7 +22,6 @@ import com.mux.stats.sdk.muxstats.internal.createErrorDataBinding
 import com.mux.stats.sdk.muxstats.internal.createExoSessionDataBinding
 import com.mux.stats.sdk.muxstats.internal.populateLiveStreamData
 import java.io.IOException
-import java.lang.Exception
 import java.util.regex.Pattern
 
 /**
