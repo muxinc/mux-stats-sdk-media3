@@ -14,7 +14,6 @@ android {
 
   defaultConfig {
     minSdk 19
-    targetSdk 34
 
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles "consumer-rules.pro"
@@ -41,6 +40,7 @@ android {
     }
     at_1_4 {
       dimension "media3"
+      minSdk 21 // media3 has a minSdk of 21 since v1.4
     }
   }
 

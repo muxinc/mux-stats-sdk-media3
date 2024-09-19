@@ -14,7 +14,6 @@ android {
 
   defaultConfig {
     minSdk 19
-    targetSdk 34
 
     // our deps almost blow the dex limit by themselves, media3 doc/examples all use multidex
     multiDexEnabled true
@@ -32,7 +31,10 @@ android {
     at_1_1 { dimension "media3" }
     at_1_2 { dimension "media3" }
     at_1_3 { dimension "media3" }
-    at_1_4 { dimension "media3" }
+    at_1_4 {
+      dimension "media3"
+      minSdk 21 // media3 has a minSdk of 21 since v1.4
+    }
   }
 
   buildTypes {
