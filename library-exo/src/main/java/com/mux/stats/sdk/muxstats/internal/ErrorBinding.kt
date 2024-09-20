@@ -105,13 +105,7 @@ internal fun MuxStateCollector.handleExoPlaybackException(errorCode: Int, e: Exo
     ExoPlaybackException.TYPE_RENDERER -> {
       when (val rex = e.rendererException) {
         is MediaCodecRenderer.DecoderInitializationException -> {
-          if (rex.cause is MediaCodecUtil.DecoderQueryException) {
-            internalError(MuxErrorException(errorCode, "Unable to query device decoders"))
-          } else if (rex.secureDecoderRequired) {
-            internalError(MuxErrorException(errorCode, createErrorMessage(rex), rex.diagnosticInfo))
-          } else {
-            internalError(MuxErrorException(errorCode, createErrorMessage(rex), rex.diagnosticInfo))
-          }
+          internalError(MuxErrorException(errorCode, createErrorMessage(rex), rex.diagnosticInfo))
         }
 
         is MediaCodecDecoderException -> {
