@@ -6,15 +6,14 @@ plugins {
 
 android {
   namespace 'com.mux.stats.sdk.media3_ima'
-  compileSdk 34
+  compileSdk 35
 
   buildFeatures {
     buildConfig = true
   }
 
   defaultConfig {
-    targetSdk 34
-    minSdk 19
+    minSdk 21
 
     // our deps almost blow the dex limit by themselves, media3 doc/examples all use multidex
     multiDexEnabled true
@@ -28,11 +27,25 @@ android {
     // This module does not currently need different src sets for different media3 versions.
     // We still need to declare different flavors so we can create version-specific variants
     At_latest { dimension "media3" }
-    at_1_0 { dimension "media3" }
-    at_1_1 { dimension "media3" }
-    at_1_2 { dimension "media3" }
-    at_1_3 { dimension "media3" }
-    at_1_4 { dimension "media3" }
+    at_1_0 {
+      dimension "media3"
+      minSdk 19 // minSdk is 19 before 1.4
+    }
+    at_1_1 {
+      dimension "media3"
+      minSdk 19 // minSdk is 19 before 1.4
+    }
+    at_1_2 {
+     dimension "media3"
+      minSdk 19 // minSdk is 19 before 1.4
+     }
+    at_1_3 {
+     dimension "media3"
+      minSdk 19 // minSdk is 19 before 1.4
+     }
+    at_1_4 {
+      dimension "media3"
+    }
   }
 
   buildTypes {
