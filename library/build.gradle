@@ -6,15 +6,14 @@ plugins {
 
 android {
   namespace 'com.mux.stats.sdk.muxstats.media3'
-  compileSdk 34
+  compileSdk 35
 
   buildFeatures {
     buildConfig = true
   }
 
   defaultConfig {
-    minSdk 19
-    targetSdk 34
+    minSdk 21
 
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     consumerProguardFiles "consumer-rules.pro"
@@ -24,25 +23,27 @@ android {
   productFlavors {
     At_latest {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.3.x\""
     }
     // This module does not currently need different src sets for different media3 versions.
     // We still need to declare different flavors so we can create version-specific variants
     at_1_0 {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.0.x\""
+      minSdk 19 // minSdk is 19 before 1.4
     }
     at_1_1 {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.1.x\""
+      minSdk 19 // minSdk is 19 before 1.4
     }
     at_1_2 {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.2.x\""
+      minSdk 19 // minSdk is 19 before 1.4
     }
     at_1_3 {
       dimension "media3"
-      buildConfigField "String", "MEDIA3_VERSION", "\"1.3.x\""
+      minSdk 19 // minSdk is 19 before 1.4
+    }
+    at_1_4 {
+      dimension "media3"
     }
   }
 
@@ -73,10 +74,10 @@ muxDistribution {
     }
   }
   groupIds just("com.mux.stats.sdk.muxstats")
-  publicReleaseIf releaseOnTag()
+  publicReleaseIf releaseIfCmdFlag("publicRelease")
 
   // TODO: This is kinda clumsy, packageJavadocs should be a function not a property probably
-  packageJavadocs = releaseOnTag().call()
+  packageJavadocs = releaseIfCmdFlag("publicRelease").call()
   publishIf { it.containsIgnoreCase("release") }
   artifactoryConfig {
     contextUrl = "https://muxinc.jfrog.io/artifactory/"
@@ -110,16 +111,17 @@ muxDistribution {
 
 dependencies {
   api "com.mux.stats.sdk.muxstats:android:${coreVersion}"
-  // implementation is used so it doesn't pollute customers namespace
-  implementation "com.mux:utils-kt:$coreVersion"
 
   //noinspection GradleDependency
   at_1_0Api "androidx.media3:media3-common:1.0.0"
   //noinspection GradleDependency
   at_1_1Api "androidx.media3:media3-common:1.1.0"
+  //noinspection GradleDependency
   at_1_2Api "androidx.media3:media3-common:1.2.0"
+  //noinspection GradleDependency
   at_1_3Api "androidx.media3:media3-common:1.3.0"
-  At_latestApi "androidx.media3:media3-common:1.3.0"
+  at_1_4Api "androidx.media3:media3-common:1.4.0"
+  At_latestApi "androidx.media3:media3-common:1.4.0"
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3"
 

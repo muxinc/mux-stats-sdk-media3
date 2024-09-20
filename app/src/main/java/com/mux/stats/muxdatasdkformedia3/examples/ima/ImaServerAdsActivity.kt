@@ -1,5 +1,6 @@
 package com.mux.stats.muxdatasdkformedia3.examples.ima
 
+import VersionCompat
 import android.net.Uri
 import android.os.Bundle
 import android.os.PersistableBundle
@@ -60,7 +61,7 @@ class ImaServerAdsActivity : AppCompatActivity() {
     window.addFlags(View.KEEP_SCREEN_ON)
 
     adsLoaderState = savedInstanceState?.getBundle(EXTRA_ADS_LOADER_STATE)
-      ?.let { AdsLoader.State.CREATOR.fromBundle(it) }
+      ?.let { VersionCompat.adsLoaderStateFromBundle(it) }
   }
 
   override fun onResume() {

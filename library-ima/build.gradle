@@ -6,15 +6,14 @@ plugins {
 
 android {
   namespace 'com.mux.stats.sdk.media3_ima'
-  compileSdk 34
+  compileSdk 35
 
   buildFeatures {
     buildConfig = true
   }
 
   defaultConfig {
-    targetSdk 34
-    minSdk 19
+    minSdk 21
 
     // our deps almost blow the dex limit by themselves, media3 doc/examples all use multidex
     multiDexEnabled true
@@ -28,10 +27,25 @@ android {
     // This module does not currently need different src sets for different media3 versions.
     // We still need to declare different flavors so we can create version-specific variants
     At_latest { dimension "media3" }
-    at_1_0 { dimension "media3" }
-    at_1_1 { dimension "media3" }
-    at_1_2 { dimension "media3" }
-    at_1_3 { dimension "media3" }
+    at_1_0 {
+      dimension "media3"
+      minSdk 19 // minSdk is 19 before 1.4
+    }
+    at_1_1 {
+      dimension "media3"
+      minSdk 19 // minSdk is 19 before 1.4
+    }
+    at_1_2 {
+     dimension "media3"
+      minSdk 19 // minSdk is 19 before 1.4
+     }
+    at_1_3 {
+     dimension "media3"
+      minSdk 19 // minSdk is 19 before 1.4
+     }
+    at_1_4 {
+      dimension "media3"
+    }
   }
 
   buildTypes {
@@ -61,10 +75,10 @@ muxDistribution {
     }
   }
   groupIds just("com.mux.stats.sdk.muxstats")
-  publicReleaseIf releaseOnTag()
+  publicReleaseIf releaseIfCmdFlag("publicRelease")
 
   // TODO: This is kinda clumsy, packageJavadocs should be a function not a property probably
-  packageJavadocs = releaseOnTag().call()
+  packageJavadocs = releaseIfCmdFlag("publicRelease").call()
   publishIf { it.containsIgnoreCase("release") }
   artifactoryConfig {
     contextUrl = "https://muxinc.jfrog.io/artifactory/"
@@ -98,11 +112,6 @@ muxDistribution {
 
 dependencies {
   debugImplementation project(':library')
-  
-  // note- 3.30.0 and 3.30.1 are marked as broken by google, so don't use
-//  api 'com.google.ads.interactivemedia.v3:interactivemedia:3.29.0'
-  // implementation is used so it doesn't pollute customers namespace
-  implementation "com.mux:utils-kt:$coreVersion"
 
   //noinspection GradleDependency
   at_1_0Api "androidx.media3:media3-exoplayer-ima:1.0.0"
@@ -119,8 +128,12 @@ dependencies {
   at_1_3Api "androidx.media3:media3-exoplayer-ima:1.3.0"
   //noinspection GradleDependency
   at_1_3Api "androidx.media3:media3-exoplayer:1.3.0"
-  At_latestApi "androidx.media3:media3-exoplayer-ima:1.3.0"
-  At_latestApi "androidx.media3:media3-exoplayer:1.3.0"
+  //noinspection GradleDependency
+  at_1_4Api "androidx.media3:media3-exoplayer-ima:1.4.0"
+  //noinspection GradleDependency
+  at_1_4Api "androidx.media3:media3-exoplayer:1.4.0"
+  At_latestApi "androidx.media3:media3-exoplayer-ima:1.4.0"
+  At_latestApi "androidx.media3:media3-exoplayer:1.4.0"
 
   implementation 'androidx.core:core-ktx:1.13.1'
 
