@@ -5,11 +5,12 @@ plugins {
 
 android {
   namespace 'com.mux.stats.muxdatasdkformedia3'
-  compileSdk 34
+  compileSdk 35
 
   defaultConfig {
     applicationId "com.example.muxdatasdkformedia3"
-    targetSdk 34
+    //noinspection OldTargetApi
+    targetSdk 35
     minSdk 21
     versionCode 1
     versionName "1.0"
