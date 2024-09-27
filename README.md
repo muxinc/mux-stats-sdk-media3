@@ -100,16 +100,16 @@ found [here](https://github.com/muxinc/stats-sdk-android).
 
 #### API Surface
 
-The surface of this API is contained in `MuxStatsSdkMeda3`, which extends a common `MuxDataSdk`
+The surface of this API is contained in `MuxStatsSdkMedia3`, which extends a common `MuxDataSdk`
 object in a common core library. This is the class customers should interact with if/when they need
-to customize some aspect of SDK behavior. Internally, `MuxStatsSdkMeda3` manages player interaction
+to customize some aspect of SDK behavior. Internally, `MuxStatsSdkMedia3` manages player interaction
 with the underlying data tracking and reporting code in
 the [android core](https://github.com/muxinc/stats-sdk-android)
 
 #### Player Bindings
 
-`Meda3PlayerBinding` should handle all interaction with the `Player`. It, in turn, is managed by our
+`Media3PlayerBinding` should handle all interaction with the `Player`. It, in turn, is managed by our
 [core android library](https://github.com/muxinc/stats-sdk-android). The `PlayerBinding` is bound
 when
-the outer `MuxStatsSdkMeda3` object is created and unbound when that object is released.
+the outer `MuxStatsSdkMedia3` object is created and unbound when that object is released.
 
