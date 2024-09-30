@@ -2,7 +2,6 @@ package com.mux.stats.sdk.media3_ima
 
 import androidx.media3.common.Player
 import com.google.ads.interactivemedia.v3.api.Ad
-import com.google.ads.interactivemedia.v3.api.AdError
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdEvent
@@ -13,7 +12,6 @@ import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.events.playback.*
 import com.mux.stats.sdk.core.model.AdData
-import com.mux.stats.sdk.core.model.PlayerData
 import com.mux.stats.sdk.core.model.ViewData
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.AdCollector
@@ -266,49 +264,46 @@ class MuxImaAdsListener private constructor(
   }
 
   /** VideoAdPlayerCallback */
-  override fun onAdProgress(p0: AdMediaInfo, p1: VideoProgressUpdate) {
-    customerVideoAdPlayerCallback?.onAdProgress(p0, p1)
+  override fun onAdProgress(mediaInfo: AdMediaInfo, progress: VideoProgressUpdate) {
+    customerVideoAdPlayerCallback?.onAdProgress(mediaInfo, progress)
   }
 
-  override fun onBuffering(p0: AdMediaInfo) {
-    customerVideoAdPlayerCallback?.onBuffering(p0)
+  override fun onBuffering(mediaInfo: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onBuffering(mediaInfo)
   }
 
   override fun onContentComplete() {
     customerVideoAdPlayerCallback?.onContentComplete()
   }
 
-  override fun onEnded(p0: AdMediaInfo) {
-    customerVideoAdPlayerCallback?.onEnded(p0)
+  override fun onEnded(mediaInfo: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onEnded(mediaInfo)
   }
 
-  override fun onError(p0: AdMediaInfo) {
-    val pData = PlayerData()
-    pData.playerErrorContext = "Ad playback error"
-    pData.setPlayerErrorSeverity(ErrorEvent.ErrorSeverity.ErrorSeverityWarning.name)
-    adCollector?.dispatch(MuxAdErrorEvent(pData))
-    customerVideoAdPlayerCallback?.onError(p0)
+  override fun onError(mediaInfo: AdMediaInfo) {
+    adCollector?.dispatch(MuxAdErrorEvent(null))
+    customerVideoAdPlayerCallback?.onError(mediaInfo)
   }
 
-  override fun onLoaded(p0: AdMediaInfo) {
+  override fun onLoaded(mediaInfo: AdMediaInfo) {
     adCollector?.dispatch(AdResponseEvent(null))
-    customerVideoAdPlayerCallback?.onLoaded(p0)
+    customerVideoAdPlayerCallback?.onLoaded(mediaInfo)
   }
 
-  override fun onPause(p0: AdMediaInfo) {
-    customerVideoAdPlayerCallback?.onPause(p0)
+  override fun onPause(mediaInfo: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onPause(mediaInfo)
   }
 
-  override fun onPlay(p0: AdMediaInfo) {
-    customerVideoAdPlayerCallback?.onPlay(p0)
+  override fun onPlay(mediaInfo: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onPlay(mediaInfo)
   }
 
-  override fun onResume(p0: AdMediaInfo) {
-    customerVideoAdPlayerCallback?.onResume(p0)
+  override fun onResume(mediaInfo: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onResume(mediaInfo)
   }
 
-  override fun onVolumeChanged(p0: AdMediaInfo, p1: Int) {
-    customerVideoAdPlayerCallback?.onVolumeChanged(p0, p1)
+  override fun onVolumeChanged(mediaInfo: AdMediaInfo, p1: Int) {
+    customerVideoAdPlayerCallback?.onVolumeChanged(mediaInfo, p1)
   }
 }
 
