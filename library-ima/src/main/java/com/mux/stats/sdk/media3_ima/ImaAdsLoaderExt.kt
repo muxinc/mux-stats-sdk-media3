@@ -36,6 +36,7 @@ fun ImaAdsLoader.Builder.monitorWith(
 
   setAdEventListener(adsListener)
   setAdErrorListener(adsListener)
+  customerAdPlayerAdCallback?.let { setVideoAdPlayerCallback(adsListener) }
 
   return this
 }
