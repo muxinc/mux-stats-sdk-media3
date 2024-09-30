@@ -226,42 +226,6 @@ class MuxImaAdsListener private constructor(
     adCollector?.dispatch(event)
   }
 
-  companion object {
-    private const val TAG = "MuxImaAdsListener"
-
-    /**
-     * Creates a new [MuxImaAdsListener] based on the given [MuxStatsSdkMedia3]
-     */
-    @JvmStatic
-    fun newListener(
-      muxSdk: MuxStatsSdkMedia3<*>,
-      customerAdEventListener: AdEventListener = AdEventListener { },
-      customerAdErrorListener: AdErrorListener = AdErrorListener { },
-      customerVideoAdPlayerCallback: VideoAdPlayerCallback? = null,
-    ): MuxImaAdsListener {
-      return MuxImaAdsListener(
-        Provider { muxSdk },
-        customerAdEventListener,
-        customerAdErrorListener,
-        customerVideoAdPlayerCallback
-      )
-    }
-      /**
-       * Creates a new [MuxImaAdsListener] based on the given [MuxStatsSdkMedia3]
-       */
-      @JvmStatic
-      fun newListener(
-        muxSdkProvider:() -> MuxStatsSdkMedia3<*>?,
-        customerAdEventListener: AdEventListener = AdEventListener { },
-        customerAdErrorListener: AdErrorListener = AdErrorListener { },
-      ): MuxImaAdsListener {
-        return MuxImaAdsListener(
-          Provider { muxSdkProvider() },
-          customerAdEventListener,
-          customerAdErrorListener
-        )
-      }
-  }
 
   /** VideoAdPlayerCallback */
   override fun onAdProgress(mediaInfo: AdMediaInfo, progress: VideoProgressUpdate) {
@@ -304,6 +268,43 @@ class MuxImaAdsListener private constructor(
 
   override fun onVolumeChanged(mediaInfo: AdMediaInfo, p1: Int) {
     customerVideoAdPlayerCallback?.onVolumeChanged(mediaInfo, p1)
+  }
+
+  companion object {
+    private const val TAG = "MuxImaAdsListener"
+
+    /**
+     * Creates a new [MuxImaAdsListener] based on the given [MuxStatsSdkMedia3]
+     */
+    @JvmStatic
+    fun newListener(
+      muxSdk: MuxStatsSdkMedia3<*>,
+      customerAdEventListener: AdEventListener = AdEventListener { },
+      customerAdErrorListener: AdErrorListener = AdErrorListener { },
+      customerVideoAdPlayerCallback: VideoAdPlayerCallback? = null,
+    ): MuxImaAdsListener {
+      return MuxImaAdsListener(
+        Provider { muxSdk },
+        customerAdEventListener,
+        customerAdErrorListener,
+        customerVideoAdPlayerCallback
+      )
+    }
+    /**
+     * Creates a new [MuxImaAdsListener] based on the given [MuxStatsSdkMedia3]
+     */
+    @JvmStatic
+    fun newListener(
+      muxSdkProvider:() -> MuxStatsSdkMedia3<*>?,
+      customerAdEventListener: AdEventListener = AdEventListener { },
+      customerAdErrorListener: AdErrorListener = AdErrorListener { },
+    ): MuxImaAdsListener {
+      return MuxImaAdsListener(
+        Provider { muxSdkProvider() },
+        customerAdEventListener,
+        customerAdErrorListener
+      )
+    }
   }
 }
 
