@@ -3,16 +3,23 @@ package com.mux.stats.sdk.media3_ima
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ima.ImaAdsLoader
+import androidx.media3.exoplayer.ima.ImaServerSideAdInsertionMediaSource
 import androidx.media3.exoplayer.ima.ImaServerSideAdInsertionMediaSource.AdsLoader
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 
 /**
- * Monitors the [ImaAdsLoader] created by the given [ImaAdsLoader.Builder].
+ * Monitors the [ImaServerSideAdInsertionMediaSource.AdsLoader] created by the a
+ * [ImaServerSideAdInsertionMediaSource.AdsLoader.Builder].
+ *
+ * This method is just for DAI server-side ad-insertion. If you're doing Client-Side Ad Insertion
+ * (CSAI), use [ImaAdsLoader.Builder.monitorWith]
  *
  * Mux must take ownership of the [AdErrorListener] and [AdEventListener] for this ads loader, but
  * you can provide your own listeners and logic using the provided optional params
+ *
+ * This method is specifically for Google DAI, and it works
  *
  * @param muxStatsProvider Provides [MuxStatsSdkMedia3] instance for monitoring your player.
  * @param customerAdEventListener Optional. An [AdEventListener] with your apps custom ad-event handling
