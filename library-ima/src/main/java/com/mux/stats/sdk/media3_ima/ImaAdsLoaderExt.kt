@@ -11,8 +11,9 @@ import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 /**
  * Monitors the [ImaAdsLoader] created by the given [ImaAdsLoader.Builder].
  *
- * Mux must take ownership of the [AdErrorListener] and [AdEventListener] for this ads loader, but
- * you can provide your own listeners and logic using the provided optional params
+ * Mux must take ownership of the [AdErrorListener], [AdEventListener], and [VideoAdPlayerCallback]
+ * for this ads loader, but you can provide your own listeners and logic using the provided optional
+ * params.
  *
  * @param muxStats The [MuxStatsSdkMedia3] instance monitoring your player
  * @param customerAdEventListener Optional. An [AdEventListener] with your apps custom ad-event handling

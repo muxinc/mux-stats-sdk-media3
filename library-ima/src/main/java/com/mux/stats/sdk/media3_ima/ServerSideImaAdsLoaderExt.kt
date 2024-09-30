@@ -19,8 +19,6 @@ import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
  * Mux must take ownership of the [AdErrorListener] and [AdEventListener] for this ads loader, but
  * you can provide your own listeners and logic using the provided optional params
  *
- * This method is specifically for Google DAI, and it works
- *
  * @param muxStatsProvider Provides [MuxStatsSdkMedia3] instance for monitoring your player.
  * @param customerAdEventListener Optional. An [AdEventListener] with your apps custom ad-event handling
  * @param customerAdErrorListener Optional. An [AdErrorListener] containing your app's ad-error handling
