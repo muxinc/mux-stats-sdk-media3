@@ -6,6 +6,9 @@ import com.google.ads.interactivemedia.v3.api.AdErrorEvent
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent.AdErrorListener
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.google.ads.interactivemedia.v3.api.AdEvent.AdEventListener
+import com.google.ads.interactivemedia.v3.api.player.AdMediaInfo
+import com.google.ads.interactivemedia.v3.api.player.VideoAdPlayer.VideoAdPlayerCallback
+import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.events.playback.*
 import com.mux.stats.sdk.core.model.AdData
@@ -24,7 +27,8 @@ class MuxImaAdsListener private constructor(
   private val provider: Provider,
   private val customerAdEventListener: AdEventListener = AdEventListener { },
   private val customerAdErrorListener: AdErrorListener = AdErrorListener { },
-) : AdErrorListener, AdEventListener {
+  private val customerVideoAdPlayerCallback: VideoAdPlayerCallback? = null,
+) : AdErrorListener, AdEventListener, VideoAdPlayerCallback {
 
   /** The ExoPlayer that is playing the ads */
   private val exoPlayer: Player? get() = provider.boundPlayer
@@ -222,6 +226,50 @@ class MuxImaAdsListener private constructor(
     adCollector?.dispatch(event)
   }
 
+
+  /** VideoAdPlayerCallback */
+  override fun onAdProgress(mediaInfo: AdMediaInfo, progress: VideoProgressUpdate) {
+    customerVideoAdPlayerCallback?.onAdProgress(mediaInfo, progress)
+  }
+
+  override fun onBuffering(mediaInfo: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onBuffering(mediaInfo)
+  }
+
+  override fun onContentComplete() {
+    customerVideoAdPlayerCallback?.onContentComplete()
+  }
+
+  override fun onEnded(mediaInfo: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onEnded(mediaInfo)
+  }
+
+  override fun onError(mediaInfo: AdMediaInfo) {
+    adCollector?.dispatch(MuxAdErrorEvent(null))
+    customerVideoAdPlayerCallback?.onError(mediaInfo)
+  }
+
+  override fun onLoaded(mediaInfo: AdMediaInfo) {
+    adCollector?.dispatch(AdResponseEvent(null))
+    customerVideoAdPlayerCallback?.onLoaded(mediaInfo)
+  }
+
+  override fun onPause(mediaInfo: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onPause(mediaInfo)
+  }
+
+  override fun onPlay(mediaInfo: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onPlay(mediaInfo)
+  }
+
+  override fun onResume(mediaInfo: AdMediaInfo) {
+    customerVideoAdPlayerCallback?.onResume(mediaInfo)
+  }
+
+  override fun onVolumeChanged(mediaInfo: AdMediaInfo, p1: Int) {
+    customerVideoAdPlayerCallback?.onVolumeChanged(mediaInfo, p1)
+  }
+
   companion object {
     private const val TAG = "MuxImaAdsListener"
 
@@ -233,28 +281,30 @@ class MuxImaAdsListener private constructor(
       muxSdk: MuxStatsSdkMedia3<*>,
       customerAdEventListener: AdEventListener = AdEventListener { },
       customerAdErrorListener: AdErrorListener = AdErrorListener { },
+      customerVideoAdPlayerCallback: VideoAdPlayerCallback? = null,
     ): MuxImaAdsListener {
       return MuxImaAdsListener(
         Provider { muxSdk },
         customerAdEventListener,
+        customerAdErrorListener,
+        customerVideoAdPlayerCallback
+      )
+    }
+    /**
+     * Creates a new [MuxImaAdsListener] based on the given [MuxStatsSdkMedia3]
+     */
+    @JvmStatic
+    fun newListener(
+      muxSdkProvider:() -> MuxStatsSdkMedia3<*>?,
+      customerAdEventListener: AdEventListener = AdEventListener { },
+      customerAdErrorListener: AdErrorListener = AdErrorListener { },
+    ): MuxImaAdsListener {
+      return MuxImaAdsListener(
+        Provider { muxSdkProvider() },
+        customerAdEventListener,
         customerAdErrorListener
       )
     }
-      /**
-       * Creates a new [MuxImaAdsListener] based on the given [MuxStatsSdkMedia3]
-       */
-      @JvmStatic
-      fun newListener(
-        muxSdkProvider:() -> MuxStatsSdkMedia3<*>?,
-        customerAdEventListener: AdEventListener = AdEventListener { },
-        customerAdErrorListener: AdErrorListener = AdErrorListener { },
-      ): MuxImaAdsListener {
-        return MuxImaAdsListener(
-          Provider { muxSdkProvider() },
-          customerAdEventListener,
-          customerAdErrorListener
-        )
-      }
   }
 }
 
