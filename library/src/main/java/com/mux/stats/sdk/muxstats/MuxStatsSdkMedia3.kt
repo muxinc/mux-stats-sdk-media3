@@ -11,6 +11,7 @@ import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.AdEvent
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
+import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.media3.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +62,7 @@ class MuxStatsSdkMedia3<P : Player> @OptIn(UnstableApi::class) @JvmOverloads con
   ),
   makeNetworkRequest = { iDevice -> network ?: MuxNetwork(iDevice, CoroutineScope(Dispatchers.IO)) }
 ) {
+
   /**
    * Collects events related to ad playback and reports them. If you are using Google IMA, you don't
    * need to interact with this class directly. Instead, use the `media3-ima` library provided by
