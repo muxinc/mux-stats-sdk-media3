@@ -99,7 +99,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
     val customerData = CustomerData(
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
-        title = "Mux Data SDK for Media3 Demo"
+        videoTitle = "Mux Data for Media3 - CSAI Ads"
       },
       CustomerViewData().apply { }
     )
