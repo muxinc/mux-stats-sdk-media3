@@ -18,7 +18,7 @@ import androidx.media3.exoplayer.ima.ImaAdsLoader
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import com.mux.stats.muxdatasdkformedia3.Constants
-import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
+import com.mux.stats.muxdatasdkformedia3.databinding.ActivityImaClientAdsBinding
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
@@ -29,7 +29,7 @@ import com.mux.stats.sdk.muxstats.monitorWithMuxData
 
 class ImaClientAdsActivity : AppCompatActivity() {
 
-  private lateinit var view: ActivityPlayerBinding
+  private lateinit var view: ActivityImaClientAdsBinding
   private var player: Player? = null
   private var muxStats: MuxStatsSdkMedia3<ExoPlayer>? = null
   private var adsLoader: ImaAdsLoader? = null
@@ -37,7 +37,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
   @OptIn(UnstableApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    view = ActivityPlayerBinding.inflate(layoutInflater)
+    view = ActivityImaClientAdsBinding.inflate(layoutInflater)
     setContentView(view.root)
 
     view.playerView.apply {
