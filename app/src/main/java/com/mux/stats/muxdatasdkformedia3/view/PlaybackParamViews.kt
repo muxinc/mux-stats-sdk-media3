@@ -5,6 +5,8 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.BaseAdapter
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -96,8 +98,12 @@ class SpinnerParamEntryView @JvmOverloads constructor(
     val text = binding.textParamEntryIn.text?.trim()?.ifEmpty { null }?.toString()
     return text
   }
+  var adapter: SpinnerParamEntryView.Adapter
+    get() = binding.textParamEntrySpinner.adapter as Adapter
+    set(value) = binding.textParamEntrySpinner.setAdapter(value)
 
-  var onClear: (() -> Unit)? = null
+//  var onClear: (() -> Unit)? = null
+  var onSelected: ((Int) -> Unit)? = null
 
   init {
     val defaultIndex: Int
@@ -126,8 +132,18 @@ class SpinnerParamEntryView @JvmOverloads constructor(
 
     binding.textParamEntryClear.setOnClickListener {
       binding.textParamEntryIn.text = null
-      onClear?.invoke()
+//      onClear?.invoke()
     }
+    binding.textParamEntrySpinner.onItemSelectedListener = object: OnItemSelectedListener {
+      override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        onSelected?.invoke(position)
+      }
+      override fun onNothingSelected(parent: AdapterView<*>?) {
+        selection = defaultIndex
+      }
+
+    }
+
     selection = defaultIndex
   }
 
@@ -169,8 +185,6 @@ class SpinnerParamEntryView @JvmOverloads constructor(
     val text: CharSequence?,
   )
 }
-
-
 
 class NumericParamEntryView @JvmOverloads constructor(
   context: Context,

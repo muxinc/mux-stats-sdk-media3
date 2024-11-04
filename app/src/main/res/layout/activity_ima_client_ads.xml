@@ -26,20 +26,19 @@
             >
 
             <com.mux.stats.muxdatasdkformedia3.view.TextParamEntryView
-                android:id="@+id/configurable_player_playback_id"
+                android:id="@+id/configurable_player_src_url"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                app:title="@string/label_playback_id"
+                app:title="@string/label_src_url"
                 />
 
-            <com.mux.stats.muxdatasdkformedia3.view.TextParamEntryView
+            <com.mux.stats.muxdatasdkformedia3.view.SpinnerParamEntryView
                 android:id="@+id/configurable_player_custom_domain"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
-                app:title="@string/label_custom_domain"
-                app:hint="@string/unspecified_custom_domain"
+                app:title="@string/label_ad_tag_url"
                 />
 
 <!--            <com.mux.stats.muxdatasdkformedia3.view.NumericParamEntryView-->

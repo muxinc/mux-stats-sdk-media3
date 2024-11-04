@@ -46,7 +46,9 @@ class ImaClientAdsActivity : AppCompatActivity() {
 
     savedInstanceState?.let { paramHelper.restoreInstanceState(it) }
 
-    // todo - hook up the param views here
+    view.configurablePlayerSrcUrl.onClear = {
+      paramHelper.sourceUrl = null
+    }
 
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
