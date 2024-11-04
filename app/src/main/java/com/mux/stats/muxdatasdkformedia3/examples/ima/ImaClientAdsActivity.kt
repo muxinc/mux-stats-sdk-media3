@@ -19,6 +19,8 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityImaClientAdsBinding
+import com.mux.stats.muxdatasdkformedia3.examples.ImaClientAdsParamHelper
+import com.mux.stats.sdk.core.model.CustomData
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
@@ -34,11 +36,17 @@ class ImaClientAdsActivity : AppCompatActivity() {
   private var muxStats: MuxStatsSdkMedia3<ExoPlayer>? = null
   private var adsLoader: ImaAdsLoader? = null
 
+  private val paramHelper = ImaClientAdsParamHelper()
+
   @OptIn(UnstableApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     view = ActivityImaClientAdsBinding.inflate(layoutInflater)
     setContentView(view.root)
+
+    savedInstanceState?.let { paramHelper.restoreInstanceState(it) }
+
+    // todo - hook up the param views here
 
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
@@ -55,6 +63,11 @@ class ImaClientAdsActivity : AppCompatActivity() {
   override fun onPause() {
     stopPlaying()
     super.onPause()
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    paramHelper.saveInstanceState(outState)
+    super.onSaveInstanceState(outState)
   }
 
   private fun startPlaying(mediaUrl: String, adTagUri: String) {
@@ -99,9 +112,12 @@ class ImaClientAdsActivity : AppCompatActivity() {
     val customerData = CustomerData(
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
-        videoTitle = "Mux Data for Media3 - CSAI Ads"
+        videoTitle = "Mux Data for Media3 - IMA Ads"
       },
-      CustomerViewData().apply { }
+      CustomerViewData().apply { },
+      CustomData().apply {
+        customData1 = paramHelper.adTagUrl
+      }
     )
 
     return player.monitorWithMuxData(

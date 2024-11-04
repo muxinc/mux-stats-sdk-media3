@@ -15,6 +15,7 @@ class ImaClientAdsParamHelper {
 
   var sourceUrl: String? = null
   var adTagUrl: String? = null
+  var title: String? = null
 
   fun createMediaItemBuilder(): MediaItem.Builder {
     return MediaItem.Builder()
