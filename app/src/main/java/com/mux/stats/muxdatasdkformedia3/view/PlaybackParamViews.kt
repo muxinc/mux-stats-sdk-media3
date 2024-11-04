@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.SpinnerAdapter
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.mux.stats.muxdatasdkformedia3.R
@@ -79,7 +78,7 @@ class SpinnerParamEntryView @JvmOverloads constructor(
     selection = defaultIndex
   }
 
-  inner class SpinnerParamAdapter(
+  inner class Adapter(
     val context: Context,
     val items: List<Item>,
   ) : BaseAdapter() {
@@ -106,7 +105,7 @@ class SpinnerParamEntryView @JvmOverloads constructor(
         view.findViewById<TextView>(android.R.id.text2).text = item.text
       }
       view.findViewById<TextView>(android.R.id.text1).text = item.title
-      
+
       return view
     }
   }
