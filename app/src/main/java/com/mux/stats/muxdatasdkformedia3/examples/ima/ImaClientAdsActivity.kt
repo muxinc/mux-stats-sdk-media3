@@ -73,6 +73,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
       muxStats?.updateCustomerData(customerData)
 
     }
+    // todo - the 'update ad tag url' button
     view.configurablePlayerCustomDomain.adapter = createAdTagAdapter()
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
