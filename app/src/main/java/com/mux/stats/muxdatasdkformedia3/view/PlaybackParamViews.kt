@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.SpinnerAdapter
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.mux.stats.muxdatasdkformedia3.R
 import com.mux.stats.muxdatasdkformedia3.databinding.NumericParamEntryBinding
@@ -77,35 +78,47 @@ class SpinnerParamEntryView @JvmOverloads constructor(
     }
     selection = defaultIndex
   }
-}
 
-class SpinnerParamAdapter<T>(
-  val context: Context,
-  val items: List<Item<T>>,
-  val viewBinder: (View, T) -> Unit,
-) : BaseAdapter() {
+  inner class SpinnerParamAdapter(
+    val context: Context,
+    val items: List<Item>,
+  ) : BaseAdapter() {
 
-  override fun getCount(): Int = items.size
+    override fun getCount(): Int = items.size
 
-  override fun getItem(position: Int): Item<T>  = items[position]
+    override fun getItem(position: Int): Item  = items[position]
 
-  override fun getItemId(position: Int): Long = position.toLong()
+    override fun getItemId(position: Int): Long = position.toLong()
 
-  override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-    // no view holder is fine, this is a simple layout
-    val view = convertView
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+      // no view holder is fine, this is a simple layout
+      val view = convertView
         ?: LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_2, parent, false)
+      val item = getItem(position)
 
-    viewBinder(view, getItem(position).data)
-    return view
+      if (item.customAllowed) {
+        binding.textParamEntryIn.visibility = View.VISIBLE
+      } else {
+        binding.textParamEntryIn.visibility = View.GONE
+      }
+
+      if (item.text != null) {
+        view.findViewById<TextView>(android.R.id.text2).text = item.text
+      }
+      view.findViewById<TextView>(android.R.id.text1).text = item.title
+      
+      return view
+    }
   }
 
-  data class Item<T>(
-    val data: T,
+  data class Item(
     val customAllowed: Boolean,
-    val selectable: Boolean = true,
+    val title: CharSequence,
+    val text: CharSequence?,
   )
 }
+
+
 
 class NumericParamEntryView @JvmOverloads constructor(
   context: Context,
