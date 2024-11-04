@@ -130,12 +130,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
         .apply { setPlayer(newPlayer) }
 
       view.playerView.player = newPlayer
-      newPlayer.setMediaItem(
-        MediaItem.Builder()
-          .setUri(Uri.parse(mediaUrl))
-          .setAdsConfiguration(AdsConfiguration.Builder(Uri.parse(adTagUri)).build())
-          .build()
-      )
+      newPlayer.setMediaItem(paramHelper.createMediaItem())
       newPlayer.prepare()
       newPlayer.playWhenReady = true
     }
