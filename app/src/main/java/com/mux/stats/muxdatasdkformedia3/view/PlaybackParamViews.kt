@@ -93,16 +93,22 @@ class SpinnerParamEntryView @JvmOverloads constructor(
     set(value) {
       binding.textParamEntrySpinner.setSelection(value)
     }
-  val entry: String? get() {
-    // todo - get from Spinner adapter
-    val text = binding.textParamEntryIn.text?.trim()?.ifEmpty { null }?.toString()
-    return text
+  val entry: Pair<String?, String?> get() {
+    val chosenItem = adapter?.let { adapter -> adapter.items[selection] }
+    val customEntry = binding.textParamEntryIn.text?.trim()?.ifEmpty { null }?.toString() ?: ""
+
+    return if (chosenItem?.customAllowed == true) {
+      Pair(chosenItem.title.toString(), customEntry)
+    } else if (chosenItem != null) {
+      Pair(chosenItem.title.toString(), chosenItem.text?.toString())
+    } else {
+      return Pair(null, null)
+    }
   }
-  var adapter: SpinnerParamEntryView.Adapter
+
+  var adapter: SpinnerParamEntryView.Adapter?
     get() = binding.textParamEntrySpinner.adapter as Adapter
     set(value) = binding.textParamEntrySpinner.setAdapter(value)
-
-//  var onClear: (() -> Unit)? = null
   var onSelected: ((Int) -> Unit)? = null
 
   init {

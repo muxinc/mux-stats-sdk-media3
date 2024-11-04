@@ -19,7 +19,9 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityImaClientAdsBinding
+import com.mux.stats.muxdatasdkformedia3.examples.ImaAdTags
 import com.mux.stats.muxdatasdkformedia3.examples.ImaClientAdsParamHelper
+import com.mux.stats.muxdatasdkformedia3.view.SpinnerParamEntryView
 import com.mux.stats.sdk.core.model.CustomData
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
@@ -50,10 +52,33 @@ class ImaClientAdsActivity : AppCompatActivity() {
       paramHelper.sourceUrl = null
     }
 
+    // todo - rename layout to adtagurl something
+    view.configurablePlayerCustomDomain.onSelected = {
+      val (title, adTagUrl) = view.configurablePlayerCustomDomain.entry
+      paramHelper.adTagUrl = adTagUrl
+      paramHelper.title = title
+
+      // todo - repeated later on
+      val customerData = CustomerData(
+        CustomerPlayerData().apply { },
+        CustomerVideoData().apply {
+          videoTitle = "Mux Data for Media3 - IMA Ads"
+        },
+        CustomerViewData().apply { },
+        CustomData().apply {
+          customData1 = paramHelper.adTagUrl
+          customData2 = paramHelper.title
+        }
+      )
+      muxStats?.updateCustomerData(customerData)
+
+    }
+    view.configurablePlayerCustomDomain.adapter = createAdTagAdapter()
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
       controllerAutoShow = true
     }
+
     window.addFlags(View.KEEP_SCREEN_ON)
   }
 
@@ -70,6 +95,24 @@ class ImaClientAdsActivity : AppCompatActivity() {
   override fun onSaveInstanceState(outState: Bundle) {
     paramHelper.saveInstanceState(outState)
     super.onSaveInstanceState(outState)
+  }
+
+  private fun createAdTagAdapter(): SpinnerParamEntryView.Adapter {
+    val googleTags = ImaAdTags.googleTags.map { tag ->
+      SpinnerParamEntryView.Item(
+        customAllowed = false,
+        title = tag.title,
+        text = tag.adTagUrl
+      )
+    }
+    val customTag = SpinnerParamEntryView.Item(
+      customAllowed = true,
+      title = "Custom Ad Tag",
+      text = null,
+    )
+    val allTags = listOf(customTag) + googleTags
+
+    return view.configurablePlayerCustomDomain.Adapter(this, allTags)
   }
 
   private fun startPlaying(mediaUrl: String, adTagUri: String) {
@@ -119,6 +162,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
       CustomerViewData().apply { },
       CustomData().apply {
         customData1 = paramHelper.adTagUrl
+        customData2 = paramHelper.title
       }
     )
 
