@@ -3,6 +3,10 @@ package com.mux.stats.muxdatasdkformedia3.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.BaseAdapter
+import android.widget.SpinnerAdapter
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.mux.stats.muxdatasdkformedia3.R
 import com.mux.stats.muxdatasdkformedia3.databinding.NumericParamEntryBinding
@@ -39,6 +43,7 @@ class SpinnerParamEntryView @JvmOverloads constructor(
     val text = binding.textParamEntryIn.text?.trim()?.ifEmpty { null }?.toString()
     return text
   }
+
   var onClear: (() -> Unit)? = null
 
   init {
@@ -71,6 +76,28 @@ class SpinnerParamEntryView @JvmOverloads constructor(
       onClear?.invoke()
     }
     selection = defaultIndex
+  }
+}
+
+class SpinnerParamAdapter<T>(
+  val context: Context,
+  val items: List<Item<T>>,
+  val viewBinder: (View, T) -> Unit,
+) : BaseAdapter() {
+
+  override fun getCount(): Int = items.size
+
+  override fun getItem(position: Int): Item<T>  = items[position]
+
+  override fun getItemId(position: Int): Long = position.toLong()
+
+  override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+    // no view holder is fine, this is a simple layout
+    val view = convertView
+        ?: LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_2, parent, false)
+
+    viewBinder(view, getItem(position).data)
+    return view
   }
 
   data class Item<T>(
