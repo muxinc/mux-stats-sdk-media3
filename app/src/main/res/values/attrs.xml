@@ -9,4 +9,7 @@
   <declare-styleable name="NumericParamEntryView">
     <attr name="hint_num" format="float" />
   </declare-styleable>
+  <declare-styleable name="SpinnerParamEntryView">
+    <attr name="default_index" format="integer" />
+  </declare-styleable>
 </resources>

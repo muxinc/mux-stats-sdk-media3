@@ -1,7 +1,9 @@
 package com.mux.stats.muxdatasdkformedia3.examples
 
+import android.net.Uri
 import android.os.Bundle
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaItem.AdsConfiguration
 import com.mux.stats.muxdatasdkformedia3.Constants
 
 /**
@@ -11,25 +13,19 @@ import com.mux.stats.muxdatasdkformedia3.Constants
 class ImaClientAdsParamHelper {
   // todo: set data from Intent (ie, deep linking)
 
-  var playbackToken: String? = null
   var sourceUrl: String? = null
   var adTagUrl: String? = null
 
-
   fun createMediaItemBuilder(): MediaItem.Builder {
-//    return MediaItems.builderFromMuxPlaybackId(
-//      playbackId = playbackIdOrDefault(),
-//      minResolution = minRes,
-//      maxResolution = maxRes,
-//      renditionOrder = renditionOrder,
-//      assetStartTime = assetStartTime,
-//      assetEndTime = assetEndTime,
-//      playbackToken = playbackToken?.ifEmpty { null },
-//      drmToken = drmToken?.ifEmpty { null },
-//      domain = customDomain?.ifEmpty { null },
-//    )
-    // todo
     return MediaItem.Builder()
+      .setUri(Uri.parse(sourceUrlOrDefault()))
+      .setAdsConfiguration(
+        AdsConfiguration.Builder(Uri.parse(adTagUrlOrDefault())).build()
+      )
+  }
+
+  fun adTagUrlOrDefault(): String {
+    return adTagUrl?.ifEmpty { DEFAULT_AD_TAG_URL } ?: DEFAULT_AD_TAG_URL
   }
 
   fun sourceUrlOrDefault(): String {
@@ -41,15 +37,18 @@ class ImaClientAdsParamHelper {
   }
 
   fun saveInstanceState(state: Bundle) {
-    //todo
+    state.putString("source url", sourceUrl)
+    state.putString("ad tag url", adTagUrl)
   }
 
   fun restoreInstanceState(state: Bundle) {
-    // todo
+    sourceUrl = state.getString("source url", null)
+    adTagUrl = state.getString("ad tag url", null)
   }
 
   companion object {
     const val DEFAULT_SOURCE_URL = Constants.VOD_TEST_URL_TEARS_OF_STEEL
+    const val DEFAULT_AD_TAG_URL = Constants.AD_TAG_COMPLEX
   }
 }
 

@@ -7,15 +7,28 @@
 
     <!-- playback ID -->
     <TextView
-      android:id="@+id/text_param_entry_lbl"
+      android:id="@+id/spinner_param_entry_lbl"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:layout_margin="4dp"
-      android:textAppearance="@style/TextAppearance.App.PlaybackParamLabel"
       android:textSize="20sp"
       tools:text="Text Entry Label"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/text_param_entry_spinner"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:backgroundTint="@color/Gray30"
+        android:textColor="?colorOnPrimary"
+        android:textColorHint="@color/Gray70"
+        android:textSize="18sp"
+        tools:hint="Entry Hint"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/spinner_param_entry_lbl" />
 
     <EditText
       android:id="@+id/text_param_entry_in"
@@ -27,21 +40,9 @@
       android:textColorHint="@color/Gray70"
       android:textSize="18sp"
       tools:hint="Entry Hint"
+      tools:visibility="visible"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toBottomOf="@id/text_param_entry_lbl" />
-
-<!--    android:paddingEnd="32dp"-->
-<!--    <ImageButton-->
-<!--      android:id="@+id/text_param_entry_clear"-->
-<!--      android:layout_width="20dp"-->
-<!--      android:layout_height="20dp"-->
-<!--      android:layout_marginEnd="8dp"-->
-<!--      android:background="@null"-->
-<!--      android:scaleType="centerInside"-->
-<!--      android:src="@drawable/quantum_ic_clear_white_24"-->
-<!--      app:layout_constraintBottom_toBottomOf="@id/text_param_entry_in"-->
-<!--      app:layout_constraintEnd_toEndOf="@id/text_param_entry_in"-->
-<!--      app:layout_constraintTop_toTopOf="@id/text_param_entry_in" />-->
+      app:layout_constraintTop_toBottomOf="@id/text_param_entry_spinner" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
