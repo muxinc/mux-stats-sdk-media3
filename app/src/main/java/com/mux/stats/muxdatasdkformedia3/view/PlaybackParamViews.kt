@@ -35,7 +35,7 @@ class SpinnerParamEntryView @JvmOverloads constructor(
       binding.textParamEntrySpinner.setSelection(value)
     }
   val entry: String? get() {
-    // todo - get from Spinner adpter
+    // todo - get from Spinner adapter
     val text = binding.textParamEntryIn.text?.trim()?.ifEmpty { null }?.toString()
     return text
   }
@@ -65,13 +65,19 @@ class SpinnerParamEntryView @JvmOverloads constructor(
         recycle()
       }
     }
-    
+
     binding.textParamEntryClear.setOnClickListener {
       binding.textParamEntryIn.text = null
       onClear?.invoke()
     }
     selection = defaultIndex
   }
+
+  data class Item<T>(
+    val data: T,
+    val customAllowed: Boolean,
+    val selectable: Boolean = true,
+  )
 }
 
 class NumericParamEntryView @JvmOverloads constructor(
