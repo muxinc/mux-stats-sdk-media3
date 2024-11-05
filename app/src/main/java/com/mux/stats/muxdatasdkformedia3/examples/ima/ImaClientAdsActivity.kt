@@ -58,18 +58,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
       paramHelper.adTagUrl = adTagUrl
       paramHelper.title = title
 
-      // todo - repeated later on
-      val customerData = CustomerData(
-        CustomerPlayerData().apply { },
-        CustomerVideoData().apply {
-          videoTitle = "Mux Data for Media3 - IMA Ads"
-        },
-        CustomerViewData().apply { },
-        CustomData().apply {
-          customData1 = paramHelper.adTagUrl
-          customData2 = paramHelper.title
-        }
-      )
+      val customerData = createCustomerData(title, adTagUrl)
       muxStats?.updateCustomerData(customerData)
 
     }
@@ -96,6 +85,20 @@ class ImaClientAdsActivity : AppCompatActivity() {
   override fun onSaveInstanceState(outState: Bundle) {
     paramHelper.saveInstanceState(outState)
     super.onSaveInstanceState(outState)
+  }
+
+  private fun createCustomerData(title: String?, adTagUrl: String?): CustomerData {
+    return CustomerData(
+      CustomerPlayerData().apply { },
+      CustomerVideoData().apply {
+        videoTitle = "Mux Data for Media3 - IMA Ads"
+      },
+      CustomerViewData().apply { },
+      CustomData().apply {
+        customData1 = adTagUrl
+        customData2 = title
+      }
+    )
   }
 
   private fun createAdTagAdapter(): SpinnerParamEntryView.Adapter {
@@ -150,17 +153,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
 
   private fun monitorPlayer(player: ExoPlayer): MuxStatsSdkMedia3<ExoPlayer> {
     // You can add your own data to a View, which will override any data we collect
-    val customerData = CustomerData(
-      CustomerPlayerData().apply { },
-      CustomerVideoData().apply {
-        videoTitle = "Mux Data for Media3 - IMA Ads"
-      },
-      CustomerViewData().apply { },
-      CustomData().apply {
-        customData1 = paramHelper.adTagUrl
-        customData2 = paramHelper.title
-      }
-    )
+    val customerData = createCustomerData(paramHelper.title, paramHelper.adTagUrl)
 
     return player.monitorWithMuxData(
       context = this,
