@@ -36,6 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
+        app:hint="@string/hint_ad_tag_custom"
         app:default_index="1"
         app:title="@string/label_ad_tag_url" />
 

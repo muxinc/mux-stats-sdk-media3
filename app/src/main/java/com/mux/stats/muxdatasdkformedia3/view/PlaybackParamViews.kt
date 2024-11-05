@@ -142,6 +142,15 @@ class SpinnerParamEntryView @JvmOverloads constructor(
     }
     binding.textParamEntrySpinner.onItemSelectedListener = object: OnItemSelectedListener {
       override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+        val item = adapter?.getItem(position)
+        if (item?.customAllowed == true) {
+          binding.textParamEntryIn.visibility = VISIBLE
+          binding.textParamEntryClear.visibility = VISIBLE
+        } else {
+          binding.textParamEntryIn.visibility = GONE
+          binding.textParamEntryClear.visibility = GONE
+        }
+
         onSelected?.invoke(position)
       }
       override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -172,8 +181,10 @@ class SpinnerParamEntryView @JvmOverloads constructor(
 
       if (item.customAllowed) {
         binding.textParamEntryIn.visibility = View.VISIBLE
+        binding.textParamEntryClear.visibility = View.VISIBLE
       } else {
         binding.textParamEntryIn.visibility = View.GONE
+        binding.textParamEntryClear.visibility = View.GONE
       }
 
       if (item.text != null) {
