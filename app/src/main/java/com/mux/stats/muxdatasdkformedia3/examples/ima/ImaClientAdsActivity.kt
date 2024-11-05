@@ -62,6 +62,9 @@ class ImaClientAdsActivity : AppCompatActivity() {
       startPlaying()
     }
     view.imaClientAdsUpdateMediaItem.setOnClickListener {
+      paramHelper.sourceUrl = view.imaClientAdsSrcUrl.entry
+      paramHelper.envKey = view.imaClientAdsDataKey.entry
+
       startPlaying()
     }
     view.imaClientAdsSpinner.adapter = createAdTagAdapter()
