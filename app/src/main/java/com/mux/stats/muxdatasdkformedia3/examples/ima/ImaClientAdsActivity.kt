@@ -55,14 +55,17 @@ class ImaClientAdsActivity : AppCompatActivity() {
       val (title, adTagUrl) = view.imaClientAdsSpinner.entry
       paramHelper.adTagUrl = adTagUrl
       paramHelper.title = title
+
       val customerData = createCustomerData(title, adTagUrl)
       muxStats?.updateCustomerData(customerData)
 
+      startPlaying()
     }
     view.imaClientAdsUpdateMediaItem.setOnClickListener {
       startPlaying()
     }
     view.imaClientAdsSpinner.adapter = createAdTagAdapter()
+    view.imaClientAdsSrcUrl.hint = ImaClientAdsParamHelper.DEFAULT_SOURCE_URL
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
       controllerAutoShow = true

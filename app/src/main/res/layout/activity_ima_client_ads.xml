@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:layout_marginStart="8dp"
-        android:text="@string/update_tokens_ids" />
+        android:text="@string/update_src_url" />
 
     </LinearLayout>
 

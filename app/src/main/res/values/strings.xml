@@ -11,7 +11,7 @@
     <string name="asset_end_time">Clip End Time (sec)</string>
 
     <string name="hint_ad_tag_custom">Custom Ad Tag URL</string>
-    <string name="update_tokens_ids">Update tokens/playback ID</string>
+    <string name="update_src_url">Update source url</string>
 
     <string name="menu_rendition_order">Rendition Order</string>
     <string name="menu_descending">Descending</string>

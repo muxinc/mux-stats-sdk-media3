@@ -73,6 +73,7 @@ class SpinnerParamEntryView @JvmOverloads constructor(
   defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
+  private val defaultSelection: Int
   private val binding = ParamSpinnerWithDefaultBinding.inflate(
     LayoutInflater.from(context),
     this,
@@ -108,7 +109,13 @@ class SpinnerParamEntryView @JvmOverloads constructor(
 
   var adapter: SpinnerParamEntryView.Adapter?
     get() = binding.textParamEntrySpinner.adapter as Adapter
-    set(value) = binding.textParamEntrySpinner.setAdapter(value)
+    set(value) {
+      val setDefaultSelection = binding.textParamEntrySpinner.adapter == null
+      binding.textParamEntrySpinner.setAdapter(value)
+      if (setDefaultSelection) {
+        selection = defaultSelection
+      }
+    }
   var onSelected: ((Int) -> Unit)? = null
 
   init {
@@ -156,10 +163,8 @@ class SpinnerParamEntryView @JvmOverloads constructor(
       override fun onNothingSelected(parent: AdapterView<*>?) {
         selection = defaultIndex
       }
-
     }
-
-    selection = defaultIndex
+    this.defaultSelection = defaultIndex
   }
 
   inner class Adapter(
@@ -179,16 +184,13 @@ class SpinnerParamEntryView @JvmOverloads constructor(
         ?: LayoutInflater.from(context).inflate(android.R.layout.simple_list_item_2, parent, false)
       val item = getItem(position)
 
-      if (item.customAllowed) {
-        binding.textParamEntryIn.visibility = View.VISIBLE
-        binding.textParamEntryClear.visibility = View.VISIBLE
-      } else {
-        binding.textParamEntryIn.visibility = View.GONE
-        binding.textParamEntryClear.visibility = View.GONE
-      }
-
       if (item.text != null) {
-        view.findViewById<TextView>(android.R.id.text2).text = item.text
+        val text2 = view.findViewById<TextView>(android.R.id.text2)
+        text2.text = item.text
+        text2.visibility = VISIBLE
+      } else {
+        val text2 = view.findViewById<TextView>(android.R.id.text2)
+        text2.visibility = GONE
       }
       view.findViewById<TextView>(android.R.id.text1).text = item.title
 
