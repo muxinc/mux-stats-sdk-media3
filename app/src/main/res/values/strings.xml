@@ -7,5 +7,5 @@
   <string name="label_ad_tag_url">Ad tag URL</string>
 
   <string name="hint_ad_tag_custom">Custom Ad Tag URL</string>
-  <string name="update_src_url">Update source url</string>
+  <string name="update_src_url">Update URLs/Keys</string>
 </resources>
