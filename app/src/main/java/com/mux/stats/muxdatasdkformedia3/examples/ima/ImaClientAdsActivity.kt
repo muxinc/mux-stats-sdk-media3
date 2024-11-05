@@ -48,24 +48,21 @@ class ImaClientAdsActivity : AppCompatActivity() {
 
     savedInstanceState?.let { paramHelper.restoreInstanceState(it) }
 
-    view.configurablePlayerSrcUrl.onClear = {
+    view.imaClientAdsSrcUrl.onClear = {
       paramHelper.sourceUrl = null
     }
-
-    // todo - rename layout to adtagurl something
-    view.configurablePlayerCustomDomain.onSelected = {
-      val (title, adTagUrl) = view.configurablePlayerCustomDomain.entry
+    view.imaClientAdsSpinner.onSelected = {
+      val (title, adTagUrl) = view.imaClientAdsSpinner.entry
       paramHelper.adTagUrl = adTagUrl
       paramHelper.title = title
-
       val customerData = createCustomerData(title, adTagUrl)
       muxStats?.updateCustomerData(customerData)
 
     }
-    view.configurablePlayerUpdateMediaItem.setOnClickListener {
+    view.imaClientAdsUpdateMediaItem.setOnClickListener {
       startPlaying()
     }
-    view.configurablePlayerCustomDomain.adapter = createAdTagAdapter()
+    view.imaClientAdsSpinner.adapter = createAdTagAdapter()
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
       controllerAutoShow = true
@@ -118,7 +115,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
     )
     val allTags = listOf(customTag) + googleTags
 
-    return view.configurablePlayerCustomDomain.Adapter(this, allTags)
+    return view.imaClientAdsSpinner.Adapter(this, allTags)
   }
 
   private fun startPlaying() {

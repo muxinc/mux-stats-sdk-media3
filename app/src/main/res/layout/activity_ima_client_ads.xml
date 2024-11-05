@@ -25,14 +25,14 @@
       app:layout_constraintTop_toBottomOf="@id/player_view">
 
       <com.mux.stats.muxdatasdkformedia3.view.TextParamEntryView
-        android:id="@+id/configurable_player_src_url"
+        android:id="@+id/ima_client_ads_src_url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         app:title="@string/label_src_url" />
 
       <com.mux.stats.muxdatasdkformedia3.view.SpinnerParamEntryView
-        android:id="@+id/configurable_player_custom_domain"
+        android:id="@+id/ima_client_ads_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
@@ -40,7 +40,7 @@
         app:title="@string/label_ad_tag_url" />
 
       <Button
-        android:id="@+id/configurable_player_update_media_item"
+        android:id="@+id/ima_client_ads_update_media_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
