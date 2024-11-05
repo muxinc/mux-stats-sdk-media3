@@ -16,6 +16,7 @@ class ImaClientAdsParamHelper {
   var sourceUrl: String? = null
   var adTagUrl: String? = null
   var title: String? = null
+  var envKey: String? = null
 
   fun createMediaItemBuilder(): MediaItem.Builder {
     return MediaItem.Builder()
@@ -33,6 +34,10 @@ class ImaClientAdsParamHelper {
     return sourceUrl?.ifEmpty { DEFAULT_SOURCE_URL } ?: DEFAULT_SOURCE_URL
   }
 
+  fun envKeyOrDefault(): String {
+    return envKey?.ifEmpty { Constants.MUX_DATA_ENV_KEY } ?: Constants.MUX_DATA_ENV_KEY
+  }
+
   fun createMediaItem(): MediaItem {
     return createMediaItemBuilder().build()
   }
@@ -40,11 +45,13 @@ class ImaClientAdsParamHelper {
   fun saveInstanceState(state: Bundle) {
     state.putString("source url", sourceUrl)
     state.putString("ad tag url", adTagUrl)
+    state.putString("env key", envKey)
   }
 
   fun restoreInstanceState(state: Bundle) {
     sourceUrl = state.getString("source url", null)
     adTagUrl = state.getString("ad tag url", null)
+    envKey = state.getString("env key", null)
   }
 
   companion object {

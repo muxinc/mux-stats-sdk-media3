@@ -1,6 +1,7 @@
 package com.mux.stats.muxdatasdkformedia3.view
 
 import android.content.Context
+import android.text.Editable
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
@@ -60,10 +61,13 @@ class TextParamEntryView @JvmOverloads constructor(
     }
 
   var onClear: (() -> Unit)? = null
-  val entry: String?
+  var entry: String?
     get() {
       val text = binding.textParamEntryIn.text?.trim()?.ifEmpty { null }?.toString()
       return text
+    }
+    set(value) {
+      binding.textParamEntryIn.text = value?.let { Editable.Factory.getInstance().newEditable(it) }
     }
 }
 

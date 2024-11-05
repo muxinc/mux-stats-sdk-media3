@@ -26,7 +26,7 @@
       android:layout_marginStart="8dp"
       android:backgroundTint="@color/Gray30"
       android:paddingEnd="32dp"
-      android:textColor="?colorOnPrimary"
+      android:textColor="@color/Gray90"
       android:textColorHint="@color/Gray70"
       android:textSize="18sp"
       android:inputType="number"

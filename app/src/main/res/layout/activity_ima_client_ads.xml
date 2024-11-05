@@ -27,6 +27,13 @@
       android:layout_marginBottom="4dp"
       app:title="@string/label_src_url" />
 
+    <com.mux.stats.muxdatasdkformedia3.view.TextParamEntryView
+      android:id="@+id/ima_client_ads_data_key"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="4dp"
+      app:title="@string/label_src_url" />
+
     <com.mux.stats.muxdatasdkformedia3.view.SpinnerParamEntryView
       android:id="@+id/ima_client_ads_spinner"
       android:layout_width="match_parent"

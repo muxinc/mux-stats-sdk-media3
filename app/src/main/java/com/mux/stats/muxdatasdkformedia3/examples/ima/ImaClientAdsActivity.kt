@@ -66,6 +66,12 @@ class ImaClientAdsActivity : AppCompatActivity() {
     }
     view.imaClientAdsSpinner.adapter = createAdTagAdapter()
     view.imaClientAdsSrcUrl.hint = ImaClientAdsParamHelper.DEFAULT_SOURCE_URL
+    view.imaClientAdsSrcUrl.entry = paramHelper.sourceUrl
+
+    view.imaClientAdsDataKey.hint = Constants.MUX_DATA_ENV_KEY
+    view.imaClientAdsDataKey.entry = paramHelper.envKey
+    view.imaClientAdsDataKey.onClear = { paramHelper.envKey = null }
+      
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
       controllerAutoShow = true

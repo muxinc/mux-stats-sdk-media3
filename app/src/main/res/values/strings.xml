@@ -3,6 +3,7 @@
   <string name="title_activity_compose_ui_example">Compose UI Example</string>
 
   <string name="label_src_url">Source URL</string>
+  <string name="label_data_key">Mux Data Env Key</string>
   <string name="label_ad_tag_url">Ad tag URL</string>
 
   <string name="hint_ad_tag_custom">Custom Ad Tag URL</string>
