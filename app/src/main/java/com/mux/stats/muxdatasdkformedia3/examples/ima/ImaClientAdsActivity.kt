@@ -62,7 +62,9 @@ class ImaClientAdsActivity : AppCompatActivity() {
       muxStats?.updateCustomerData(customerData)
 
     }
-    // todo - the 'update ad tag url' button
+    view.configurablePlayerUpdateMediaItem.setOnClickListener {
+      startPlaying()
+    }
     view.configurablePlayerCustomDomain.adapter = createAdTagAdapter()
     view.playerView.apply {
       setShowBuffering(PlayerView.SHOW_BUFFERING_WHEN_PLAYING)
@@ -74,7 +76,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
 
   override fun onResume() {
     super.onResume()
-    startPlaying(Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY, Constants.AD_TAG_COMPLEX)
+    startPlaying()
   }
 
   override fun onPause() {
@@ -119,7 +121,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
     return view.configurablePlayerCustomDomain.Adapter(this, allTags)
   }
 
-  private fun startPlaying(mediaUrl: String, adTagUri: String) {
+  private fun startPlaying() {
     stopPlaying()
 
     player = createPlayer().also { newPlayer ->
