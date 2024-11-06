@@ -13,7 +13,9 @@ android {
     targetSdk 35
     minSdk 21
     versionCode 1
-    versionName "1.0"
+    def commit = "git rev-parse --short HEAD".execute().inputReader().readLines().join()
+    def branch = "git branch --show-current".execute().inputReader().readLines().join()
+    versionName "$branch-$commit"
 
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     vectorDrawables {
