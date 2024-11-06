@@ -55,7 +55,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
       // update the ad tag whenever a new spinner item is selected
       val (title, adTagUrl) = view.imaClientAdsSpinner.entry
       // ... unless you need to enter text
-      if (adTagUrl != null) {
+      if (!adTagUrl.isNullOrBlank()) {
         paramHelper.adTagUrl = adTagUrl
         paramHelper.title = title
         val customerData = createCustomerData(title, adTagUrl)
