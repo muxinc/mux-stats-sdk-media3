@@ -52,18 +52,26 @@ class ImaClientAdsActivity : AppCompatActivity() {
       paramHelper.sourceUrl = null
     }
     view.imaClientAdsSpinner.onSelected = {
+      // update the ad tag whenever a new spinner item is selected
       val (title, adTagUrl) = view.imaClientAdsSpinner.entry
-      paramHelper.adTagUrl = adTagUrl
-      paramHelper.title = title
-
-      val customerData = createCustomerData(title, adTagUrl)
-      muxStats?.updateCustomerData(customerData)
-
-      startPlaying()
+      // ... unless you need to enter text
+      if (adTagUrl != null) {
+        paramHelper.adTagUrl = adTagUrl
+        paramHelper.title = title
+        val customerData = createCustomerData(title, adTagUrl)
+        muxStats?.updateCustomerData(customerData)
+        startPlaying()
+      }
     }
     view.imaClientAdsUpdateMediaItem.setOnClickListener {
+      // update everything when the 'update' button is clicked
       paramHelper.sourceUrl = view.imaClientAdsSrcUrl.entry
       paramHelper.envKey = view.imaClientAdsDataKey.entry
+
+      val (title, adTagUrl) = view.imaClientAdsSpinner.entry
+      paramHelper.adTagUrl = adTagUrl
+      val customerData = createCustomerData(title, adTagUrl)
+      muxStats?.updateCustomerData(customerData)
 
       startPlaying()
     }

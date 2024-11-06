@@ -149,7 +149,8 @@ class SpinnerParamEntryView @JvmOverloads constructor(
 
     binding.textParamEntryClear.setOnClickListener {
       binding.textParamEntryIn.text = null
-//      onClear?.invoke()
+      // notify change again
+      onSelected?.invoke(selection)
     }
     binding.textParamEntrySpinner.onItemSelectedListener = object: OnItemSelectedListener {
       override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
