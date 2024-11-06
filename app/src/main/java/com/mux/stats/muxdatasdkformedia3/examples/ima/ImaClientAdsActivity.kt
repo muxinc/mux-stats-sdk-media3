@@ -68,8 +68,10 @@ class ImaClientAdsActivity : AppCompatActivity() {
       startPlaying()
     }
     view.imaClientAdsSpinner.adapter = createAdTagAdapter()
+
     view.imaClientAdsSrcUrl.hint = ImaClientAdsParamHelper.DEFAULT_SOURCE_URL
     view.imaClientAdsSrcUrl.entry = paramHelper.sourceUrl
+    view.imaClientAdsSrcUrl.onClear = { paramHelper.sourceUrl = null }
 
     view.imaClientAdsDataKey.hint = Constants.MUX_DATA_ENV_KEY
     view.imaClientAdsDataKey.entry = paramHelper.envKey
