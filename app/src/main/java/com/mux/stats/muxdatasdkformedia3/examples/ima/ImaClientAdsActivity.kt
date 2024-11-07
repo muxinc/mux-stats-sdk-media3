@@ -1,14 +1,11 @@
 package com.mux.stats.muxdatasdkformedia3.examples.ima
 
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaItem.AdsConfiguration
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -60,7 +57,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
         paramHelper.title = title
         val customerData = createCustomerData(title, adTagUrl)
         muxStats?.updateCustomerData(customerData)
-        startPlaying()
+        initPlayer(play = player?.isPlaying == true)
       }
     }
     view.imaClientAdsUpdateMediaItem.setOnClickListener {
@@ -73,7 +70,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
       val customerData = createCustomerData(title, adTagUrl)
       muxStats?.updateCustomerData(customerData)
 
-      startPlaying()
+      initPlayer(play = player?.isPlaying == true)
     }
     view.imaClientAdsSpinner.adapter = createAdTagAdapter()
 
@@ -95,7 +92,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
 
   override fun onResume() {
     super.onResume()
-    startPlaying()
+    initPlayer(play = false)
   }
 
   override fun onPause() {
@@ -140,7 +137,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
     return view.imaClientAdsSpinner.Adapter(this, allTags)
   }
 
-  private fun startPlaying() {
+  private fun initPlayer(play: Boolean = true) {
     stopPlaying()
 
     player = createPlayer().also { newPlayer ->
@@ -156,8 +153,8 @@ class ImaClientAdsActivity : AppCompatActivity() {
 
       view.playerView.player = newPlayer
       newPlayer.setMediaItem(paramHelper.createMediaItem())
-      newPlayer.prepare()
-      newPlayer.playWhenReady = true
+      if (play) { newPlayer.prepare() }
+      newPlayer.playWhenReady = play
     }
   }
 
