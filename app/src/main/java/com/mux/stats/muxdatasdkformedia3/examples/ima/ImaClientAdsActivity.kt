@@ -112,7 +112,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
     return CustomerData(
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
-        videoTitle = "Mux Data for Media3 - IMA Ads"
+        videoTitle = "Media3 - IMA Ads: $title"
       },
       CustomerViewData().apply { },
       CustomData().apply {
