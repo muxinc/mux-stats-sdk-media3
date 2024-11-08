@@ -92,7 +92,6 @@ class ImaClientAdsActivity : AppCompatActivity() {
 
   override fun onResume() {
     super.onResume()
-    initPlayer(play = false)
   }
 
   override fun onPause() {

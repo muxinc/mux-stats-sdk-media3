@@ -25,6 +25,7 @@
             android:theme="@style/Theme.MuxDataSDKForMedia3" />
         <activity
             android:name=".examples.ima.ImaClientAdsActivity"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".examples.ima.ImaServerAdsActivity"
