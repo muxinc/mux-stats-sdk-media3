@@ -193,9 +193,11 @@ class SpinnerParamEntryView @JvmOverloads constructor(
         val text2 = view.findViewById<TextView>(android.R.id.text2)
         text2.text = item.text
         text2.visibility = VISIBLE
+        text2.maxLines = 2
       } else {
         val text2 = view.findViewById<TextView>(android.R.id.text2)
         text2.visibility = GONE
+        text2.maxLines = 2
       }
       view.findViewById<TextView>(android.R.id.text1).text = item.title
 
