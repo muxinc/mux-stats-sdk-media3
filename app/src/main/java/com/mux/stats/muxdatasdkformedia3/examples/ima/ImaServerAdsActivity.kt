@@ -97,13 +97,13 @@ class ImaServerAdsActivity : AppCompatActivity() {
         .apply { state?.let { adsLoaderState = it } }
         .monitorWith(
           { muxStats }, // This is safe, will only be called while playing
-          {
+          { adEvent ->
             /*your ad event handling here*/
-          when (it.type) {
-            AdEvent.AdEventType.AD_PERIOD_STARTED -> view.skipAd.visibility = View.VISIBLE
-            AdEvent.AdEventType.AD_PERIOD_ENDED -> view.skipAd.visibility = View.GONE
-            else -> { /* ignore */ }
-          }
+            when (adEvent.type) {
+              AdEvent.AdEventType.AD_PERIOD_STARTED -> view.skipAd.visibility = View.VISIBLE
+              AdEvent.AdEventType.AD_PERIOD_ENDED -> view.skipAd.visibility = View.GONE
+              else -> { /* ignore */ }
+            }
           },
           { /*your ad error handling here*/ },
         )
