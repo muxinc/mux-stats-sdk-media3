@@ -15,6 +15,9 @@ android {
     versionCode 1
     def commit = "git rev-parse --short HEAD".execute().inputReader().readLines().join()
     def branch = "git branch --show-current".execute().inputReader().readLines().join()
+    if (branch == null || branch.trim().isEmpty()) {
+      branch = System.getenv("BUILDKITE_BRANCH")
+    }
     versionName "$branch-$commit"
 
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
