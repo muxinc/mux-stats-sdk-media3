@@ -64,7 +64,7 @@ class MuxImaAdsListener private constructor(
    */
   private fun setupAdViewData(event: MuxAdEvent, ad: Ad?) {
     val viewData = ViewData()
-    val adData = AdData();
+    val adData = AdData()
     if (ad != null) {
       adCollector?.let {
         if (it.playbackPositionMillis < 1000L) {
@@ -80,7 +80,7 @@ class MuxImaAdsListener private constructor(
       ad.universalAdIdValue?.let { adData.adUniversalId = it }
     }
     event.viewData = viewData
-    event.adData = adData;
+    event.adData = adData
   }
 
   /**
