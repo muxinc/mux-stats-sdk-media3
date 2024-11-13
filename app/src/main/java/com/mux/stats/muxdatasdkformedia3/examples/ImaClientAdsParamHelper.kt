@@ -55,7 +55,7 @@ class ImaClientAdsParamHelper {
   }
 
   companion object {
-    const val DEFAULT_SOURCE_URL = Constants.VOD_TEST_URL_TEARS_OF_STEEL
+    const val DEFAULT_SOURCE_URL = Constants.VOD_TEST_SHORT_VIDEO
     const val DEFAULT_AD_TAG_URL = Constants.AD_TAG_COMPLEX
   }
 }
