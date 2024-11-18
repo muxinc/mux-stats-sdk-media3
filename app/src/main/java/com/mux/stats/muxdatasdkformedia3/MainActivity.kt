@@ -17,6 +17,8 @@ import com.mux.stats.muxdatasdkformedia3.examples.basic.PlayerReuseActivity
 import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaClientAdsActivity
 import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaServerAdsActivity
 
+import com.mux.stats.sdk.core.util.MuxLogger
+
 class MainActivity : AppCompatActivity() {
 
   private lateinit var view: ActivityMainBinding
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     setContentView(view.root)
     view.recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     view.recycler.adapter = ExampleListAdapter(this, examples())
+    MuxLogger.setAllowLogcat(true)
   }
 
   private fun examples() = listOf(
