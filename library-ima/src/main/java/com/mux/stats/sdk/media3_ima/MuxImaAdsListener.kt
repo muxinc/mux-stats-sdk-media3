@@ -50,6 +50,7 @@ class MuxImaAdsListener private constructor(
    * @param adErrorEvent, Error to be handled.
    */
   override fun onAdError(adErrorEvent: AdErrorEvent) {
+    MuxLogger.d(TAG, "Logged IMA ad error event: $adErrorEvent")
     val event = MuxAdErrorEvent(null)
     setupAdViewData(event, null)
     adCollector?.dispatch(event)
@@ -245,6 +246,7 @@ class MuxImaAdsListener private constructor(
   }
 
   override fun onError(mediaInfo: AdMediaInfo) {
+    MuxLogger.d(TAG, "Logged IMA ad error event: $mediaInfo")
     adCollector?.dispatch(MuxAdErrorEvent(null))
     customerVideoAdPlayerCallback?.onError(mediaInfo)
   }
