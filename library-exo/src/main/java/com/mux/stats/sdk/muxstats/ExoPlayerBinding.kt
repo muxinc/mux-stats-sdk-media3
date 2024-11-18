@@ -214,6 +214,7 @@ private class MuxAnalyticsListener(
     error: IOException,
     wasCanceled: Boolean
   ) {
+    MuxLogger.d("Media3Callbacks", "onLoadError")
     bandwidthMetrics?.onLoadError(
       loadTaskId = loadEventInfo.loadTaskId,
       segmentUrl = loadEventInfo.uri.path,

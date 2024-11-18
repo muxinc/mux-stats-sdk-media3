@@ -101,6 +101,8 @@ internal fun createErrorDataBinding(): MuxPlayerAdapter.PlayerBinding<ExoPlayer>
 @OptIn(UnstableApi::class)
 @JvmSynthetic
 internal fun MuxStateCollector.handleExoPlaybackException(errorCode: Int, e: ExoPlaybackException) {
+  MuxLogger.d("Media3Callbacks", "ExoPlaybackException of type: ${e.type}")
+
   when (e.type) {
     ExoPlaybackException.TYPE_RENDERER -> {
       when (val rex = e.rendererException) {
