@@ -106,6 +106,7 @@ class MuxImaAdsListener private constructor(
             || data["errorCode"] != null
             || data["innerError"] != null
           ) {
+            MuxLogger.d(TAG, "Logged IMA event: $adEvent")
             dispatchAdPlaybackEvent(MuxAdErrorEvent(null), adEvent.ad)
           } else {
             MuxLogger.d(TAG, "Logged IMA event: $adEvent")
