@@ -92,6 +92,7 @@ class MuxImaAdsListener private constructor(
    * @param adEvent
    */
   override fun onAdEvent(adEvent: AdEvent) {
+    MuxLogger.d(TAG, "Received $adEvent")
     exoPlayer?.let { player ->
       when (adEvent.type) {
         AdEvent.AdEventType.LOADED -> {
