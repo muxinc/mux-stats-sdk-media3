@@ -9,6 +9,7 @@ import androidx.media3.common.util.UnstableApi
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.AdEvent
+import com.mux.stats.sdk.core.events.playback.AdPlayingEvent
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.util.MuxLogger
@@ -145,7 +146,14 @@ class AdCollector private constructor(
   }
 
   fun dispatch(event: AdEvent) {
-    eventBus.dispatch(event)
+    if (muxPlayerState == MuxPlayerState.PLAYING_ADS) {
+      eventBus.dispatch(event)
+    } else {
+      // TODO: Filter other ad event types like `adplay`, etc here as well
+      if (event.type != AdPlayingEvent.TYPE) {
+        eventBus.dispatch(event)
+      }
+    }
   }
 
   companion object {
