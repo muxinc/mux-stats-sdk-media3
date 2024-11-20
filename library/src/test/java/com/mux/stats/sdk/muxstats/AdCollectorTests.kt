@@ -78,7 +78,7 @@ class AdCollectorTests : AbsRobolectricTest() {
       dispatchedEvents.find { it is AdPlayingEvent } == null
     )
 
-    dispatchedEvents.removeAll()
+    dispatchedEvents.clear()
     adCollector.onStartPlayingAds()
 
     adCollector.dispatch(AdPlayEvent(null))
@@ -94,7 +94,7 @@ class AdCollectorTests : AbsRobolectricTest() {
       dispatchedEvents.find { it is AdPlayingEvent } != null
     )
 
-    dispatchedEvents.removeAll()
+    dispatchedEvents.clear()
     adCollector.onFinishPlayingAds(willPlay = true)
 
     adCollector.dispatch(AdPlayEvent(null))
@@ -131,7 +131,7 @@ class AdCollectorTests : AbsRobolectricTest() {
       dispatchedEvents.find { it is AdErrorEvent } != null
     )
 
-    dispatchedEvents.removeAll()
+    dispatchedEvents.clear()
     adCollector.onStartPlayingAds()
 
     adCollector.dispatch(AdErrorEvent(null))
@@ -140,7 +140,7 @@ class AdCollectorTests : AbsRobolectricTest() {
       dispatchedEvents.find { it is AdErrorEvent } != null
     )
 
-    dispatchedEvents.removeAll()
+    dispatchedEvents.clear()
     adCollector.onFinishPlayingAds(willPlay = true)
 
     adCollector.dispatch(AdErrorEvent(null))
@@ -170,7 +170,7 @@ class AdCollectorTests : AbsRobolectricTest() {
       dispatchedEvents.find { it is AdRequestEvent } != null
     )
 
-    dispatchedEvents.removeAll()
+    dispatchedEvents.clear()
     adCollector.onStartPlayingAds()
 
     adCollector.dispatch(AdRequestEvent(null))
@@ -179,7 +179,7 @@ class AdCollectorTests : AbsRobolectricTest() {
       dispatchedEvents.find { it is AdRequestEvent } != null
     )
 
-    dispatchedEvents.removeAll()
+    dispatchedEvents.clear()
     adCollector.onFinishPlayingAds(willPlay = true)
 
     adCollector.dispatch(AdRequestEvent(null))
@@ -209,7 +209,7 @@ class AdCollectorTests : AbsRobolectricTest() {
       dispatchedEvents.find { it is AdResponseEvent } != null
     )
 
-    dispatchedEvents.removeAll()
+    dispatchedEvents.clear()
     adCollector.onStartPlayingAds()
 
     adCollector.dispatch(AdResponseEvent(null))
@@ -218,7 +218,7 @@ class AdCollectorTests : AbsRobolectricTest() {
       dispatchedEvents.find { it is AdResponseEvent } != null
     )
 
-    dispatchedEvents.removeAll()
+    dispatchedEvents.clear()
     adCollector.onFinishPlayingAds(willPlay = true)
 
     adCollector.dispatch(AdResponseEvent(null))
