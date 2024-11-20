@@ -6,6 +6,8 @@ import com.mux.stats.sdk.core.events.IEvent
 import com.mux.stats.sdk.core.events.playback.AdErrorEvent
 import com.mux.stats.sdk.core.events.playback.AdPlayEvent
 import com.mux.stats.sdk.core.events.playback.AdPlayingEvent
+import com.mux.stats.sdk.core.events.playback.AdRequestEvent
+import com.mux.stats.sdk.core.events.playback.AdResponseEvent
 import com.mux.stats.sdk.core.events.playback.RebufferEndEvent
 import io.mockk.every
 import io.mockk.just
@@ -125,7 +127,7 @@ class AdCollectorTests : AbsRobolectricTest() {
 
     adCollector.dispatch(AdErrorEvent(null))
     Assert.assertTrue(
-      "aderror should be sent to event bus",
+      "aderror should be sent to event bus before the start of an ad break",
       dispatchedEvents.find { it is AdErrorEvent } != null
     )
 
@@ -134,7 +136,7 @@ class AdCollectorTests : AbsRobolectricTest() {
 
     adCollector.dispatch(AdErrorEvent(null))
     Assert.assertTrue(
-      "aderror should be sent to event bus",
+      "aderror should be sent to event bus during an ad break",
       dispatchedEvents.find { it is AdErrorEvent } != null
     )
 
@@ -143,8 +145,86 @@ class AdCollectorTests : AbsRobolectricTest() {
 
     adCollector.dispatch(AdErrorEvent(null))
     Assert.assertTrue(
-      "aderror should be sent to event bus",
+      "aderror should be sent to event bus after an ad break is finished",
       dispatchedEvents.find { it is AdErrorEvent } != null
+    )
+  }
+
+  @Test
+  fun testDispatchesAdRequestBothDuringAndOutsideOfAdBreaks() {
+    val dispatchedEvents = mutableListOf<IEvent>()
+    val eventBus = mockk<EventBus> {
+      every { addListener(any()) } just runs
+      every { removeListener(any()) } just runs
+      every { removeAllListeners() } just runs
+      every { dispatch(any()) } answers { call ->
+        dispatchedEvents += (call.invocation.args.first() as IEvent)
+      }
+    }
+    val stateCollector = MuxStateCollector(mockk<MuxStats>(relaxed = true), eventBus)
+    val adCollector = AdCollector.create(stateCollector, eventBus)
+
+    adCollector.dispatch(AdRequestEvent(null))
+    Assert.assertTrue(
+      "adrequest should be sent to event bus before the start of an ad break",
+      dispatchedEvents.find { it is AdRequestEvent } != null
+    )
+
+    dispatchedEvents.removeAll()
+    adCollector.onStartPlayingAds()
+
+    adCollector.dispatch(AdRequestEvent(null))
+    Assert.assertTrue(
+      "adrequest should be sent to event bus during an ad break",
+      dispatchedEvents.find { it is AdRequestEvent } != null
+    )
+
+    dispatchedEvents.removeAll()
+    adCollector.onFinishPlayingAds(willPlay = true)
+
+    adCollector.dispatch(AdRequestEvent(null))
+    Assert.assertTrue(
+      "adrequest should be sent to event bus  after an ad break is finished",
+      dispatchedEvents.find { it is AdRequestEvent } != null
+    )
+  }
+
+  @Test
+  fun testDispatchesAdResponseBothDuringAndOutsideOfAdBreaks() {
+    val dispatchedEvents = mutableListOf<IEvent>()
+    val eventBus = mockk<EventBus> {
+      every { addListener(any()) } just runs
+      every { removeListener(any()) } just runs
+      every { removeAllListeners() } just runs
+      every { dispatch(any()) } answers { call ->
+        dispatchedEvents += (call.invocation.args.first() as IEvent)
+      }
+    }
+    val stateCollector = MuxStateCollector(mockk<MuxStats>(relaxed = true), eventBus)
+    val adCollector = AdCollector.create(stateCollector, eventBus)
+
+    adCollector.dispatch(AdResponseEvent(null))
+    Assert.assertTrue(
+      "adresponse should be sent to event bus before the start of an ad break",
+      dispatchedEvents.find { it is AdResponseEvent } != null
+    )
+
+    dispatchedEvents.removeAll()
+    adCollector.onStartPlayingAds()
+
+    adCollector.dispatch(AdResponseEvent(null))
+    Assert.assertTrue(
+      "adresponse should be sent to event bus during an ad break",
+      dispatchedEvents.find { it is AdResponseEvent } != null
+    )
+
+    dispatchedEvents.removeAll()
+    adCollector.onFinishPlayingAds(willPlay = true)
+
+    adCollector.dispatch(AdResponseEvent(null))
+    Assert.assertTrue(
+      "adresponse should be sent to event bus after an ad break is finished",
+      dispatchedEvents.find { it is AdResponseEvent } != null
     )
   }
 }
