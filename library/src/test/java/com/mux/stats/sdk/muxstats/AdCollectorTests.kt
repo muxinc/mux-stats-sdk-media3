@@ -3,6 +3,8 @@ package com.mux.stats.sdk.muxstats
 import com.mux.stats.media3.test.tools.AbsRobolectricTest
 import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.IEvent
+import com.mux.stats.sdk.core.events.playback.AdPlayEvent
+import com.mux.stats.sdk.core.events.playback.AdPlayingEvent
 import com.mux.stats.sdk.core.events.playback.RebufferEndEvent
 import io.mockk.every
 import io.mockk.just
@@ -44,5 +46,48 @@ class AdCollectorTests : AbsRobolectricTest() {
       dispatchedEvents.find { it is RebufferEndEvent } != null
     )
 
+  }
+
+  @Test
+  fun testDispatchesAdPlayAndAdPlayingOnlyDuringAdBreaks() {
+    val dispatchedEvents = mutableListOf<IEvent>()
+    val eventBus = mockk<EventBus> {
+      every { addListener(any()) } just runs
+      every { removeListener(any()) } just runs
+      every { removeAllListeners() } just runs
+      every { dispatch(any()) } answers { call ->
+        dispatchedEvents += (call.invocation.args.first() as IEvent)
+      }
+    }
+    val stateCollector = MuxStateCollector(mockk<MuxStats>(relaxed = true), eventBus)
+    val adCollector = AdCollector.create(stateCollector, eventBus)
+
+    adCollector.dispatch(AdPlayEvent(null))
+    adCollector.dispatch(AdPlayingEvent(null))
+
+    Assert.assertTrue(
+      "adplay should not be sent to event bus",
+      dispatchedEvents.find { it is AdPlayEvent } == null
+    )
+
+    Assert.assertTrue(
+      "adplaying should not be sent to event bus",
+      dispatchedEvents.find { it is AdPlayingEvent } == null
+    )
+
+    adCollector.onStartPlayingAds()
+
+    adCollector.dispatch(AdPlayEvent(null))
+    adCollector.dispatch(AdPlayingEvent(null))
+
+    Assert.assertTrue(
+      "adplay should not be sent to event bus",
+      dispatchedEvents.find { it is AdPlayEvent } != null
+    )
+
+    Assert.assertTrue(
+      "adplaying should not be sent to event bus",
+      dispatchedEvents.find { it is AdPlayingEvent } != null
+    )
   }
 }
