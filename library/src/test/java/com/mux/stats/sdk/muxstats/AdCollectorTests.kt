@@ -110,7 +110,7 @@ class AdCollectorTests : AbsRobolectricTest() {
 
     Assert.assertTrue(
       "aderror should be sent to event bus",
-      dispatchedEvents.find { it is AdErrorEvent } == null
+      dispatchedEvents.find { it is AdErrorEvent } != null
     )
 
     adCollector.onStartPlayingAds()
