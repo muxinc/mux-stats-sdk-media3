@@ -154,22 +154,23 @@ class AdCollector private constructor(
   }
 
   fun dispatch(event: AdEvent) {
-    if (muxPlayerState == MuxPlayerState.PLAYING_ADS) {
+
+    if (
+      muxPlayerState != MuxPlayerState.PLAYING_ADS &&
+      event.type.noneOf(
+        AdPlayingEvent.TYPE,
+        AdPlayEvent.TYPE,
+        AdFirstQuartileEvent.TYPE,
+        AdMidpointEvent.TYPE,
+        AdThirdQuartileEvent.TYPE,
+        AdEndedEvent.TYPE,
+        AdBreakEndEvent.TYPE,
+        AdPauseEvent.TYPE
+      )
+      ) {
       eventBus.dispatch(event)
-    } else {
-      if (
-        event.type.noneOf(
-          AdPlayingEvent.TYPE,
-          AdPlayEvent.TYPE,
-          AdFirstQuartileEvent.TYPE,
-          AdMidpointEvent.TYPE,
-          AdThirdQuartileEvent.TYPE,
-          AdEndedEvent.TYPE,
-          AdBreakEndEvent.TYPE,
-          AdPauseEvent.TYPE
-        )) {
-          eventBus.dispatch(event)
-      }
+    } else if (muxPlayerState == MuxPlayerState.PLAYING_ADS) {
+      eventBus.dispatch(event)
     }
   }
 
