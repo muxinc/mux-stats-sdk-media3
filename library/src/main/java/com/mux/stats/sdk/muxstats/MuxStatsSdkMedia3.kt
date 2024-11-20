@@ -159,7 +159,7 @@ class AdCollector private constructor(
       eventBus.dispatch(event)
     } else {
       if (
-        event.type.oneOf(
+        event.type.noneOf(
           AdPlayingEvent.TYPE,
           AdPlayEvent.TYPE,
           AdFirstQuartileEvent.TYPE,
