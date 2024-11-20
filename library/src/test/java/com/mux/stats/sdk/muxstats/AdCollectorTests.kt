@@ -76,6 +76,7 @@ class AdCollectorTests : AbsRobolectricTest() {
       dispatchedEvents.find { it is AdPlayingEvent } == null
     )
 
+    dispatchedEvents.removeAll()
     adCollector.onStartPlayingAds()
 
     adCollector.dispatch(AdPlayEvent(null))
@@ -89,6 +90,22 @@ class AdCollectorTests : AbsRobolectricTest() {
     Assert.assertTrue(
       "adplaying should not be sent to event bus",
       dispatchedEvents.find { it is AdPlayingEvent } != null
+    )
+
+    dispatchedEvents.removeAll()
+    adCollector.onFinishPlayingAds(willPlay = true)
+
+    adCollector.dispatch(AdPlayEvent(null))
+    adCollector.dispatch(AdPlayingEvent(null))
+
+    Assert.assertTrue(
+      "adplay should not be sent to event bus",
+      dispatchedEvents.find { it is AdPlayEvent } == null
+    )
+
+    Assert.assertTrue(
+      "adplaying should not be sent to event bus",
+      dispatchedEvents.find { it is AdPlayingEvent } == null
     )
   }
 
@@ -107,12 +124,12 @@ class AdCollectorTests : AbsRobolectricTest() {
     val adCollector = AdCollector.create(stateCollector, eventBus)
 
     adCollector.dispatch(AdErrorEvent(null))
-
     Assert.assertTrue(
       "aderror should be sent to event bus",
       dispatchedEvents.find { it is AdErrorEvent } != null
     )
 
+    dispatchedEvents.removeAll()
     adCollector.onStartPlayingAds()
 
     adCollector.dispatch(AdErrorEvent(null))
@@ -121,6 +138,7 @@ class AdCollectorTests : AbsRobolectricTest() {
       dispatchedEvents.find { it is AdErrorEvent } != null
     )
 
+    dispatchedEvents.removeAll()
     adCollector.onFinishPlayingAds(willPlay = true)
 
     adCollector.dispatch(AdErrorEvent(null))
