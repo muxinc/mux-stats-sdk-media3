@@ -6,9 +6,18 @@ import androidx.annotation.OptIn
 import androidx.media3.common.MediaLibraryInfo
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import com.mux.android.util.noneOf
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.events.EventBus
+import com.mux.stats.sdk.core.events.playback.AdBreakEndEvent
+import com.mux.stats.sdk.core.events.playback.AdEndedEvent
 import com.mux.stats.sdk.core.events.playback.AdEvent
+import com.mux.stats.sdk.core.events.playback.AdFirstQuartileEvent
+import com.mux.stats.sdk.core.events.playback.AdMidpointEvent
+import com.mux.stats.sdk.core.events.playback.AdPauseEvent
+import com.mux.stats.sdk.core.events.playback.AdPlayEvent
+import com.mux.stats.sdk.core.events.playback.AdPlayingEvent
+import com.mux.stats.sdk.core.events.playback.AdThirdQuartileEvent
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.util.MuxLogger
@@ -145,7 +154,24 @@ class AdCollector private constructor(
   }
 
   fun dispatch(event: AdEvent) {
-    eventBus.dispatch(event)
+
+    if (
+      muxPlayerState != MuxPlayerState.PLAYING_ADS &&
+      event.type.noneOf(
+        AdPlayingEvent.TYPE,
+        AdPlayEvent.TYPE,
+        AdFirstQuartileEvent.TYPE,
+        AdMidpointEvent.TYPE,
+        AdThirdQuartileEvent.TYPE,
+        AdEndedEvent.TYPE,
+        AdBreakEndEvent.TYPE,
+        AdPauseEvent.TYPE
+      )
+      ) {
+      eventBus.dispatch(event)
+    } else if (muxPlayerState == MuxPlayerState.PLAYING_ADS) {
+      eventBus.dispatch(event)
+    }
   }
 
   companion object {
