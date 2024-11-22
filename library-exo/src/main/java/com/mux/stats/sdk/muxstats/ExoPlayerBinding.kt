@@ -1,6 +1,8 @@
 package com.mux.stats.sdk.muxstats
 
+import android.util.Log
 import androidx.annotation.OptIn
+import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -12,14 +14,17 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
+import androidx.media3.exoplayer.analytics.AnalyticsListener.EventTime
 import androidx.media3.exoplayer.source.LoadEventInfo
 import androidx.media3.exoplayer.source.MediaLoadData
+import androidx.media3.exoplayer.source.MediaSource
 import com.mux.android.util.weak
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
 import com.mux.stats.sdk.muxstats.internal.createErrorDataBinding
 import com.mux.stats.sdk.muxstats.internal.createExoSessionDataBinding
+import com.mux.stats.sdk.muxstats.internal.isInAdPeriod
 import com.mux.stats.sdk.muxstats.internal.populateLiveStreamData
 import java.io.IOException
 import java.util.regex.Pattern
@@ -142,14 +147,22 @@ private class MuxAnalyticsListener(
     format: Format,
     decoderReuseEvaluation: DecoderReuseEvaluation?
   ) {
+    Log.w("ROLEFLAGS", "onVideoInputChanged: format role flags is ${format.roleFlags} ")
+    Log.w(
+      "ROLEFLAGS", "onVideoInputChanged: Ad stuff from MediaPeriodId:" +
+        "\tadGroupIndex: ${eventTime.mediaPeriodId?.adGroupIndex}\n" +
+        "\tadIndexInAdGroup: ${eventTime.mediaPeriodId?.adIndexInAdGroup}\n" +
+        "\tnextAdGroupIndex: ${eventTime.mediaPeriodId?.nextAdGroupIndex}\n"
+    )
     MuxLogger.d(
       TAG, "onVideoInputFormatChanged: new format: bitrate ${format.bitrate}" +
           " and frameRate ${format.frameRate} "
     )
+
     // Situations like looping or ad breaks can result in this callback being called for the same
     //  format multiple times over the course of a View. These aren't really rendition changes, and
     //  are not abr-related so we ignore them in this case
-    if (this.lastVideoFormat == null || format != this.lastVideoFormat) {
+    if (shouldReportVideoFormat(eventTime, format)) {
       val cleanBitrate = format.bitrate.takeIf { it >= 0 } ?: 0
       val cleanFrameRate = format.frameRate.takeIf { it >= 0 } ?: 0F
 
@@ -270,6 +283,13 @@ private class MuxAnalyticsListener(
       )
     }
   } // fun onLoadCompleted
+
+  private fun shouldReportVideoFormat(eventTime: EventTime, format: Format): Boolean {
+    val formatChanged = this.lastVideoFormat == null || format != this.lastVideoFormat
+    val isAdRelated = eventTime.mediaPeriodId?.isInAdPeriod() == true
+
+    return formatChanged && !isAdRelated
+  }
 
   companion object {
     private const val TAG = "ExoPlayerBinding"
