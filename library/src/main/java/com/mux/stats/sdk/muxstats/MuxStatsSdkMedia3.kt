@@ -11,6 +11,7 @@ import com.mux.android.util.noneOf
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.AdBreakEndEvent
+import com.mux.stats.sdk.core.events.playback.AdBreakStartEvent
 import com.mux.stats.sdk.core.events.playback.AdEndedEvent
 import com.mux.stats.sdk.core.events.playback.AdEvent
 import com.mux.stats.sdk.core.events.playback.AdFirstQuartileEvent
@@ -155,6 +156,11 @@ class AdCollector private constructor(
   }
 
   fun dispatch(event: AdEvent) {
+    when (event.type) {
+      AdBreakStartEvent.TYPE, AdBreakEndEvent.TYPE -> {
+        Log.w("ROLEFLAGS", "dispatch: ${event.type}")
+      }
+    }
     if (
       muxPlayerState != MuxPlayerState.PLAYING_ADS &&
       event.type.noneOf(

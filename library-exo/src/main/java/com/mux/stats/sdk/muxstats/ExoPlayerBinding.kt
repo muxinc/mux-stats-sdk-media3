@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.muxstats
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
@@ -148,6 +149,11 @@ private class MuxAnalyticsListener(
           " and frameRate ${format.frameRate} "
     )
 
+    val relevant = eventTime.mediaPeriodId?.isInAdPeriod() == false
+    Log.v("ROLEFLAGS", "inputFormat: size ${format.height} x ${format.width}")
+    Log.v("ROLEFLAGS", "inputFormat: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
+    Log.v("ROLEFLAGS", "inpurFormat: relevant? $relevant")
+
     // Situations like looping or ad breaks can result in this callback being called for the same
     //  format multiple times over the course of a View. These aren't really rendition changes, and
     //  are not abr-related so we ignore them in this case
@@ -155,6 +161,7 @@ private class MuxAnalyticsListener(
       val cleanBitrate = format.bitrate.takeIf { it >= 0 } ?: 0
       val cleanFrameRate = format.frameRate.takeIf { it >= 0 } ?: 0F
 
+      Log.v("ROLEFLAGS", "SENDING RENDITIONCHANGE")
       collector.renditionChange(
         advertisedBitrate = cleanBitrate,
         advertisedFrameRate = cleanFrameRate,
@@ -205,8 +212,16 @@ private class MuxAnalyticsListener(
     eventTime: AnalyticsListener.EventTime,
     videoSize: VideoSize
   ) {
-    collector.sourceWidth = videoSize.width
-    collector.sourceHeight = videoSize.height
+    val relevant = eventTime.mediaPeriodId?.isInAdPeriod() == false
+    Log.i("ROLEFLAGS", "sizeChanged: size ${videoSize.height} x ${videoSize.width}")
+    Log.i("ROLEFLAGS", "sizeChanged: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
+    Log.i("ROLEFLAGS", "sizeChanged: relevant? $relevant")
+
+    if (relevant) {
+      Log.i("ROLEFLAGS", "sizeChanged: Set dimensions")
+      collector.sourceWidth = videoSize.width
+      collector.sourceHeight = videoSize.height
+    }
   }
 
   override fun onLoadError(
@@ -278,6 +293,9 @@ private class MuxAnalyticsListener(
   ): Boolean {
     val formatChanged = this.lastVideoFormat == null || format != this.lastVideoFormat
     val isAdRelated = eventTime.mediaPeriodId?.isInAdPeriod() == true
+
+    Log.d("ROLEFLAGS", "formatChanged: $formatChanged, isAdRelated: $isAdRelated")
+    Log.d("ROLEFLAGS", "formatChanged: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
 
     return formatChanged && !isAdRelated
   }
