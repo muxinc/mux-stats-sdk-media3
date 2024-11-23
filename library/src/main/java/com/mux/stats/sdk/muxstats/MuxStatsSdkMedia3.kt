@@ -155,7 +155,6 @@ class AdCollector private constructor(
   }
 
   fun dispatch(event: AdEvent) {
-    Log.i("ROLEFLAGS", "AdCollector.dispatch: format role flags is ${event.type} ")
     if (
       muxPlayerState != MuxPlayerState.PLAYING_ADS &&
       event.type.noneOf(

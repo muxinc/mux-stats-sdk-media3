@@ -1,8 +1,6 @@
 package com.mux.stats.sdk.muxstats
 
-import android.util.Log
 import androidx.annotation.OptIn
-import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -14,10 +12,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
-import androidx.media3.exoplayer.analytics.AnalyticsListener.EventTime
 import androidx.media3.exoplayer.source.LoadEventInfo
 import androidx.media3.exoplayer.source.MediaLoadData
-import androidx.media3.exoplayer.source.MediaSource
 import com.mux.android.util.weak
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
@@ -147,13 +143,6 @@ private class MuxAnalyticsListener(
     format: Format,
     decoderReuseEvaluation: DecoderReuseEvaluation?
   ) {
-    Log.w("ROLEFLAGS", "onVideoInputChanged: format role flags is ${format.roleFlags} ")
-    Log.w(
-      "ROLEFLAGS", "onVideoInputChanged: Ad stuff from MediaPeriodId:" +
-        "\tadGroupIndex: ${eventTime.mediaPeriodId?.adGroupIndex}\n" +
-        "\tadIndexInAdGroup: ${eventTime.mediaPeriodId?.adIndexInAdGroup}\n" +
-        "\tnextAdGroupIndex: ${eventTime.mediaPeriodId?.nextAdGroupIndex}\n"
-    )
     MuxLogger.d(
       TAG, "onVideoInputFormatChanged: new format: bitrate ${format.bitrate}" +
           " and frameRate ${format.frameRate} "
@@ -284,7 +273,9 @@ private class MuxAnalyticsListener(
     }
   } // fun onLoadCompleted
 
-  private fun shouldReportVideoFormat(eventTime: EventTime, format: Format): Boolean {
+  private fun shouldReportVideoFormat(
+    eventTime: AnalyticsListener.EventTime, format: Format
+  ): Boolean {
     val formatChanged = this.lastVideoFormat == null || format != this.lastVideoFormat
     val isAdRelated = eventTime.mediaPeriodId?.isInAdPeriod() == true
 
