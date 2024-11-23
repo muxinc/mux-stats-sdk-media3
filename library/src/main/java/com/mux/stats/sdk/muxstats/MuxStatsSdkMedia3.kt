@@ -158,7 +158,7 @@ class AdCollector private constructor(
   fun dispatch(event: AdEvent) {
     when (event.type) {
       AdBreakStartEvent.TYPE, AdBreakEndEvent.TYPE -> {
-        Log.w("ROLEFLAGS", "dispatch: ${event.type}")
+        Log.w("RENDITIONCHANGE", "dispatch: ${event.type}")
       }
     }
     if (

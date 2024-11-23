@@ -150,9 +150,9 @@ private class MuxAnalyticsListener(
     )
 
     val relevant = eventTime.mediaPeriodId?.isInAdPeriod() == false
-    Log.v("ROLEFLAGS", "inputFormat: size ${format.height} x ${format.width}")
-    Log.v("ROLEFLAGS", "inputFormat: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
-    Log.v("ROLEFLAGS", "inpurFormat: relevant? $relevant")
+    Log.v("RENDITIONCHANGE", "inputFormat: size ${format.height} x ${format.width}")
+    Log.v("RENDITIONCHANGE", "inputFormat: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
+    Log.v("RENDITIONCHANGE", "inpurFormat: relevant? $relevant")
 
     // Situations like looping or ad breaks can result in this callback being called for the same
     //  format multiple times over the course of a View. These aren't really rendition changes, and
@@ -161,7 +161,7 @@ private class MuxAnalyticsListener(
       val cleanBitrate = format.bitrate.takeIf { it >= 0 } ?: 0
       val cleanFrameRate = format.frameRate.takeIf { it >= 0 } ?: 0F
 
-      Log.v("ROLEFLAGS", "SENDING RENDITIONCHANGE")
+      Log.v("RENDITIONCHANGE", "SENDING RENDITIONCHANGE")
       collector.renditionChange(
         advertisedBitrate = cleanBitrate,
         advertisedFrameRate = cleanFrameRate,
@@ -213,12 +213,12 @@ private class MuxAnalyticsListener(
     videoSize: VideoSize
   ) {
     val relevant = eventTime.mediaPeriodId?.isInAdPeriod() == false
-    Log.i("ROLEFLAGS", "sizeChanged: size ${videoSize.height} x ${videoSize.width}")
-    Log.i("ROLEFLAGS", "sizeChanged: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
-    Log.i("ROLEFLAGS", "sizeChanged: relevant? $relevant")
+    Log.i("RENDITIONCHANGE", "sizeChanged: size ${videoSize.height} x ${videoSize.width}")
+    Log.i("RENDITIONCHANGE", "sizeChanged: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
+    Log.i("RENDITIONCHANGE", "sizeChanged: relevant? $relevant")
 
     if (relevant) {
-      Log.i("ROLEFLAGS", "sizeChanged: Set dimensions")
+      Log.i("RENDITIONCHANGE", "sizeChanged: Set dimensions")
       collector.sourceWidth = videoSize.width
       collector.sourceHeight = videoSize.height
     }
@@ -294,8 +294,8 @@ private class MuxAnalyticsListener(
     val formatChanged = this.lastVideoFormat == null || format != this.lastVideoFormat
     val isAdRelated = eventTime.mediaPeriodId?.isInAdPeriod() == true
 
-    Log.d("ROLEFLAGS", "formatChanged: $formatChanged, isAdRelated: $isAdRelated")
-    Log.d("ROLEFLAGS", "formatChanged: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
+    Log.d("RENDITIONCHANGE", "formatChanged: $formatChanged, isAdRelated: $isAdRelated")
+    Log.d("RENDITIONCHANGE", "formatChanged: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
 
     return formatChanged && !isAdRelated
   }
