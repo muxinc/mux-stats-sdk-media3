@@ -25,6 +25,7 @@ import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
 import com.mux.stats.sdk.media3_ima.monitorWith
+import com.mux.stats.sdk.muxstats.MuxDataSdk
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
 
@@ -108,7 +109,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
     return CustomerData(
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
-        videoTitle = "Media3 - IMA Ads: $title"
+        videoTitle = "Testing deferred renditionchange with fake numbers and no sizechange"
       },
       CustomerViewData().apply { },
       CustomData().apply {
@@ -174,6 +175,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
 
     return player.monitorWithMuxData(
       context = this,
+      logLevel = MuxDataSdk.LogcatLevel.DEBUG,
       envKey = paramHelper.envKeyOrDefault(),
       customerData = customerData,
       playerView = view.playerView
