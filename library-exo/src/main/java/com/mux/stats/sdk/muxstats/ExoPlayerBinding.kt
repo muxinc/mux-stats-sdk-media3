@@ -161,7 +161,7 @@ private class MuxAnalyticsListener(
       val cleanBitrate = format.bitrate.takeIf { it >= 0 } ?: 0
       val cleanFrameRate = format.frameRate.takeIf { it >= 0 } ?: 0F
 
-      Log.v("RENDITIONCHANGE", "SENDING RENDITIONCHANGE")
+      Log.v("RENDITIONCHANGE", "dispatching RENDITIONCHANGE")
       collector.renditionChange(
         advertisedBitrate = cleanBitrate,
         advertisedFrameRate = cleanFrameRate,
