@@ -165,8 +165,10 @@ private class MuxAnalyticsListener(
       collector.renditionChange(
         advertisedBitrate = cleanBitrate,
         advertisedFrameRate = cleanFrameRate,
-        sourceWidth = 999,
-        sourceHeight = 100004
+//        sourceWidth = 999,
+//        sourceHeight = 100004
+        sourceWidth = format.width,
+        sourceHeight = format.height
       )
 
       this.lastVideoFormat = format
@@ -221,8 +223,8 @@ private class MuxAnalyticsListener(
       Log.i("RENDITIONCHANGE", "sizeChanged: SET DIMENSIONS")
 //      collector.sourceWidth = 78910
 //      collector.sourceHeight = 11121314
-//      collector.sourceWidth = videoSize.width
-//      collector.sourceHeight = videoSize.height
+      collector.sourceWidth = videoSize.width
+      collector.sourceHeight = videoSize.height
     }
   }
 
