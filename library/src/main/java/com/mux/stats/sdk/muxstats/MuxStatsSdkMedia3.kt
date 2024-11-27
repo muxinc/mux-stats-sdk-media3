@@ -156,11 +156,6 @@ class AdCollector private constructor(
   }
 
   fun dispatch(event: AdEvent) {
-    when (event.type) {
-      AdBreakStartEvent.TYPE, AdBreakEndEvent.TYPE -> {
-        Log.w("RENDITIONCHANGE", "dispatch: ${event.type}")
-      }
-    }
     if (
       muxPlayerState != MuxPlayerState.PLAYING_ADS &&
       event.type.noneOf(
