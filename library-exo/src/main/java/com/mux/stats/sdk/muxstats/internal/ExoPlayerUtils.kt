@@ -12,6 +12,6 @@ import androidx.media3.exoplayer.source.MediaSource
  * format before the ad break is over.
  */
 @OptIn(UnstableApi::class)
-fun MediaSource.MediaPeriodId.isInAdPeriod(): Boolean {
+fun MediaSource.MediaPeriodId.isInAdGroup(): Boolean {
   return this.adGroupIndex != C.INDEX_UNSET || this.adIndexInAdGroup != C.INDEX_UNSET
 }

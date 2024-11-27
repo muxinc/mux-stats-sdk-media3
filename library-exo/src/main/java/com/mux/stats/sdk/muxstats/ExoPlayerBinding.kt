@@ -21,7 +21,7 @@ import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
 import com.mux.stats.sdk.muxstats.internal.createErrorDataBinding
 import com.mux.stats.sdk.muxstats.internal.createExoSessionDataBinding
-import com.mux.stats.sdk.muxstats.internal.isInAdPeriod
+import com.mux.stats.sdk.muxstats.internal.isInAdGroup
 import com.mux.stats.sdk.muxstats.internal.populateLiveStreamData
 import java.io.IOException
 import java.util.regex.Pattern
@@ -149,11 +149,6 @@ private class MuxAnalyticsListener(
           " and frameRate ${format.frameRate} "
     )
 
-    val relevant = eventTime.mediaPeriodId?.isInAdPeriod() == false
-    Log.v("RENDITIONCHANGE", "inputFormat: size ${format.height} x ${format.width}")
-    Log.v("RENDITIONCHANGE", "inputFormat: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
-    Log.v("RENDITIONCHANGE", "inpurFormat: relevant? $relevant")
-
     // Situations like looping or ad breaks can result in this callback being called for the same
     //  format multiple times over the course of a View. These aren't really rendition changes, and
     //  are not abr-related so we ignore them in this case
@@ -161,12 +156,9 @@ private class MuxAnalyticsListener(
       val cleanBitrate = format.bitrate.takeIf { it >= 0 } ?: 0
       val cleanFrameRate = format.frameRate.takeIf { it >= 0 } ?: 0F
 
-      Log.v("RENDITIONCHANGE", "dispatching RENDITIONCHANGE")
       collector.renditionChange(
         advertisedBitrate = cleanBitrate,
         advertisedFrameRate = cleanFrameRate,
-//        sourceWidth = 999,
-//        sourceHeight = 100004
         sourceWidth = format.width,
         sourceHeight = format.height
       )
@@ -214,15 +206,9 @@ private class MuxAnalyticsListener(
     eventTime: AnalyticsListener.EventTime,
     videoSize: VideoSize
   ) {
-    val relevant = eventTime.mediaPeriodId?.isInAdPeriod() == false
-    Log.i("RENDITIONCHANGE", "sizeChanged: size ${videoSize.height} x ${videoSize.width}")
-    Log.i("RENDITIONCHANGE", "sizeChanged: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
-    Log.i("RENDITIONCHANGE", "sizeChanged: relevant? $relevant")
-
+    val relevant = eventTime.mediaPeriodId?.isInAdGroup() == false
     if (relevant) {
-      Log.i("RENDITIONCHANGE", "sizeChanged: SET DIMENSIONS")
-//      collector.sourceWidth = 78910
-//      collector.sourceHeight = 11121314
+      MuxLogger.d("ExoPlayerBinding", "sizeChanged: change was relevant, setting dimensions")
       collector.sourceWidth = videoSize.width
       collector.sourceHeight = videoSize.height
     }
@@ -296,10 +282,7 @@ private class MuxAnalyticsListener(
     eventTime: AnalyticsListener.EventTime, format: Format
   ): Boolean {
     val formatChanged = this.lastVideoFormat == null || format != this.lastVideoFormat
-    val isAdRelated = eventTime.mediaPeriodId?.isInAdPeriod() == true
-
-    Log.d("RENDITIONCHANGE", "formatChanged: $formatChanged, isAdRelated: $isAdRelated")
-    Log.d("RENDITIONCHANGE", "formatChanged: AGIND ${eventTime.mediaPeriodId?.adGroupIndex} + AIIAG ${eventTime.mediaPeriodId?.adIndexInAdGroup}")
+    val isAdRelated = eventTime.mediaPeriodId?.isInAdGroup() == true
 
     return formatChanged && !isAdRelated
   }
