@@ -109,7 +109,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
     return CustomerData(
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
-        videoTitle = "Testing deferred renditionchange"
+        videoTitle = "Media3 - IMA: $title"
       },
       CustomerViewData().apply { },
       CustomData().apply {
