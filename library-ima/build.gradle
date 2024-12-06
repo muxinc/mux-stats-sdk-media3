@@ -46,6 +46,9 @@ android {
     at_1_4 {
       dimension "media3"
     }
+    at_1_5 {
+      dimension "media3"
+    }
   }
 
   buildTypes {
@@ -133,9 +136,13 @@ dependencies {
   //noinspection GradleDependency
   at_1_4Api "androidx.media3:media3-exoplayer:1.4.0"
   //noinspection GradleDependency
-  At_latestApi "androidx.media3:media3-exoplayer-ima:1.4.0"
+  at_1_5Api "androidx.media3:media3-exoplayer-ima:1.5.0"
   //noinspection GradleDependency
-  At_latestApi "androidx.media3:media3-exoplayer:1.4.0"
+  at_1_5Api "androidx.media3:media3-exoplayer:1.5.0"
+  //noinspection GradleDependency
+  At_latestApi "androidx.media3:media3-exoplayer-ima:1.5.0"
+  //noinspection GradleDependency
+  At_latestApi "androidx.media3:media3-exoplayer:1.5.0"
 
   implementation 'androidx.core:core-ktx:1.15.0'
 
