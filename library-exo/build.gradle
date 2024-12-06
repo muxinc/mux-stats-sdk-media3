@@ -46,6 +46,9 @@ android {
     at_1_4 {
       dimension "media3"
     }
+    at_1_5 {
+      dimension "media3"
+    }
   }
 
   buildTypes {
@@ -139,9 +142,14 @@ dependencies {
   at_1_4CompileOnly "androidx.media3:media3-exoplayer-hls:1.4.0"
 
   //noinspection GradleDependency
-  At_latestApi "androidx.media3:media3-exoplayer:1.4.0"
+  at_1_5Api "androidx.media3:media3-exoplayer:1.5.0"
   //noinspection GradleDependency
-  At_latestCompileOnly "androidx.media3:media3-exoplayer-hls:1.4.0"
+  at_1_5CompileOnly "androidx.media3:media3-exoplayer-hls:1.5.0"
+
+  //noinspection GradleDependency
+  At_latestApi "androidx.media3:media3-exoplayer:1.5.0"
+  //noinspection GradleDependency
+  At_latestCompileOnly "androidx.media3:media3-exoplayer-hls:1.5.0"
 
   testImplementation 'junit:junit:4.13.2'
   androidTestImplementation 'androidx.test.ext:junit:1.2.1'
