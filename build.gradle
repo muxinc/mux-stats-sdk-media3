@@ -9,7 +9,8 @@ plugins {
 
 allprojects {
   project.ext {
-    coreVersion = '1.4.4'
+    coreVersion = 'dev-feat-defer-renditionchange-during-events-3f7da77'
+
   }
 
   tasks.withType(DokkaTaskPartial.class) {

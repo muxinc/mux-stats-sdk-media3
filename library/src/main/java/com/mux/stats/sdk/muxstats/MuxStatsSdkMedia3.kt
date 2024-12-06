@@ -1,6 +1,7 @@
 package com.mux.stats.sdk.muxstats
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaLibraryInfo
@@ -10,6 +11,7 @@ import com.mux.android.util.noneOf
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.AdBreakEndEvent
+import com.mux.stats.sdk.core.events.playback.AdBreakStartEvent
 import com.mux.stats.sdk.core.events.playback.AdEndedEvent
 import com.mux.stats.sdk.core.events.playback.AdEvent
 import com.mux.stats.sdk.core.events.playback.AdFirstQuartileEvent
@@ -154,7 +156,6 @@ class AdCollector private constructor(
   }
 
   fun dispatch(event: AdEvent) {
-
     if (
       muxPlayerState != MuxPlayerState.PLAYING_ADS &&
       event.type.noneOf(
