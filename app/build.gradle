@@ -175,27 +175,27 @@ dependencies {
   at_1_4Implementation "androidx.media3:media3-exoplayer-rtsp:1.4.1"
 
   //noinspection GradleDependency
-  at_1_5Implementation "androidx.media3:media3-exoplayer:1.5.1"
+  at_1_5Implementation "androidx.media3:media3-exoplayer:1.5.0"
   //noinspection GradleDependency
-  at_1_5Implementation "androidx.media3:media3-session:1.5.1"
+  at_1_5Implementation "androidx.media3:media3-session:1.5.0"
   //noinspection GradleDependency
-  at_1_5Implementation "androidx.media3:media3-ui:1.5.1"
+  at_1_5Implementation "androidx.media3:media3-ui:1.5.0"
   //noinspection GradleDependency
-  at_1_5Implementation "androidx.media3:media3-exoplayer-ima:1.5.1"
+  at_1_5Implementation "androidx.media3:media3-exoplayer-ima:1.5.0"
   //noinspection GradleDependency
-  at_1_5Implementation "androidx.media3:media3-exoplayer-dash:1.5.1"
+  at_1_5Implementation "androidx.media3:media3-exoplayer-dash:1.5.0"
   //noinspection GradleDependency
-  at_1_5Implementation "androidx.media3:media3-exoplayer-hls:1.5.1"
+  at_1_5Implementation "androidx.media3:media3-exoplayer-hls:1.5.0"
   //noinspection GradleDependency
-  at_1_5Implementation "androidx.media3:media3-exoplayer-rtsp:1.5.1"
+  at_1_5Implementation "androidx.media3:media3-exoplayer-rtsp:1.5.0"
 
-  At_latestImplementation "androidx.media3:media3-exoplayer:1.4.1"
-  At_latestImplementation "androidx.media3:media3-session:1.4.1"
-  At_latestImplementation "androidx.media3:media3-ui:1.4.1"
-  At_latestImplementation "androidx.media3:media3-exoplayer-ima:1.4.1"
-  At_latestImplementation "androidx.media3:media3-exoplayer-dash:1.4.1"
-  At_latestImplementation "androidx.media3:media3-exoplayer-hls:1.4.1"
-  At_latestImplementation "androidx.media3:media3-exoplayer-rtsp:1.4.1"
+  At_latestImplementation "androidx.media3:media3-exoplayer:1.5.0"
+  At_latestImplementation "androidx.media3:media3-session:1.5.0"
+  At_latestImplementation "androidx.media3:media3-ui:1.5.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-ima:1.5.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-dash:1.5.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-hls:1.5.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-rtsp:1.5.0"
 
   implementation 'androidx.core:core-ktx:1.15.0'
   implementation 'androidx.appcompat:appcompat:1.7.0'
