@@ -155,9 +155,10 @@ class AdCollector private constructor(
   }
 
   fun dispatch(event: AdEvent) {
-    if (
-      muxPlayerState != MuxPlayerState.PLAYING_ADS &&
-      event.type.noneOf(
+    if (muxPlayerState == MuxPlayerState.PLAYING_ADS
+      || event.type.noneOf(
+        // .. the ad playback types are not allowed unless between adbreakstart and adbreakend.
+        // If the event is really real, the caller is responsible for dispatching adbreakstart first
         AdPlayingEvent.TYPE,
         AdPlayEvent.TYPE,
         AdFirstQuartileEvent.TYPE,
@@ -166,10 +167,7 @@ class AdCollector private constructor(
         AdEndedEvent.TYPE,
         AdBreakEndEvent.TYPE,
         AdPauseEvent.TYPE
-      )
-      ) {
-      eventBus.dispatch(event)
-    } else if (muxPlayerState == MuxPlayerState.PLAYING_ADS) {
+    )) {
       eventBus.dispatch(event)
     }
   }
