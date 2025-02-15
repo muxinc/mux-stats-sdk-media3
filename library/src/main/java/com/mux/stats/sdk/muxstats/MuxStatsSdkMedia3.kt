@@ -105,7 +105,6 @@ class MuxStatsSdkMedia3<P : Player> @OptIn(UnstableApi::class) @JvmOverloads con
  * Collects generic data and events regarding ad playback.
  *
  * If you're using the Google IMA Ads SDK, can use MuxImaAdsListener in our `media3-ima` lib
- * (TODO: Doc link)
  */
 class AdCollector private constructor(
   private val stateCollector: MuxStateCollector,
