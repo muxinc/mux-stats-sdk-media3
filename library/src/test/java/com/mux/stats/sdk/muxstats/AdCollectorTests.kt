@@ -43,6 +43,7 @@ class AdCollectorTests : AbsRobolectricTest() {
 
     // ad sdks sometimes do surprising things when handling unhappy paths
     adCollector.dispatch(AdErrorEvent(null))
+    adCollector.dispatch(AdPlayingEvent(null))
     adCollector.dispatch(AdPauseEvent(null))
     adCollector.dispatch(AdBreakEndEvent(null))
 
