@@ -1,9 +1,12 @@
 package com.mux.stats.sdk.muxstats
 
+import com.mux.android.util.noneOf
 import com.mux.stats.media3.test.tools.AbsRobolectricTest
 import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.IEvent
+import com.mux.stats.sdk.core.events.playback.AdBreakEndEvent
 import com.mux.stats.sdk.core.events.playback.AdErrorEvent
+import com.mux.stats.sdk.core.events.playback.AdPauseEvent
 import com.mux.stats.sdk.core.events.playback.AdPlayEvent
 import com.mux.stats.sdk.core.events.playback.AdPlayingEvent
 import com.mux.stats.sdk.core.events.playback.AdRequestEvent
@@ -13,6 +16,7 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
+import junit.framework.TestCase.assertTrue
 import org.junit.Assert
 import org.junit.Test
 
@@ -31,6 +35,33 @@ class AdCollectorTests : AbsRobolectricTest() {
     }
     val stateCollector = MuxStateCollector(mockk<MuxStats>(relaxed = true), eventBus)
     val adCollector = AdCollector.create(stateCollector, eventBus)
+
+    // initial condition: some normal stuff happens
+    stateCollector.play()
+    adCollector.dispatch(AdRequestEvent(null))
+    stateCollector.playing()
+
+    // ad sdks sometimes do surprising things when handling unhappy paths
+    adCollector.dispatch(AdErrorEvent(null))
+    adCollector.dispatch(AdPauseEvent(null))
+    adCollector.dispatch(AdBreakEndEvent(null))
+
+    // Maybe it retried
+    adCollector.dispatch(AdRequestEvent(null))
+    adCollector.dispatch(AdResponseEvent(null))
+
+    assertTrue(
+      "Events related to ads playing or ending should be filtered out if no adbreakstart came thru",
+      dispatchedEvents.map { it.type }.noneOf(AdCollector.EVENTS_ONLY_IN_ADBREAK)
+    )
+
+    assertTrue(
+      "Some ad-related events are expected outside of ad breaks",
+      dispatchedEvents.map { it.type }
+        .containsAll(listOf(
+          AdErrorEvent.TYPE, AdRequestEvent.TYPE, AdRequestEvent.TYPE, AdRequestEvent.TYPE
+        ))
+    )
   }
 
   @Test

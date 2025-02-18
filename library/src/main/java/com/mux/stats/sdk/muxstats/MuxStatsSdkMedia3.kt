@@ -156,7 +156,7 @@ class AdCollector private constructor(
   }
 
   fun dispatch(event: AdEvent) {
-    if (muxPlayerState == MuxPlayerState.PLAYING_ADS && !event.type.oneOf(EVENTS_ONLY_IN_ADBREAK)) {
+    if (muxPlayerState == MuxPlayerState.PLAYING_ADS || !event.type.oneOf(EVENTS_ONLY_IN_ADBREAK)) {
       eventBus.dispatch(event)
     }
   }
