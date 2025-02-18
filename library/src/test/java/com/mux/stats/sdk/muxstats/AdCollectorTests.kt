@@ -17,6 +17,22 @@ import org.junit.Assert
 import org.junit.Test
 
 class AdCollectorTests : AbsRobolectricTest() {
+
+  @Test
+  fun testAdPlaybackEventsNotDuringAds() {
+    val dispatchedEvents = mutableListOf<IEvent>()
+    val eventBus = mockk<EventBus> {
+      every { addListener(any()) } just runs
+      every { removeListener(any()) } just runs
+      every { removeAllListeners() } just runs
+      every { dispatch(any()) } answers { call ->
+        dispatchedEvents += (call.invocation.args.first() as IEvent)
+      }
+    }
+    val stateCollector = MuxStateCollector(mockk<MuxStats>(relaxed = true), eventBus)
+    val adCollector = AdCollector.create(stateCollector, eventBus)
+  }
+
   @Test
   fun testEndsRebufferingWhenAdsStart() {
     val dispatchedEvents = mutableListOf<IEvent>()

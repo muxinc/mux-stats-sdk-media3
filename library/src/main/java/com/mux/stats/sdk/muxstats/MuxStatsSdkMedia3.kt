@@ -8,6 +8,7 @@ import androidx.media3.common.MediaLibraryInfo
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import com.mux.android.util.noneOf
+import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.AdBreakEndEvent
@@ -155,19 +156,7 @@ class AdCollector private constructor(
   }
 
   fun dispatch(event: AdEvent) {
-    if (muxPlayerState == MuxPlayerState.PLAYING_ADS
-      || event.type.noneOf(
-        // .. the ad playback types are not allowed unless between adbreakstart and adbreakend.
-        // If the event is really real, the caller is responsible for dispatching adbreakstart first
-        AdPlayingEvent.TYPE,
-        AdPlayEvent.TYPE,
-        AdFirstQuartileEvent.TYPE,
-        AdMidpointEvent.TYPE,
-        AdThirdQuartileEvent.TYPE,
-        AdEndedEvent.TYPE,
-        AdBreakEndEvent.TYPE,
-        AdPauseEvent.TYPE
-    )) {
+    if (muxPlayerState == MuxPlayerState.PLAYING_ADS && !event.type.oneOf(EVENTS_ONLY_IN_ADBREAK)) {
       eventBus.dispatch(event)
     }
   }
@@ -177,5 +166,19 @@ class AdCollector private constructor(
     internal fun create(collector: MuxStateCollector, eventBus: EventBus): AdCollector {
       return AdCollector(collector, eventBus)
     }
+
+    @JvmSynthetic
+    internal val EVENTS_ONLY_IN_ADBREAK = listOf(
+      // .. ad playback/quartile types are not allowed unless between adbreakstart and adbreakend.
+      // If the event is really real, the caller is responsible for dispatching adbreakstart
+      AdPlayingEvent.TYPE,
+      AdPlayEvent.TYPE,
+      AdFirstQuartileEvent.TYPE,
+      AdMidpointEvent.TYPE,
+      AdThirdQuartileEvent.TYPE,
+      AdEndedEvent.TYPE,
+      AdBreakEndEvent.TYPE,
+      AdPauseEvent.TYPE,
+    )
   }
 }
