@@ -8,6 +8,7 @@ import androidx.media3.common.MediaLibraryInfo
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import com.mux.android.util.noneOf
+import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.CustomOptions
 import com.mux.stats.sdk.core.events.EventBus
 import com.mux.stats.sdk.core.events.playback.AdBreakEndEvent
@@ -105,7 +106,6 @@ class MuxStatsSdkMedia3<P : Player> @OptIn(UnstableApi::class) @JvmOverloads con
  * Collects generic data and events regarding ad playback.
  *
  * If you're using the Google IMA Ads SDK, can use MuxImaAdsListener in our `media3-ima` lib
- * (TODO: Doc link)
  */
 class AdCollector private constructor(
   private val stateCollector: MuxStateCollector,
@@ -156,21 +156,9 @@ class AdCollector private constructor(
   }
 
   fun dispatch(event: AdEvent) {
-    if (
-      muxPlayerState != MuxPlayerState.PLAYING_ADS &&
-      event.type.noneOf(
-        AdPlayingEvent.TYPE,
-        AdPlayEvent.TYPE,
-        AdFirstQuartileEvent.TYPE,
-        AdMidpointEvent.TYPE,
-        AdThirdQuartileEvent.TYPE,
-        AdEndedEvent.TYPE,
-        AdBreakEndEvent.TYPE,
-        AdPauseEvent.TYPE
-      )
+    if (muxPlayerState == MuxPlayerState.PLAYING_ADS
+      || !EVENTS_ONLY_IN_ADBREAK.contains(event.type)
       ) {
-      eventBus.dispatch(event)
-    } else if (muxPlayerState == MuxPlayerState.PLAYING_ADS) {
       eventBus.dispatch(event)
     }
   }
@@ -180,5 +168,19 @@ class AdCollector private constructor(
     internal fun create(collector: MuxStateCollector, eventBus: EventBus): AdCollector {
       return AdCollector(collector, eventBus)
     }
+
+    @JvmSynthetic
+    internal val EVENTS_ONLY_IN_ADBREAK = listOf(
+      // .. ad playback/quartile types are not allowed unless between adbreakstart and adbreakend.
+      // If the event is really real, the caller is responsible for dispatching adbreakstart
+      AdPlayingEvent.TYPE,
+      AdPlayEvent.TYPE,
+      AdFirstQuartileEvent.TYPE,
+      AdMidpointEvent.TYPE,
+      AdThirdQuartileEvent.TYPE,
+      AdEndedEvent.TYPE,
+      AdBreakEndEvent.TYPE,
+      AdPauseEvent.TYPE,
+    )
   }
 }
