@@ -1,6 +1,5 @@
 package com.mux.stats.sdk.muxstats
 
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
@@ -16,6 +15,7 @@ import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.source.LoadEventInfo
 import androidx.media3.exoplayer.source.MediaLoadData
 import com.mux.android.util.weak
+import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
@@ -41,6 +41,11 @@ open class ExoPlayerBinding : MuxPlayerAdapter.PlayerBinding<ExoPlayer> {
   private val errorBinding = createErrorDataBinding()
 
   private var listener: MuxAnalyticsListener? = null
+
+  @JvmSynthetic
+  internal fun setAutomaticVideoChange(automaticVideoChange: Boolean) {
+    this.listener?.automaticVideoChange = automaticVideoChange
+  }
 
   override fun bindPlayer(player: ExoPlayer, collector: MuxStateCollector) {
     catchUpPlayState(player, collector)
@@ -92,6 +97,8 @@ private class MuxAnalyticsListener(
   private val player by weak(player)
   private var lastVideoFormat: Format? = null
 
+  var automaticVideoChange: Boolean = false
+
   override fun onPlayWhenReadyChanged(
     eventTime: AnalyticsListener.EventTime,
     playWhenReady: Boolean,
@@ -128,6 +135,19 @@ private class MuxAnalyticsListener(
     mediaItem: MediaItem?,
     reason: Int
   ) {
+    // player is weakly reachable
+    val player = player ?: return
+
+    if (automaticVideoChange) {
+      val customerData = mediaItem?.getMuxMetadata()
+      val videoData = customerData?.customerVideoData
+
+      collector.videoChange(videoData ?: CustomerVideoData())
+      catchUpPlayState(player, collector)
+      catchUpStreamData(player, collector)
+    }
+
+    // Pick up base/non-customer Video Data from the MediaItem
     mediaItem?.let { collector.handleMediaItemChanged(it) }
   }
 

@@ -177,7 +177,7 @@ fun MuxStateCollector.handleExoPlaybackState(
 @JvmSynthetic
 fun MuxStateCollector.handleMediaItemChanged(mediaItem: MediaItem) {
   mediaItem.localConfiguration?.let { localConfig ->
-    val sourceUrl = localConfig.uri;
+    val sourceUrl = localConfig.uri
     val sourceDomain = sourceUrl.authority
     val videoData = VideoData().apply {
       videoSourceDomain = sourceDomain
