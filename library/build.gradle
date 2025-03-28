@@ -116,7 +116,8 @@ muxDistribution {
 }
 
 dependencies {
-  api "com.mux.stats.sdk.muxstats:android:${coreVersion}"
+  api "com.mux.stats.sdk.muxstats:android:${androidCoreVersion}"
+  api "com.mux:stats.muxcore:${javaCoreVersion}"
 
   //noinspection GradleDependency
   at_1_0Api "androidx.media3:media3-common:1.0.0"
