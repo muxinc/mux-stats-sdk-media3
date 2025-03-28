@@ -9,7 +9,7 @@ plugins {
 
 allprojects {
   project.ext {
-    androidCoreVersion = '1.4.9'
+    androidCoreVersion = '1.4.10'
     javaCoreVersion = '8.4.1'
   }
 
