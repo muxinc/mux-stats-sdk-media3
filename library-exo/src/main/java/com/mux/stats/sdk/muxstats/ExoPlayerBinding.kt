@@ -315,6 +315,9 @@ private class MuxAnalyticsListener(
     // For non-CMAF dash (not common) it would still be video, as in "video/mp2t", "video/mp4",
     //  "video/iso.segment"
 
+    // ** SsManifestParser is the same way as DashManifestParser, so we can assume AUDIO/VIDEO
+    //  (not AUDIO/DEFAULT)
+
     Log.d(TAG, "onLoadCompleted: for url: ${loadEventInfo.uri}")
     Log.d(TAG, "onLoadCompleted: Track Type is ${trackTypeString(mediaLoadData.trackType)}")
     Log.d(TAG, "onLoadCompleted: Data Type is ${dataTypeString(mediaLoadData.dataType)}")
