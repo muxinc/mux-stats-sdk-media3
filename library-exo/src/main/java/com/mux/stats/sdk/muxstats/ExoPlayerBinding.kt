@@ -296,17 +296,24 @@ private class MuxAnalyticsListener(
     // for CMAF HLS:
     //  trackType = DEFAULT for video chunks
     //  trackType = AUDIO for audio chunks
-    //  DATA_TYPE = media
+    //  dataType = media
     // for (not-CMAF) HLS:
     //  trackType = default for all chunks
-    //  DATA_TYPE = media
+    //  dataType = media
     // in both cases: MVPs and media PLs are dataType MANIFEST and trackType UNKNOWN
+    // HlsMediaPeriod Line 652: Main content sample stream trackType always either DEFAULT or AUDIO.
+    //  eventHandlers are later called with this (inside of HlsSampleStream)
 
-    // for CMAF DASH:
+    // for CMAF DASH
     //  trackType = VIDEO for video
     //  trackType = AUDIO for audio
+    //  dataType = MEDIA for both types of segment
     // Manifests (.mpd) have dataType MANIFEST and trackType audio
     // ** couldn't find any DASH streams with muxed segments, but that isn't common anymore anyway
+    // DashMediaPeriod gets it from the AdaptationSet, which is created inside DashManifestParser by
+    //  parsing the content type. Valid values are AUDIO, VIDEO, TEXT, or IMAGE
+    // For non-CMAF dash (not common) it would still be video, as in "video/mp2t", "video/mp4",
+    //  "video/iso.segment"
 
     Log.d(TAG, "onLoadCompleted: for url: ${loadEventInfo.uri}")
     Log.d(TAG, "onLoadCompleted: Track Type is ${trackTypeString(mediaLoadData.trackType)}")
