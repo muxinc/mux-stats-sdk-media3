@@ -296,10 +296,10 @@ private class MuxAnalyticsListener(
     // for CMAF HLS:
     //  trackType = DEFAULT for video chunks
     //  trackType = AUDIO for audio chunks
-    //  dataType = media
+    //  dataType = MEDIA
     // for (not-CMAF) HLS:
-    //  trackType = default for all chunks
-    //  dataType = media
+    //  trackType = DEFAULT for all chunks
+    //  dataType = MEDIA
     // in both cases: MVPs and media PLs are dataType MANIFEST and trackType UNKNOWN
     // HlsMediaPeriod Line 652: Main content sample stream trackType always either DEFAULT or AUDIO.
     //  eventHandlers are later called with this (inside of HlsSampleStream)
