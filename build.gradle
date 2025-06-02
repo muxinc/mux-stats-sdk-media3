@@ -9,7 +9,7 @@ plugins {
 
 allprojects {
   project.ext {
-    androidCoreVersion = 'dev-fix-abstract-method-error-49d0621'
+    androidCoreVersion = '1.4.11'
     javaCoreVersion = '8.4.1'
   }
 
