@@ -324,6 +324,7 @@ private class MuxAnalyticsListener(
     Log.d(TAG, "onLoadCompleted: for url: ${loadEventInfo.uri}")
     Log.d(TAG, "onLoadCompleted: Track Type is ${trackTypeString(mediaLoadData.trackType)}")
     Log.d(TAG, "onLoadCompleted: Data Type is ${dataTypeString(mediaLoadData.dataType)}")
+    Log.d(TAG, "onLoadCompleted: Response Headers: ${loadEventInfo.responseHeaders}")
     Log.d(TAG, "onLoadCompleted: --")
 
     @Suppress("SENSELESS_COMPARISON")
