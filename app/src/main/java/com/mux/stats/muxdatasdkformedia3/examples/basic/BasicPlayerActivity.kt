@@ -51,9 +51,9 @@ class BasicPlayerActivity : AppCompatActivity() {
       // plain HLS
 //      "https://stream.mux.com/zrQ02TP4Br02KycnnAJIM8FPnohUZLZprkDC33nWzJavc.m3u8"
       // CMAF HLS
-//      "https://stream.mux.com/5ICwECLW8900gMTi5eaOkWdYvOkGhtKyBY02uRCT6FOyE.m3u8"
+      "https://stream.mux.com/5ICwECLW8900gMTi5eaOkWdYvOkGhtKyBY02uRCT6FOyE.m3u8"
       // Audio-only
-      "https://stream.mux.com/MwUGUc7gWwcE6AN6qVcilQ8cR4SFlE601kB96IiYqPVM.m3u8"
+//      "https://stream.mux.com/MwUGUc7gWwcE6AN6qVcilQ8cR4SFlE601kB96IiYqPVM.m3u8"
       // Demuxed DASH
 //      "https://cdn.bitmovin.com/content/assets/art-of-motion-dash-hls-progressive/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd"
     )
