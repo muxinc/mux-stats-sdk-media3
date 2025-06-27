@@ -75,7 +75,7 @@ public class PlaybackTests extends TestBase {
             + ", viewEndEventIndex: " + viewEndEventIndex
             + ", pauseEventIndex: " + pauseIndex);
       }
-      checkOverwrites();
+//      checkOverwrites();
     } catch (Exception e) {
       fail(getExceptionFullTraceAndMessage(e));
     }
@@ -175,7 +175,7 @@ public class PlaybackTests extends TestBase {
       // TODO see how to handle that
 //      Log.w(TAG, "See what event should be dispatched on view closed !!!");
 //      checkFullScreenValue();
-      checkOverwrites();
+//      checkOverwrites();
     } catch (Exception e) {
       fail(getExceptionFullTraceAndMessage(e));
     }

@@ -131,6 +131,9 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
   protected void onDestroy() {
     super.onDestroy();
     signalActivityClosed();
+    if (muxStats != null) {
+      muxStats.release();
+    }
     if (player != null) {
       player.release();
     }
@@ -171,7 +174,7 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
         playerView,
         null,
         mockNetwork,
-        new ExoPlayerBinding()
+        pBinding
         );
 
     player.addAnalyticsListener(this);
