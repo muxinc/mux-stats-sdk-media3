@@ -1,0 +1,22 @@
+apiVersion: v1alpha
+kind: espresso
+sauce:
+  region: us-west-1
+  concurrency: 2
+  retries: 1
+    
+  metadata:
+    tags:
+      - mux-player
+      - android
+      - data
+    # best overridden from the CLI using --build
+    build: "Mux Player Android"
+espresso:
+  app: automatedtests/build/outputs/apk/debug/automatedtests-debug.apk
+  testApp: automatedtests/build/outputs/apk/androidTest/debug/automatedtests-debug-androidTest.apk
+suites:
+  - name: 'Mux Data Media3 :automatedtests Any Pixel'
+    devices:
+      - name: Google Pixel.*
+
