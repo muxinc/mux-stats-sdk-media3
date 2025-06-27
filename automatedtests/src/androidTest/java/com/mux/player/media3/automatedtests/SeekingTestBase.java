@@ -13,6 +13,8 @@ import com.mux.stats.sdk.core.events.playback.SeekingEvent;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.List;
+
 public class SeekingTestBase extends TestBase {
 
   @Test
@@ -116,13 +118,15 @@ public class SeekingTestBase extends TestBase {
           seekedIndex - 1, RebufferStartEvent.TYPE);
       int rebufferEndIndex = networkRequest.getIndexForNextEvent(
           seekedIndex - 1, RebufferEndEvent.TYPE);
+      List<String> eventNames = networkRequest.getReceivedEventNames();
       if (playIndex != -1 || pauseIndex != -1 || rebufferStartIndex != -1
           || rebufferEndIndex != -1) {
         fail("Found unwanted events after seeked event: " + seekedIndex
             + ", playIndex: " + playIndex
             + ", rebufferStartIndex: " + rebufferStartIndex
             + ", pauseIndex: " + pauseIndex
-            + ", rebufferEndIndex: " + rebufferEndIndex);
+            + ", rebufferEndIndex: " + rebufferEndIndex
+            + "\nAll event names: " + eventNames);
       }
       if (seekedIndex > playingIndex) {
         fail("Missing playing  event after seeked event: SeekedEvent: " + seekedIndex
