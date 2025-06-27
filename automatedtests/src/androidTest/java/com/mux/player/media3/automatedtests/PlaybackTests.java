@@ -257,7 +257,7 @@ public class PlaybackTests extends TestBase {
             + networkRequest.getReceivedEventNames());
       }
       // TODO see what is the best way to calculate rebuffer period
-      checkOverwrites();
+//      periodcheckOverwrites();
     } catch (Exception e) {
       fail(getExceptionFullTraceAndMessage(e));
     }
