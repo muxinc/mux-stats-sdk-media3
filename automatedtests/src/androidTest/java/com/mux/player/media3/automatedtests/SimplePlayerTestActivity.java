@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.support.v4.media.session.MediaSessionCompat;
+//import android.support.v4.media.session.MediaSessionCompat;
 import android.view.View;
 import android.view.WindowManager;
 import androidx.annotation.MainThread;
@@ -26,6 +26,7 @@ import androidx.media3.exoplayer.DefaultRenderersFactory;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.RenderersFactory;
 import androidx.media3.exoplayer.analytics.AnalyticsListener;
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.exoplayer.source.ads.AdsLoader;
 import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection;
@@ -33,8 +34,6 @@ import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import androidx.media3.exoplayer.trackselection.ExoTrackSelection;
 import androidx.media3.ui.PlayerNotificationManager;
 import androidx.media3.ui.PlayerView;
-import com.mux.player.MuxPlayer;
-import com.mux.player.media.MuxMediaSourceFactory;
 import com.mux.player.media3.R;
 import com.mux.player.media3.automatedtests.mockup.MockNetworkRequest;
 import com.mux.player.media3.test.BuildConfig;
@@ -59,12 +58,12 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
   protected static final String ARG_TITLE = "title";
   protected static final String ARG_START_POSITION = "start_position";
 
-  MuxMediaSourceFactory mediaSourceFactory;
+  MediaSource.Factory mediaSourceFactory;
 
   public String videoTitle = "Test Video";
   public String urlToPlay;
   public PlayerView playerView;
-  public MuxPlayer player;
+  public ExoPlayer player;
   public DefaultTrackSelector trackSelector;
   public MediaSource testMediaSource;
   public AdsLoader adsLoader;
@@ -73,7 +72,7 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
   public MockNetworkRequest mockNetwork;
   public AtomicBoolean onResumedCalled = new AtomicBoolean(false);
   public PlayerNotificationManager notificationManager;
-  public MediaSessionCompat mediaSessionCompat;
+//  public MediaSessionCompat mediaSessionCompat;
   //  public MediaSessionConnector mediaSessionConnector;
   public long playbackStartPosition = 0;
 
@@ -146,7 +145,7 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
     DefaultTrackSelector.Parameters trackSelectorParameters = builder
         .build();
 
-    mediaSourceFactory = new MuxMediaSourceFactory(this, new DefaultDataSource.Factory(this));
+    mediaSourceFactory = new DefaultMediaSourceFactory(this);
     trackSelector = new DefaultTrackSelector(/* context= */ this, trackSelectionFactory);
     trackSelector.setParameters(trackSelectorParameters);
     RenderersFactory renderersFactory = new DefaultRenderersFactory(/* context= */ this);
@@ -154,16 +153,11 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
     AutomatedtestsExoPlayerBinding pBinding = new AutomatedtestsExoPlayerBinding(eventListener);
     mockNetwork = new MockNetworkRequest();
     // TODO init TestEventListener, send it in lambda
-    player = new MuxPlayer.Builder(this)
-        .plusExoConfig((ExoPlayer.Builder exoBuilder) -> {
-          exoBuilder.setRenderersFactory(renderersFactory);
-          exoBuilder.setMediaSourceFactory(mediaSourceFactory);
-          exoBuilder.setTrackSelector(trackSelector);
-        })
-        .addMonitoringData(initMuxSats())
-        .addExoPlayerBinding(pBinding)
-        .addNetwork(mockNetwork)
-        .build();
+    player = new ExoPlayer.Builder(this)
+      .setRenderersFactory(renderersFactory)
+      .setMediaSourceFactory(mediaSourceFactory)
+      .setTrackSelector(trackSelector)
+      .build();
 
     player.addAnalyticsListener(this);
 
@@ -248,7 +242,7 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
             | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
   }
 
-  public MuxPlayer getPlayer() {
+  public ExoPlayer getPlayer() {
     return player;
   }
 

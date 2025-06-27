@@ -2,7 +2,6 @@ package com.mux.player.media3.automatedtests;
 
 import static org.junit.Assert.fail;
 
-import com.mux.player.MuxPlayer;
 import com.mux.player.media3.automatedtests.mockup.MockNetworkRequest;
 import com.mux.player.media3.automatedtests.mockup.http.SegmentStatistics;
 import com.mux.player.media3.automatedtests.mockup.http.SimpleHTTPServer;
