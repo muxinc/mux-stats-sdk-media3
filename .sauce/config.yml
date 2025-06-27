@@ -13,8 +13,8 @@ sauce:
     # best overridden from the CLI using --build
     build: "Mux Player Android"
 espresso:
-  app: automatedtests/build/outputs/apk/debug/automatedtests-debug.apk
-  testApp: automatedtests/build/outputs/apk/androidTest/debug/automatedtests-debug-androidTest.apk
+  app: automatedtests/build/outputs/apk/At_latest/debug/automatedtests-At_latest-debug.apk
+  testApp: automatedtests/build/outputs/apk/androidTest/At_latest/debug/automatedtests-At_latest-debug-androidTest.apk
 suites:
   - name: 'Mux Data Media3 :automatedtests Any Pixel'
     devices:
