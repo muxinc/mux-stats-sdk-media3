@@ -2,12 +2,14 @@ package com.mux.player.media3.automatedtests;
 
 import static org.junit.Assert.fail;
 
+import androidx.media3.exoplayer.ExoPlayer;
 import androidx.test.uiautomator.v18.BuildConfig;
-import com.mux.player.MuxPlayer;
 import com.mux.player.media3.automatedtests.mockup.http.SimpleHTTPServer;
 import com.mux.stats.sdk.core.events.playback.PlayEvent;
 import com.mux.stats.sdk.core.events.playback.PlayingEvent;
 import com.mux.stats.sdk.core.events.playback.ViewStartEvent;
+import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3;
+
 import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +60,7 @@ public class MissusageTests extends TestBase {
       }
       // TODO release player, trigger some player events, watch for it to crash
       testActivity.runOnUiThread(() -> {
-        MuxPlayer muxStats = testActivity.getPlayer();
+        MuxStatsSdkMedia3<ExoPlayer> muxStats = testActivity.muxStats;
         long duration = pView.getPlayer().getDuration();
         pView.getPlayer().seekTo(duration - PLAY_PERIOD_IN_MS);
         muxStats.release();

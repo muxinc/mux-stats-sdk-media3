@@ -90,7 +90,6 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
       if (!testActivity.waitForPlaybackToStart(waitForPlaybackToStartInMS)) {
         fail("Playback did not start in " + waitForPlaybackToStartInMS + " milliseconds !!!");
       }
-      MuxPlayer muxStats = testActivity.getPlayer();
       for (int i = 0; i < manifestDelayList.length; i++) {
         System.out.println("Waiting for segment number: " + i);
         httpServer.setHLSManifestDelay(manifestDelayList[i]);

@@ -7,7 +7,6 @@ import android.util.Log;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.v18.BuildConfig;
-import com.mux.player.MuxPlayer;
 import com.mux.stats.sdk.core.events.playback.EndedEvent;
 import com.mux.stats.sdk.core.events.playback.PauseEvent;
 import com.mux.stats.sdk.core.events.playback.PlayEvent;
@@ -95,7 +94,7 @@ public class PlaybackTests extends TestBase {
 
       // Init player controlls
 //      controlView = pView.findViewById(R.id.exo_controller);
-      controlView = pView.findViewById(androidx.media3.cast.R.id.controllers);
+//      controlView = pView.findViewById(androidx.media3.cast.R.id.controllers);
       if (controlView != null) {
         // TODO: implemnt this
 //        pauseButton = controlView.findViewById(R.id.exo_pause);

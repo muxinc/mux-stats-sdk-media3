@@ -41,6 +41,9 @@ import com.mux.stats.sdk.core.model.CustomerData;
 import com.mux.stats.sdk.core.model.CustomerPlayerData;
 import com.mux.stats.sdk.core.model.CustomerVideoData;
 import com.mux.stats.sdk.core.model.CustomerViewerData;
+import com.mux.stats.sdk.muxstats.ExoPlayerBinding;
+import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3;
+
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -75,6 +78,7 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
 //  public MediaSessionCompat mediaSessionCompat;
   //  public MediaSessionConnector mediaSessionConnector;
   public long playbackStartPosition = 0;
+  public MuxStatsSdkMedia3<ExoPlayer> muxStats;
 
   TestEventListener eventListener;
   public Lock activityLock = new ReentrantLock();
@@ -158,6 +162,17 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
       .setMediaSourceFactory(mediaSourceFactory)
       .setTrackSelector(trackSelector)
       .build();
+
+    muxStats = new MuxStatsSdkMedia3<>(
+        this,
+        "YOUR KEY HERE",
+        new CustomerData(),
+        player,
+        playerView,
+        null,
+        mockNetwork,
+        new ExoPlayerBinding()
+        );
 
     player.addAnalyticsListener(this);
 
