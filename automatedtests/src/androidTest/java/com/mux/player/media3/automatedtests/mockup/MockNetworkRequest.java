@@ -1,6 +1,8 @@
 package com.mux.player.media3.automatedtests.mockup;
 
 import android.util.Log;
+import android.util.Pair;
+
 import com.mux.player.media3.test.BuildConfig;
 import com.mux.stats.sdk.muxstats.INetworkRequest;
 import java.net.URL;
@@ -138,6 +140,14 @@ public class MockNetworkRequest implements INetworkRequest {
       eventNames.add(getReceivedEventName(i));
     }
     return eventNames;
+  }
+
+  public ArrayList<Pair<String, Long>> getReceivedEventNamesAtViewerTime() throws JSONException {
+    ArrayList<Pair<String, Long>> namesAtTimes = new ArrayList<>();
+    for (int i = 0; i < receivedEvents.size(); i++) {
+      namesAtTimes.add(new Pair<>(getReceivedEventName(i), getReceivedEventsAsJSON().getJSONObject(i).getLong("uti")));
+    }
+    return namesAtTimes;
   }
 
   public int getNumberOfReceivedEvents() {

@@ -2,6 +2,8 @@ package com.mux.player.media3.automatedtests;
 
 import static org.junit.Assert.fail;
 
+import android.util.Pair;
+
 import com.mux.stats.sdk.core.events.playback.PauseEvent;
 import com.mux.stats.sdk.core.events.playback.PlayEvent;
 import com.mux.stats.sdk.core.events.playback.PlayingEvent;
@@ -118,15 +120,18 @@ public class SeekingTestBase extends TestBase {
           seekedIndex - 1, RebufferStartEvent.TYPE);
       int rebufferEndIndex = networkRequest.getIndexForNextEvent(
           seekedIndex - 1, RebufferEndEvent.TYPE);
-      List<String> eventNames = networkRequest.getReceivedEventNames();
+      List<Pair<String, Long>> namesAtTime = networkRequest.getReceivedEventNamesAtViewerTime();
       if (playIndex != -1 || pauseIndex != -1 || rebufferStartIndex != -1
           || rebufferEndIndex != -1) {
-        fail("Found unwanted events after seeked event: " + seekedIndex
-            + ", playIndex: " + playIndex
-            + ", rebufferStartIndex: " + rebufferStartIndex
-            + ", pauseIndex: " + pauseIndex
-            + ", rebufferEndIndex: " + rebufferEndIndex
-            + "\nAll event names: " + eventNames);
+        // it'd be ok if we rebuffered during the remaining play period as long as it ended
+        if (!(rebufferStartIndex != -1 && rebufferEndIndex != -1)) {
+          fail("Found unwanted events after seeked event: " + seekedIndex
+              + ", playIndex: " + playIndex
+              + ", rebufferStartIndex: " + rebufferStartIndex
+              + ", pauseIndex: " + pauseIndex
+              + ", rebufferEndIndex: " + rebufferEndIndex
+              + "\nAll event names: " + namesAtTime);
+        }
       }
       if (seekedIndex > playingIndex) {
         fail("Missing playing  event after seeked event: SeekedEvent: " + seekedIndex

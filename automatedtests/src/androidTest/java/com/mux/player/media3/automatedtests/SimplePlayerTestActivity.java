@@ -94,6 +94,8 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    getWindow().addFlags(View.KEEP_SCREEN_ON);
+
     // Enter fullscreen
     hideSystemUI();
     setContentView(R.layout.activity_simple_player_test);
@@ -168,8 +170,8 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
 
     muxStats = new MuxStatsSdkMedia3<>(
         this,
-        "rhhn9fph0nog346n4tqb6bqda",
-        new CustomerData(),
+        "AUTOMATED TEST FAKE KEY",
+        createCustomerData(),
         player,
         playerView,
         null,
@@ -264,7 +266,7 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
     return player;
   }
 
-  private CustomerData initMuxSats() {
+  private CustomerData createCustomerData() {
 
 
     // Mux details

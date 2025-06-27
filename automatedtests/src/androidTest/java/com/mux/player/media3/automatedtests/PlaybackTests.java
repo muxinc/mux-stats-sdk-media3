@@ -75,7 +75,7 @@ public class PlaybackTests extends TestBase {
             + ", viewEndEventIndex: " + viewEndEventIndex
             + ", pauseEventIndex: " + pauseIndex);
       }
-//      checkOverwrites();
+      checkOverwrites();
     } catch (Exception e) {
       fail(getExceptionFullTraceAndMessage(e));
     }
@@ -257,7 +257,7 @@ public class PlaybackTests extends TestBase {
             + networkRequest.getReceivedEventNames());
       }
       // TODO see what is the best way to calculate rebuffer period
-//      periodcheckOverwrites();
+      checkOverwrites();
     } catch (Exception e) {
       fail(getExceptionFullTraceAndMessage(e));
     }
