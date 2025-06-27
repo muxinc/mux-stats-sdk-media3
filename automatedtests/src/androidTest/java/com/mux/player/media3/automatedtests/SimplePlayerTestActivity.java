@@ -168,7 +168,7 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
 
     muxStats = new MuxStatsSdkMedia3<>(
         this,
-        "YOUR KEY HERE",
+        "rhhn9fph0nog346n4tqb6bqda",
         new CustomerData(),
         player,
         playerView,

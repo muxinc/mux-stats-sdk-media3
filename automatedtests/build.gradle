@@ -200,7 +200,7 @@ dependencies {
   api 'org.checkerframework:checker-qual:3.33.0'
 
   // Automated tests should always test the local module and not the maven dependency.
-//  implementation project(":library")
+  implementation project(":library")
   implementation project(":library-exo")
   implementation project(":library-ima")
 }
