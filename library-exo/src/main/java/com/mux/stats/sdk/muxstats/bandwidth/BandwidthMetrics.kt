@@ -86,7 +86,7 @@ internal open class BandwidthMetrics(
   @OptIn(UnstableApi::class) // opting-in to the bitrate api
   open fun onLoad(
     loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
-    segmentUrl: String?, dataType: Int, host: String?, segmentMimeType: String?,
+    segmentUrl: String?, dataType: Int, requestType: Int, host: String?, segmentMimeType: String?,
     segmentWidth: Int, segmentHeight: Int
   ): BandwidthMetricData {
     // Populate segment time details.
@@ -113,33 +113,64 @@ internal open class BandwidthMetrics(
       segmentData.requestVideoHeight = collector.sourceHeight
     }
     segmentData.requestUrl = segmentUrl
-    if (segmentMimeType != null) {
-      when (dataType) {
-        C.DATA_TYPE_MANIFEST -> {
-          collector.detectMimeType = false
-          segmentData.requestType = "manifest"
-        }
 
-        C.DATA_TYPE_MEDIA_INITIALIZATION -> {
-          if (segmentMimeType.contains("video")) {
-            segmentData.requestType = "video_init"
-          } else if (segmentMimeType.contains("audio")) {
-            segmentData.requestType = "audio_init"
-          }
-        }
+    fillRequestType(segmentData, dataType, requestType, mediaEndTimeMs, mediaStartTimeMs)
+    MuxLogger.d("BandwidthMetrics", "onLoad: For request: ${segmentUrl}:"
+        + "\nRequest type: ${segmentData.requestType}"
+        + "\nMedia duration: ${segmentData.requestMediaDuration}")
 
-        C.DATA_TYPE_MEDIA -> {
-          segmentData.requestType = "media"
-          segmentData.requestMediaDuration = (mediaEndTimeMs
-                  - mediaStartTimeMs)
-        }
-      }
-    }
     segmentData.requestResponseHeaders = null
     segmentData.requestHostName = host
     segmentData.requestRenditionLists = collector.renditionList
     loadedSegments[loadTaskId] = segmentData
     return segmentData
+  }
+
+  @OptIn(UnstableApi::class)
+  private fun fillRequestType(
+    segmentData: BandwidthMetricData,
+    dataType: Int,
+    requestType: Int,
+    mediaEndTimeMs: Long,
+    mediaStartTimeMs: Long
+  ) {
+    when (dataType) {
+      C.DATA_TYPE_MANIFEST -> {
+        // Stream MIME type only applicable to progressive files
+        collector.detectMimeType = false
+        segmentData.requestType = "manifest"
+      }
+      C.DATA_TYPE_DRM -> {
+        segmentData.requestType = "encryption"
+      }
+      C.DATA_TYPE_MEDIA_INITIALIZATION -> {
+        if (requestType == C.TRACK_TYPE_VIDEO || requestType == C.TRACK_TYPE_DEFAULT) {
+          segmentData.requestType = "video_init"
+        } else if (requestType == C.TRACK_TYPE_AUDIO) {
+          segmentData.requestType = "audio_init"
+        }
+      }
+      C.DATA_TYPE_MEDIA -> {
+        segmentData.requestMediaDuration = (mediaEndTimeMs - mediaStartTimeMs)
+        when (requestType) {
+          C.TRACK_TYPE_DEFAULT -> {
+            // cmaf hls with a video track, plain hls with a video track
+            segmentData.requestType = "media"
+          }
+          C.TRACK_TYPE_AUDIO -> {
+            // audio-only hls or dash segments
+            segmentData.requestType = "audio"
+          }
+          C.TRACK_TYPE_VIDEO -> {
+            // cmaf dash video segments
+            segmentData.requestType = "video"
+          }
+          C.TRACK_TYPE_TEXT -> {
+            segmentData.requestType = "subtitle"
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -162,7 +193,7 @@ internal open class BandwidthMetrics(
    */
   open fun onLoadStarted(
     loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
-    segmentUrl: String?, dataType: Int, host: String?, segmentMimeType: String?,
+    segmentUrl: String?, dataType: Int, requestType: Int, host: String?, segmentMimeType: String?,
     segmentWidth: Int, segmentHeight: Int
   )
           : BandwidthMetricData {
@@ -172,6 +203,7 @@ internal open class BandwidthMetrics(
       mediaEndTimeMs,
       segmentUrl,
       dataType,
+      requestType,
       host,
       segmentMimeType,
       segmentWidth,
@@ -306,7 +338,8 @@ internal class BandwidthMetricDispatcher(
 
   fun onLoadStarted(
     loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long, segmentUrl: String?,
-    dataType: Int, host: String?, segmentMimeType: String?, segmentWidth: Int, segmentHeight: Int
+    dataType: Int, requestType: Int, host: String?, segmentMimeType: String?,
+    segmentWidth: Int, segmentHeight: Int
   ) {
     if (player == null || collector == null) {
       return
@@ -317,6 +350,7 @@ internal class BandwidthMetricDispatcher(
       mediaEndTimeMs,
       segmentUrl,
       dataType,
+      requestType,
       host,
       segmentMimeType,
       segmentWidth,
