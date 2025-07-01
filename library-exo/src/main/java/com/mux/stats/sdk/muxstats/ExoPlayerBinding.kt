@@ -1,6 +1,5 @@
 package com.mux.stats.sdk.muxstats
 
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
@@ -254,10 +253,22 @@ private class MuxAnalyticsListener(
       segmentWidth = format.width
       segmentHeight = format.height
     }
+
+    MuxLogger.d("ExoPlayerBinding", "onLoad: For request: ${loadEventInfo.uri.path}:"
+        + "\nTrack type: ${mediaLoadData.trackType}"
+        + "\nData type duration: ${mediaLoadData.dataType}")
+
     bandwidthMetrics?.onLoadStarted(
-      loadEventInfo.loadTaskId, mediaLoadData.mediaStartTimeMs,
-      mediaLoadData.mediaEndTimeMs, loadEventInfo.uri.path, mediaLoadData.dataType,
-      loadEventInfo.uri.host, segmentMimeType, segmentWidth, segmentHeight
+      loadEventInfo.loadTaskId,
+      mediaLoadData.mediaStartTimeMs,
+      mediaLoadData.mediaEndTimeMs,
+      loadEventInfo.uri.path,
+      mediaLoadData.dataType,
+      trackType = mediaLoadData.trackType,
+      loadEventInfo.uri.host,
+      segmentMimeType,
+      segmentWidth,
+      segmentHeight
     )
   }
 
