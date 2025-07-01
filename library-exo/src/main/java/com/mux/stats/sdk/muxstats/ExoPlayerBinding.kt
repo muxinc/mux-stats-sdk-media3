@@ -20,8 +20,10 @@ import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
 import com.mux.stats.sdk.muxstats.internal.createErrorDataBinding
 import com.mux.stats.sdk.muxstats.internal.createExoSessionDataBinding
+import com.mux.stats.sdk.muxstats.internal.dataTypeString
 import com.mux.stats.sdk.muxstats.internal.isInAdGroup
 import com.mux.stats.sdk.muxstats.internal.populateLiveStreamData
+import com.mux.stats.sdk.muxstats.internal.trackTypeString
 import java.io.IOException
 import java.util.regex.Pattern
 
@@ -254,9 +256,9 @@ private class MuxAnalyticsListener(
       segmentHeight = format.height
     }
 
-    MuxLogger.d("ExoPlayerBinding", "onLoad: For request: ${loadEventInfo.uri.path}:"
-        + "\nTrack type: ${mediaLoadData.trackType}"
-        + "\nData type duration: ${mediaLoadData.dataType}")
+    MuxLogger.d("ExoPlayerBinding", "onLoadStarted: For request: ${loadEventInfo.uri.path}:"
+        + "\nTrack type: ${trackTypeString( mediaLoadData.trackType)}"
+        + "\nData type: ${dataTypeString(mediaLoadData.dataType)}")
 
     bandwidthMetrics?.onLoadStarted(
       loadEventInfo.loadTaskId,
