@@ -195,8 +195,7 @@ internal open class BandwidthMetrics(
     loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
     segmentUrl: String?, dataType: Int, requestType: Int, host: String?, segmentMimeType: String?,
     segmentWidth: Int, segmentHeight: Int
-  )
-          : BandwidthMetricData {
+  ) : BandwidthMetricData {
     val loadData = onLoad(
       loadTaskId,
       mediaStartTimeMs,
@@ -385,6 +384,9 @@ internal class BandwidthMetricDispatcher(
     }
   }
 
+  /**
+   * Call when the player's track list changes, so we can report rendition lists on request events
+   */
   @OptIn(UnstableApi::class) // Opting-in to the Bitrate APIs
   fun onTracksChanged(tracks: Tracks) {
     MuxLogger.d("BandwidthMetrics", "onTracksChanged: Got ${tracks.groups.size} tracks")
