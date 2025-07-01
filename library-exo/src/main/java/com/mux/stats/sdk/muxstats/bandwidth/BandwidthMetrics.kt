@@ -337,7 +337,7 @@ internal class BandwidthMetricDispatcher(
 
   fun onLoadStarted(
     loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long, segmentUrl: String?,
-    dataType: Int, requestType: Int, host: String?, segmentMimeType: String?,
+    dataType: Int, trackType: Int, host: String?, segmentMimeType: String?,
     segmentWidth: Int, segmentHeight: Int
   ) {
     if (player == null || collector == null) {
@@ -349,7 +349,7 @@ internal class BandwidthMetricDispatcher(
       mediaEndTimeMs,
       segmentUrl,
       dataType,
-      requestType,
+      trackType,
       host,
       segmentMimeType,
       segmentWidth,
