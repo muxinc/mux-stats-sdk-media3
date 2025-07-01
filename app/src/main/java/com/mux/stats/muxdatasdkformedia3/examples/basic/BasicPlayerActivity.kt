@@ -57,9 +57,9 @@ class BasicPlayerActivity : AppCompatActivity() {
       // Demuxed DASH
 //      "https://cdn.bitmovin.com/content/assets/art-of-motion-dash-hls-progressive/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd"
       // Plain HLS, subtitles
-//      "https://stream.mux.com/jylbh7Bh4nlUuZD00FPD5cky4Ub00MVNZQ2RKzAwGBcvY.m3u8"
+      "https://stream.mux.com/jylbh7Bh4nlUuZD00FPD5cky4Ub00MVNZQ2RKzAwGBcvY.m3u8"
       // Plain HLS, closed-captions
-      "https://stream.mux.com/qP5Eb2cj7MrNnoxBGz012pbZkMHqpIcrKMzd7ykGr01gM.m3u8"
+//      "https://stream.mux.com/qP5Eb2cj7MrNnoxBGz012pbZkMHqpIcrKMzd7ykGr01gM.m3u8"
 //      Constants.VOD_FIXTURE_SERVER_CDN_CHANGE
     )
   }
@@ -73,6 +73,11 @@ class BasicPlayerActivity : AppCompatActivity() {
     stopPlaying()
 
     player = createPlayer().also { newPlayer ->
+      newPlayer.trackSelectionParameters = newPlayer.trackSelectionParameters
+        .buildUpon()
+        .setPreferredTextLanguage("en")
+        .build()
+
       muxStats = monitorPlayer(newPlayer)
 
       view.playerView.player = newPlayer
