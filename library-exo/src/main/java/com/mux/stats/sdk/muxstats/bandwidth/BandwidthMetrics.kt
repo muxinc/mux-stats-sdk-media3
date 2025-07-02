@@ -128,6 +128,7 @@ internal open class BandwidthMetrics(
         + "\nRequest type: ${segmentData.requestType}"
         + "\nMedia duration: ${segmentData.requestMediaDuration}")
 
+    // headers will be picked up when we get onLoadCompleted
     segmentData.requestResponseHeaders = null
     segmentData.requestHostName = host
     segmentData.requestRenditionLists = collector.renditionList
@@ -157,11 +158,11 @@ internal open class BandwidthMetrics(
       C.DATA_TYPE_MEDIA -> {
         segmentData.requestMediaDuration = (mediaEndTimeMs - mediaStartTimeMs)
         when (trackType) {
-          // cmaf hls with a video track, plain hls with a video track
+          // cmaf or plain hls with a video track
           C.TRACK_TYPE_DEFAULT -> segmentData.requestType = "media"
-          // audio-only hls or dash segments
+          // dash or cmaf hls audio segments, audio-only hls or dash
           C.TRACK_TYPE_AUDIO -> segmentData.requestType = "audio"
-          // cmaf dash video segments
+          // dash video
           C.TRACK_TYPE_VIDEO -> segmentData.requestType = "video"
           C.TRACK_TYPE_TEXT -> segmentData.requestType = "subtitle"
         }
@@ -189,20 +190,20 @@ internal open class BandwidthMetrics(
    */
   open fun onLoadStarted(
     loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
-    segmentUrl: String?, dataType: Int, requestType: Int, host: String?, segmentMimeType: String?,
+    segmentUrl: String?, dataType: Int, trackType: Int, host: String?, segmentMimeType: String?,
     segmentWidth: Int, segmentHeight: Int
   ) : BandwidthMetricData {
     val loadData = onLoad(
-      loadTaskId,
-      mediaStartTimeMs,
-      mediaEndTimeMs,
-      segmentUrl,
-      dataType,
-      requestType,
-      host,
-      segmentMimeType,
-      segmentWidth,
-      segmentHeight
+      loadTaskId = loadTaskId,
+      mediaStartTimeMs = mediaStartTimeMs,
+      mediaEndTimeMs = mediaEndTimeMs,
+      segmentUrl = segmentUrl,
+      dataType = dataType,
+      trackType = trackType,
+      host = host,
+      segmentMimeType = segmentMimeType,
+      segmentWidth = segmentWidth,
+      segmentHeight = segmentHeight
     )
     loadData.requestResponseStart = System.currentTimeMillis()
     return loadData

@@ -261,16 +261,16 @@ private class MuxAnalyticsListener(
         + "\nData type: ${dataTypeString(mediaLoadData.dataType)}")
 
     bandwidthMetrics?.onLoadStarted(
-      loadEventInfo.loadTaskId,
-      mediaLoadData.mediaStartTimeMs,
-      mediaLoadData.mediaEndTimeMs,
-      loadEventInfo.uri.path,
-      mediaLoadData.dataType,
+      loadTaskId = loadEventInfo.loadTaskId,
+      mediaStartTimeMs = mediaLoadData.mediaStartTimeMs,
+      mediaEndTimeMs = mediaLoadData.mediaEndTimeMs,
+      segmentUrl = loadEventInfo.uri.path,
+      dataType = mediaLoadData.dataType,
       trackType = mediaLoadData.trackType,
-      loadEventInfo.uri.host,
-      segmentMimeType,
-      segmentWidth,
-      segmentHeight
+      host = loadEventInfo.uri.host,
+      segmentMimeType = segmentMimeType,
+      segmentWidth = segmentWidth,
+      segmentHeight = segmentHeight
     )
   }
 
