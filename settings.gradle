@@ -22,6 +22,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Mux Data SDK for Media3"
 include ':app'
+include ':automatedtests'
 include ':library'
 include ':library-exo'
 include ':library-ima'
