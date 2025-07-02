@@ -149,10 +149,9 @@ internal open class BandwidthMetrics(
       C.DATA_TYPE_MANIFEST -> segmentData.requestType = "manifest"
       C.DATA_TYPE_DRM -> segmentData.requestType = "encryption"
       C.DATA_TYPE_MEDIA_INITIALIZATION -> {
-        if (trackType == C.TRACK_TYPE_VIDEO || trackType == C.TRACK_TYPE_DEFAULT) {
-          segmentData.requestType = "video_init"
-        } else if (trackType == C.TRACK_TYPE_AUDIO) {
-          segmentData.requestType = "audio_init"
+        when (trackType) {
+          C.TRACK_TYPE_VIDEO, C.TRACK_TYPE_DEFAULT -> segmentData.requestType = "video_init"
+          C.TRACK_TYPE_AUDIO -> segmentData.requestType = "audio_init"
         }
       }
       C.DATA_TYPE_MEDIA -> {
