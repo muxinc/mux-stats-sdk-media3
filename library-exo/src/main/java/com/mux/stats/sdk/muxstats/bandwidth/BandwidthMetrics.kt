@@ -120,6 +120,7 @@ internal open class BandwidthMetrics(
     segmentData.requestUrl = segmentUrl
 
     if (dataType == C.DATA_TYPE_MANIFEST) {
+      // Overall MIME type only applicable to progressive files
       collector.detectMimeType = false
     }
 
@@ -145,7 +146,6 @@ internal open class BandwidthMetrics(
     mediaStartTimeMs: Long
   ) {
     when (dataType) {
-      // Overall MIME type only applicable to progressive files
       C.DATA_TYPE_MANIFEST -> segmentData.requestType = "manifest"
       C.DATA_TYPE_DRM -> segmentData.requestType = "encryption"
       C.DATA_TYPE_MEDIA_INITIALIZATION -> {
