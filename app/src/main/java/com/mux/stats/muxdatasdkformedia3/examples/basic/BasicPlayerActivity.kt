@@ -60,7 +60,8 @@ class BasicPlayerActivity : AppCompatActivity() {
 //      "https://stream.mux.com/jylbh7Bh4nlUuZD00FPD5cky4Ub00MVNZQ2RKzAwGBcvY.m3u8"
       // Plain HLS, closed-captions
 //      "https://stream.mux.com/qP5Eb2cj7MrNnoxBGz012pbZkMHqpIcrKMzd7ykGr01gM.m3u8"
-      Constants.VOD_FIXTURE_SERVER_CDN_CHANGE
+//      Constants.VOD_FIXTURE_SERVER_CDN_CHANGE
+         "http://10.0.2.2:3000/mux-promo-manifest-fails/stream.m3u8"
     )
   }
 
