@@ -7,6 +7,7 @@ import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
 import androidx.media3.common.Tracks.Group
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.HttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import com.mux.android.util.weak
 import com.mux.stats.sdk.core.events.playback.PlaybackEvent
@@ -59,8 +60,13 @@ internal open class BandwidthMetrics(
     }
     segmentData.requestError = e.toString()
     // TODO see what error codes are
-    segmentData.requestErrorCode = -1
-    segmentData.requestErrorText = e.message
+    if (e is HttpDataSource.InvalidResponseCodeException) {
+      segmentData.requestErrorCode = e.responseCode
+      segmentData.requestErrorText = e.responseMessage
+    } else {
+      segmentData.requestErrorCode = -1
+      segmentData.requestErrorText = e.message
+    }
     segmentData.requestResponseEnd = System.currentTimeMillis()
     return segmentData
   }
@@ -86,7 +92,7 @@ internal open class BandwidthMetrics(
   @OptIn(UnstableApi::class) // opting-in to the bitrate api
   open fun onLoad(
     loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
-    segmentUrl: String?, dataType: Int, requestType: Int, host: String?, segmentMimeType: String?,
+    segmentUrl: String?, dataType: Int, trackType: Int, host: String?, segmentMimeType: String?,
     segmentWidth: Int, segmentHeight: Int
   ): BandwidthMetricData {
     // Populate segment time details.
@@ -114,7 +120,11 @@ internal open class BandwidthMetrics(
     }
     segmentData.requestUrl = segmentUrl
 
-    fillRequestType(segmentData, dataType, requestType, mediaEndTimeMs, mediaStartTimeMs)
+    if (dataType == C.DATA_TYPE_MANIFEST) {
+      collector.detectMimeType = false
+    }
+
+    fillRequestType(segmentData, dataType, trackType, mediaEndTimeMs, mediaStartTimeMs)
     MuxLogger.d("BandwidthMetrics", "onLoad: For request: ${segmentUrl}:"
         + "\nRequest type: ${segmentData.requestType}"
         + "\nMedia duration: ${segmentData.requestMediaDuration}")
@@ -130,44 +140,31 @@ internal open class BandwidthMetrics(
   private fun fillRequestType(
     segmentData: BandwidthMetricData,
     dataType: Int,
-    requestType: Int,
+    trackType: Int,
     mediaEndTimeMs: Long,
     mediaStartTimeMs: Long
   ) {
     when (dataType) {
-      C.DATA_TYPE_MANIFEST -> {
-        // Stream MIME type only applicable to progressive files
-        collector.detectMimeType = false
-        segmentData.requestType = "manifest"
-      }
-      C.DATA_TYPE_DRM -> {
-        segmentData.requestType = "encryption"
-      }
+      // Overall MIME type only applicable to progressive files
+      C.DATA_TYPE_MANIFEST -> segmentData.requestType = "manifest"
+      C.DATA_TYPE_DRM -> segmentData.requestType = "encryption"
       C.DATA_TYPE_MEDIA_INITIALIZATION -> {
-        if (requestType == C.TRACK_TYPE_VIDEO || requestType == C.TRACK_TYPE_DEFAULT) {
+        if (trackType == C.TRACK_TYPE_VIDEO || trackType == C.TRACK_TYPE_DEFAULT) {
           segmentData.requestType = "video_init"
-        } else if (requestType == C.TRACK_TYPE_AUDIO) {
+        } else if (trackType == C.TRACK_TYPE_AUDIO) {
           segmentData.requestType = "audio_init"
         }
       }
       C.DATA_TYPE_MEDIA -> {
         segmentData.requestMediaDuration = (mediaEndTimeMs - mediaStartTimeMs)
-        when (requestType) {
-          C.TRACK_TYPE_DEFAULT -> {
-            // cmaf hls with a video track, plain hls with a video track
-            segmentData.requestType = "media"
-          }
-          C.TRACK_TYPE_AUDIO -> {
-            // audio-only hls or dash segments
-            segmentData.requestType = "audio"
-          }
-          C.TRACK_TYPE_VIDEO -> {
-            // cmaf dash video segments
-            segmentData.requestType = "video"
-          }
-          C.TRACK_TYPE_TEXT -> {
-            segmentData.requestType = "subtitle"
-          }
+        when (trackType) {
+          // cmaf hls with a video track, plain hls with a video track
+          C.TRACK_TYPE_DEFAULT -> segmentData.requestType = "media"
+          // audio-only hls or dash segments
+          C.TRACK_TYPE_AUDIO -> segmentData.requestType = "audio"
+          // cmaf dash video segments
+          C.TRACK_TYPE_VIDEO -> segmentData.requestType = "video"
+          C.TRACK_TYPE_TEXT -> segmentData.requestType = "subtitle"
         }
       }
     }
