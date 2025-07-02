@@ -155,7 +155,7 @@ internal open class BandwidthMetrics(
         }
       }
       C.DATA_TYPE_MEDIA -> {
-        segmentData.requestMediaDuration = (mediaEndTimeMs - mediaStartTimeMs)
+        segmentData.requestMediaDuration = mediaEndTimeMs - mediaStartTimeMs
         when (trackType) {
           // cmaf or plain hls with a video track
           C.TRACK_TYPE_DEFAULT -> segmentData.requestType = "media"
