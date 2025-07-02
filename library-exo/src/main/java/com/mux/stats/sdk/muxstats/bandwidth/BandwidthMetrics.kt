@@ -59,7 +59,6 @@ internal open class BandwidthMetrics(
       segmentData = BandwidthMetricData()
     }
     segmentData.requestError = e.toString()
-    // TODO see what error codes are
     if (e is HttpDataSource.InvalidResponseCodeException) {
       segmentData.requestErrorCode = e.responseCode
       segmentData.requestErrorText = e.responseMessage
