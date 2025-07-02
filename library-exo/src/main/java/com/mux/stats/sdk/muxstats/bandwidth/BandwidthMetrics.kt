@@ -90,7 +90,7 @@ internal open class BandwidthMetrics(
 
   @OptIn(UnstableApi::class) // opting-in to the bitrate api
   open fun onLoad(
-    loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
+    loadTaskId: Long, loadStartTimeMs: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
     segmentUrl: String?, dataType: Int, trackType: Int, host: String?, segmentMimeType: String?,
     segmentWidth: Int, segmentHeight: Int
   ): BandwidthMetricData {
@@ -107,8 +107,9 @@ internal open class BandwidthMetrics(
       }
     }
     val segmentData = BandwidthMetricData()
-    //RequestStart timestamp is currently not available from ExoPlayer
-    segmentData.requestResponseStart = System.currentTimeMillis()
+    segmentData.requestStart = loadStartTimeMs
+    // request_response_start not available
+//    segmentData.requestResponseStart = System.currentTimeMillis()
     segmentData.requestMediaStartTime = mediaStartTimeMs
     if (segmentWidth != 0 && segmentHeight != 0) {
       segmentData.requestVideoWidth = segmentWidth
@@ -188,12 +189,13 @@ internal open class BandwidthMetrics(
    * @return new segment.
    */
   open fun onLoadStarted(
-    loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
+    loadTaskId: Long, loadStartTimeMs: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
     segmentUrl: String?, dataType: Int, trackType: Int, host: String?, segmentMimeType: String?,
     segmentWidth: Int, segmentHeight: Int
   ) : BandwidthMetricData {
     val loadData = onLoad(
       loadTaskId = loadTaskId,
+      loadStartTimeMs = loadStartTimeMs,
       mediaStartTimeMs = mediaStartTimeMs,
       mediaEndTimeMs = mediaEndTimeMs,
       segmentUrl = segmentUrl,
@@ -204,7 +206,6 @@ internal open class BandwidthMetrics(
       segmentWidth = segmentWidth,
       segmentHeight = segmentHeight
     )
-    loadData.requestResponseStart = System.currentTimeMillis()
     return loadData
   }
 
@@ -332,7 +333,7 @@ internal class BandwidthMetricDispatcher(
   }
 
   fun onLoadStarted(
-    loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long, segmentUrl: String?,
+    loadTaskId: Long, loadStartTimeMs: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long, segmentUrl: String?,
     dataType: Int, trackType: Int, host: String?, segmentMimeType: String?,
     segmentWidth: Int, segmentHeight: Int
   ) {
@@ -341,6 +342,7 @@ internal class BandwidthMetricDispatcher(
     }
     currentBandwidthMetric().onLoadStarted(
       loadTaskId,
+      loadStartTimeMs,
       mediaStartTimeMs,
       mediaEndTimeMs,
       segmentUrl,

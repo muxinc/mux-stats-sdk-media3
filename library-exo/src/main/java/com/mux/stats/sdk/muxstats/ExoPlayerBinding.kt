@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.muxstats
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
@@ -262,6 +263,7 @@ private class MuxAnalyticsListener(
 
     bandwidthMetrics?.onLoadStarted(
       loadTaskId = loadEventInfo.loadTaskId,
+      loadStartTimeMs = System.currentTimeMillis(),
       mediaStartTimeMs = mediaLoadData.mediaStartTimeMs,
       mediaEndTimeMs = mediaLoadData.mediaEndTimeMs,
       segmentUrl = loadEventInfo.uri.path,
