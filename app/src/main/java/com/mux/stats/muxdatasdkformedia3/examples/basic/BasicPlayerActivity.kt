@@ -48,23 +48,7 @@ class BasicPlayerActivity : AppCompatActivity() {
   override fun onResume() {
     super.onResume()
     startPlaying(
-//      intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY
-      // Demuxed HLS
-//      "https://cdn.bitmovin.com/content/assets/art-of-motion-dash-hls-progressive/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8"
-      // plain HLS
-//      "https://stream.mux.com/zrQ02TP4Br02KycnnAJIM8FPnohUZLZprkDC33nWzJavc.m3u8"
-      // CMAF HLS
-//      "https://stream.mux.com/5ICwECLW8900gMTi5eaOkWdYvOkGhtKyBY02uRCT6FOyE.m3u8"
-      // Audio-only
-//      "https://stream.mux.com/MwUGUc7gWwcE6AN6qVcilQ8cR4SFlE601kB96IiYqPVM.m3u8"
-      // Demuxed DASH
-//      "https://cdn.bitmovin.com/content/assets/art-of-motion-dash-hls-progressive/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd"
-      // Plain HLS, subtitles
-//      "https://stream.mux.com/jylbh7Bh4nlUuZD00FPD5cky4Ub00MVNZQ2RKzAwGBcvY.m3u8"
-      // Plain HLS, closed-captions
-//      "https://stream.mux.com/qP5Eb2cj7MrNnoxBGz012pbZkMHqpIcrKMzd7ykGr01gM.m3u8"
-      Constants.VOD_FIXTURE_SERVER_CDN_CHANGE
-//         "http://10.0.2.2:3000/mux-promo-manifest-fails/stream.m3u8"
+      intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY
     )
   }
 
