@@ -109,7 +109,6 @@ public class ConnectionSender extends Thread {
     parseOriginHeader(headers);
     boolean sendPartialResponse = true;
     boolean acceptRangeHeader = true;
-    boolean sendResponseSynchronously = true;
     String contentType = "video/mp4";
     segmentStat.setSegmentRequestedAt(System.currentTimeMillis());
     // Delay x milly seconds serving of request
@@ -126,11 +125,9 @@ public class ConnectionSender extends Thread {
       // ok for cripes sake. so if we don't send 206 it breaks renditionchange tests, but
       //  media3 knows these to be erroneous so we wouldn't get requestcomplete, breaking cdnchange
       sendPartialResponse = this.serveDataFromPosition != 0;
-      sendResponseSynchronously = false;
     } else if (assetName.contains(".aac")) {
       contentType = "audio/aac";
       sendPartialResponse = this.serveDataFromPosition != 0;
-      sendResponseSynchronously = false;
     } else if (assetName.contains(".png")) {
       contentType = "image/png";
       sendPartialResponse = false;
@@ -147,7 +144,7 @@ public class ConnectionSender extends Thread {
         sendHTTPOKPartialResponse(contentType, acceptRangeHeader);
         isPaused = false;
       } else {
-        sendHTTPOKCompleteResponse(contentType, /*sendResponseSynchronously*/false);
+        sendHTTPOKCompleteResponse(contentType);
       }
     } else {
       sendRequestedRangeNotSatisfiable();
@@ -232,7 +229,7 @@ public class ConnectionSender extends Thread {
     listener.segmentServed(requestUuid, segmentStat);
   }
 
-  public void sendHTTPOKCompleteResponse(String contentType, boolean sendResponseData) throws IOException {
+  public void sendHTTPOKCompleteResponse(String contentType) throws IOException {
     PrintWriter writer = new PrintWriter(new OutputStreamWriter(
         httpOut, StandardCharsets.US_ASCII), true);
     String response = "HTTP/1.1 200 OK\r\n" +
@@ -253,33 +250,8 @@ public class ConnectionSender extends Thread {
     writer.write(response);
     writer.flush();
 
-    // If not sent synchronously here, will send in run() after isPaused is set to false
-    if (sendResponseData) {
-      int staticBuffSize = 200000;
-      int totalWritten = 0;
-      byte[] staticBuff = new byte[staticBuffSize];
-      while (true) {
-        int bytesRead = assetInput.read(staticBuff);
-        String line = new String(staticBuff, 0, bytesRead, StandardCharsets.UTF_8);
-//      Log.w(TAG, line);
-        writer.write(line);
-        writer.flush();
-        totalWritten += bytesRead;
-        Log.v(TAG, "Wrote " + bytesRead + " bytes");
-        Log.v(TAG, totalWritten + " total");
-        if (bytesRead < staticBuffSize) {
-          break;
-        }
-      }
-      Log.v(TAG, "Ending Request");
-      writer.write("\r\n\r\n");
-      writer.flush();
-      segmentStat.setSegmentRespondedAt(System.currentTimeMillis());
-      listener.segmentServed(requestUuid, segmentStat);
-      segmentStat = new SegmentStatistics();
-    } else {
-      isPaused = false;
-    }
+    // Response body will be sent asynchronously, in run(), after isPaused becomes false
+    isPaused = false;
   }
 
   /*
