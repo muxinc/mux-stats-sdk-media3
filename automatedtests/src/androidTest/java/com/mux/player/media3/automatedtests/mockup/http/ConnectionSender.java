@@ -122,8 +122,6 @@ public class ConnectionSender extends Thread {
     } else if (assetName.contains(".ts")) {
       contentType = "video/mp2t";
       acceptRangeHeader = false;
-      // ok for cripes sake. so if we don't send 206 it breaks renditionchange tests, but
-      //  media3 knows these to be erroneous so we wouldn't get requestcomplete, breaking cdnchange
       sendPartialResponse = this.serveDataFromPosition != 0;
     } else if (assetName.contains(".aac")) {
       contentType = "audio/aac";
