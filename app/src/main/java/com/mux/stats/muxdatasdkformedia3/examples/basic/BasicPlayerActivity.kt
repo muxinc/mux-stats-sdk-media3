@@ -121,31 +121,13 @@ class BasicPlayerActivity : AppCompatActivity() {
       CustomerViewData().apply { }
     )
 
-    MuxLogger.enable("all,exception", object: IEventListener {
-      var id: Int = 0
-
-      override fun setId(p0: Int) {
-        this.id = p0
-      }
-
-      override fun getId(): Int {
-        return id
-      }
-
-      override fun handle(p0: IEvent?) {
-      }
-
-      override fun flush() {
-      }
-
-    })
     MuxLogger.setAllowLogcat(true)
     return player.monitorWithMuxData(
       context = this,
       envKey = Constants.MUX_DATA_ENV_KEY,
       customerData = customerData,
       playerView = view.playerView,
-      logLevel = MuxDataSdk.LogcatLevel.VERBOSE,
+      logLevel = MuxDataSdk.LogcatLevel.DEBUG,
     )
   }
 

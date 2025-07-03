@@ -146,38 +146,33 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
 //    testBandwidthMetrics();
 //  }
 
-  @Test
-  public void testBandwidthMetrics() {
-    try {
-      if (!testActivity.waitForPlaybackToStart(waitForPlaybackToStartInMS)) {
-        fail("Playback did not start in " + waitForPlaybackToStartInMS + " milliseconds !!!");
-      }
-      for (int i = 0; i < manifestDelayList.length; i++) {
-        Log.i(TAG,"Waiting for segment number: " + i);
-        httpServer.setHLSManifestDelay(manifestDelayList[i]);
-        if (!httpServer.waitForNextSegmentToLoad(waitForPlaybackToStartInMS * 3)) {
-          fail("HLS playback segment did not start in " + waitForPlaybackToStartInMS + " ms !!!");
-        }
-      }
-      testActivity.runOnUiThread(new Runnable() {
-        public void run() {
-          pView.getPlayer().stop();
-        }
-      });
-      checkMimeType();
-      ArrayList<JSONObject> requestCompletedEvents = networkRequest
-          .getAllEventsOfType(RequestCompleted.TYPE);
-      ArrayList<JSONObject> requestCanceledEvents = networkRequest
-          .getAllEventsOfType(RequestCanceled.TYPE);
-      ArrayList<JSONObject> requestFailedEvents = networkRequest
-          .getAllEventsOfType(RequestFailed.TYPE);
-      checkRequests(requestCompletedEvents,
-          true, false, false);
-      checkRequests(requestCanceledEvents,
-          false, true, false);
-    } catch (Exception e) {
-      fail(getExceptionFullTraceAndMessage(e));
+  public void testBandwidthMetrics() throws Exception {
+    if (!testActivity.waitForPlaybackToStart(waitForPlaybackToStartInMS)) {
+      fail("Playback did not start in " + waitForPlaybackToStartInMS + " milliseconds !!!");
     }
+    for (int i = 0; i < manifestDelayList.length; i++) {
+      Log.i(TAG,"Waiting for segment number: " + i);
+      httpServer.setHLSManifestDelay(manifestDelayList[i]);
+      if (!httpServer.waitForNextSegmentToLoad(waitForPlaybackToStartInMS * 3)) {
+        fail("HLS playback segment did not start in " + waitForPlaybackToStartInMS + " ms !!!");
+      }
+    }
+    testActivity.runOnUiThread(new Runnable() {
+      public void run() {
+        pView.getPlayer().stop();
+      }
+    });
+    checkMimeType();
+    ArrayList<JSONObject> requestCompletedEvents = networkRequest
+        .getAllEventsOfType(RequestCompleted.TYPE);
+    ArrayList<JSONObject> requestCanceledEvents = networkRequest
+        .getAllEventsOfType(RequestCanceled.TYPE);
+    ArrayList<JSONObject> requestFailedEvents = networkRequest
+        .getAllEventsOfType(RequestFailed.TYPE);
+    checkRequests(requestCompletedEvents,
+        true, false, false);
+    checkRequests(requestCanceledEvents,
+        false, true, false);
   }
 
   private void checkRequests(ArrayList<JSONObject> requests,

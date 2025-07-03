@@ -10,6 +10,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 //import android.support.v4.media.session.MediaSessionCompat;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import androidx.annotation.MainThread;
@@ -184,6 +185,7 @@ public class SimplePlayerTestActivity extends AppCompatActivity implements Analy
     player.addListener(new Player.Listener() {
       @Override
       public void onPlayerError(PlaybackException error) {
+        Log.e(TAG, "Playback error while trying to test", error);
         throw new RuntimeException("Playback error while trying to test", error);
       }
     });
