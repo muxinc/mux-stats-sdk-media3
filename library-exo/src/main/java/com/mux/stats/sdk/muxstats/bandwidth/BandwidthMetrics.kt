@@ -423,9 +423,7 @@ internal class BandwidthMetricDispatcher(
   }
 
   private fun dispatch(data: BandwidthMetricData, event: PlaybackEvent) {
-    println("dispatch: called")
     if (shouldDispatchEvent(data, event)) {
-      println("dispatch: should send ${event.type}. headers: ${data.requestResponseHeaders}")
       event.bandwidthMetricData = data
       collector?.dispatcher?.dispatch(event)
     }
@@ -440,7 +438,6 @@ internal class BandwidthMetricDispatcher(
     for (headerName in responseHeaders.keys) {
       var headerTracked = false
       synchronized(this) {
-//        println("examining header: $headerName")
         for (trackedHeader in trackedResponseHeaders) {
           if (trackedHeader.matches(headerName)) {
             headerTracked = true
@@ -448,11 +445,9 @@ internal class BandwidthMetricDispatcher(
         }
       }
       if (!headerTracked) {
-//        println("NOT taking header: $headerName")
         // Pass this header, we do not need it
         continue
       }
-//      println("taking header: $headerName")
 
       val headerValues: List<String> = responseHeaders[headerName]!!
       if (headerValues.isEmpty()) {
