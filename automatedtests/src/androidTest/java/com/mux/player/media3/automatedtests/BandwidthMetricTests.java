@@ -135,17 +135,7 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
       fail(getExceptionFullTraceAndMessage(e));
     }
   }
-
-//  @Test
-//  public void testBandwidthMetricsHls() {
-//    testBandwidthMetrics();
-//  }
-//
-//  @Test
-//  public void testBandwidthMetricsDash() {
-//    testBandwidthMetrics();
-//  }
-
+  
   public void testBandwidthMetrics() throws Exception {
     if (!testActivity.waitForPlaybackToStart(waitForPlaybackToStartInMS)) {
       fail("Playback did not start in " + waitForPlaybackToStartInMS + " milliseconds !!!");
