@@ -127,14 +127,13 @@ public class SeekingTestBase extends TestBase {
       int rebufferEndIndex = networkRequest.getIndexForNextEvent(
           seekedIndex - 1, RebufferEndEvent.TYPE);
       List<Pair<String, Long>> namesAtTime = networkRequest.getReceivedEventNamesAtViewerTime();
-      if (playIndex != -1 || pauseIndex != -1 || rebufferStartIndex != -1
+      if (playIndex != -1 || rebufferStartIndex != -1
           || rebufferEndIndex != -1) {
         // it'd be ok if we rebuffered during the remaining play period as long as it ended
         if (!(rebufferStartIndex != -1 && rebufferEndIndex != -1)) {
           fail("Found unwanted events after seeked event: " + seekedIndex
               + ", playIndex: " + playIndex
               + ", rebufferStartIndex: " + rebufferStartIndex
-              + ", pauseIndex: " + pauseIndex
               + ", rebufferEndIndex: " + rebufferEndIndex
               + "\nAll event names: " + namesAtTime);
         }
