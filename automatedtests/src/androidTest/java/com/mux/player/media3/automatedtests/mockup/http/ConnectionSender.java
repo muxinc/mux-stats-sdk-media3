@@ -147,7 +147,7 @@ public class ConnectionSender extends Thread {
         sendHTTPOKPartialResponse(contentType, acceptRangeHeader);
         isPaused = false;
       } else {
-        sendHTTPOKCompleteResponse(contentType, sendResponseSynchronously);
+        sendHTTPOKCompleteResponse(contentType, /*sendResponseSynchronously*/false);
       }
     } else {
       sendRequestedRangeNotSatisfiable();
