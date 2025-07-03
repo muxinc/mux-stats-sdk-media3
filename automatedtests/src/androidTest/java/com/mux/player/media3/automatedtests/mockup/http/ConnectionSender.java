@@ -109,7 +109,7 @@ public class ConnectionSender extends Thread {
     parseOriginHeader(headers);
     boolean sendPartialResponse = true;
     boolean acceptRangeHeader = true;
-    boolean sendResponseDataWith200 = true;
+    boolean sendResponseSynchronously = true;
     String contentType = "video/mp4";
     segmentStat.setSegmentRequestedAt(System.currentTimeMillis());
     // Delay x milly seconds serving of request
@@ -123,12 +123,14 @@ public class ConnectionSender extends Thread {
     } else if (assetName.contains(".ts")) {
       contentType = "video/mp2t";
       acceptRangeHeader = false;
+      // ok for cripes sake. so if we don't send 206 it breaks renditionchange tests, but
+      //  media3 knows these to be erroneous so we wouldn't get requestcomplete, breaking cdnchange
       sendPartialResponse = this.serveDataFromPosition != 0;
-      sendResponseDataWith200 = false;
+      sendResponseSynchronously = false;
     } else if (assetName.contains(".aac")) {
       contentType = "audio/aac";
       sendPartialResponse = this.serveDataFromPosition != 0;
-      sendResponseDataWith200 = false;
+      sendResponseSynchronously = false;
     } else if (assetName.contains(".png")) {
       contentType = "image/png";
       sendPartialResponse = false;
@@ -145,7 +147,7 @@ public class ConnectionSender extends Thread {
         sendHTTPOKPartialResponse(contentType, acceptRangeHeader);
         isPaused = false;
       } else {
-        sendHTTPOKCompleteResponse(contentType, sendResponseDataWith200);
+        sendHTTPOKCompleteResponse(contentType, sendResponseSynchronously);
       }
     } else {
       sendRequestedRangeNotSatisfiable();
@@ -326,7 +328,6 @@ public class ConnectionSender extends Thread {
 //            Thread.sleep(seekLatency);
 //            seekLatencyServed = true;
 //        }
-    Log.i(TAG, hashCode() + ": serveStaticData(): called");
     int bytesToRead = transferBufferSize;
     if (networkJammingEndPeriod > System.currentTimeMillis()) {
       int jamFactor = this.networkJamFactor;

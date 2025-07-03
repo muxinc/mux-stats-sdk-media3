@@ -108,9 +108,9 @@ internal open class BandwidthMetrics(
       }
     }
     val segmentData = BandwidthMetricData()
-//    segmentData.requestStart = loadStartTimeMs
+    segmentData.requestStart = loadStartTimeMs
     // request_response_start not available
-    segmentData.requestResponseStart = System.currentTimeMillis()
+//    segmentData.requestResponseStart = System.currentTimeMillis()
     segmentData.requestMediaStartTime = mediaStartTimeMs
     if (segmentWidth != 0 && segmentHeight != 0) {
       segmentData.requestVideoWidth = segmentWidth

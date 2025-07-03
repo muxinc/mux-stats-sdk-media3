@@ -117,6 +117,7 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
 //    testBandwidthMetrics();
 //  }
 
+  @Test
   public void testBandwidthMetrics() {
     try {
       if (!testActivity.waitForPlaybackToStart(waitForPlaybackToStartInMS)) {
