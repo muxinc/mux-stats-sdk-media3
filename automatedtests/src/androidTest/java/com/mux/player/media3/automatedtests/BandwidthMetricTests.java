@@ -1,8 +1,10 @@
 package com.mux.player.media3.automatedtests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.mux.player.media3.automatedtests.mockup.MockNetworkRequest;
@@ -117,9 +119,9 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
           "First cdnchange should be for cdn0",
           "cdn0", videoCdnValues.get(0)
       );
-      assertEquals(
+      assertTrue(
           "First cdnchange should have no previous cdn value",
-          "", videoPrevCdnValues.get(0)
+          TextUtils.isEmpty(videoPrevCdnValues.get(0))
       );
       assertEquals(
           "Second cdnchange should be for cdn1",
