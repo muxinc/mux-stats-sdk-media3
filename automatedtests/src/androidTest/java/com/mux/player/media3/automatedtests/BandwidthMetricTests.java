@@ -1,6 +1,9 @@
 package com.mux.player.media3.automatedtests;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
+import android.util.Log;
 
 import com.mux.player.media3.automatedtests.mockup.MockNetworkRequest;
 import com.mux.player.media3.automatedtests.mockup.http.SegmentStatistics;
@@ -12,6 +15,7 @@ import com.mux.stats.sdk.core.model.BandwidthMetricData;
 import com.mux.stats.sdk.core.model.VideoData;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,15 +57,16 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
 
   @Before
   public void init() {
-    if( currentTestName.getMethodName().equalsIgnoreCase("testBandwidthMetricsHls") ) {
+    if(currentTestName.getMethodName().equalsIgnoreCase("testBandwidthMetricsHls") ) {
       urlToPlay = "http://localhost:5000/hls/google_glass/playlist.m3u8";
+      bandwidthLimitInBitsPerSecond = 12000000;
     } else if (currentTestName.getMethodName().equalsIgnoreCase("testMultiCdnStream")) {
       urlToPlay = "http://localhost:5000/hls/google_glass/playlist.m3u8";
     } else {
       urlToPlay = "http://localhost:5000/dash/google_glass/playlist.mpd";
       parsingDash = true;
+      bandwidthLimitInBitsPerSecond = 12000000;
     }
-    bandwidthLimitInBitsPerSecond = 12000000;
     super.init();
     httpServer.setHLSManifestDelay(manifestDelayList[0]);
     httpServer.setAdditionalHeader(SimpleHTTPServer.X_CDN_RESPONSE_HEADER, X_CDN_HEADER_VALUE);
@@ -82,13 +87,13 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
       }
       long startTime = System.currentTimeMillis();
       for (int i = 0; i < manifestDelayList.length; i++) {
-        System.out.println("Waiting for segment number: " + i);
+        Log.i(TAG,"Waiting for segment number: " + i);
         //httpServer.setHLSManifestDelay(manifestDelayList[i]);
-        httpServer.setAdditionalHeader("x-cdn", "cdn" + (i / 10));
+        httpServer.setAdditionalHeader("x-cdn", "cdn" + (i / 5));
         if (!httpServer.waitForNextSegmentToLoad(waitForPlaybackToStartInMS * 3)) {
           fail("HLS playback segment did not start in " + waitForPlaybackToStartInMS + " ms !!!");
         }
-        if (System.currentTimeMillis() - startTime > PLAY_PERIOD_IN_MS) {
+        if (System.currentTimeMillis() - startTime > PLAY_PERIOD_IN_MS * 2) {
           break;
         }
       }
@@ -99,8 +104,32 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
       });
 
       List<JSONObject> cdnChanges = networkRequest.getAllEventsOfType("cdnchange");
-      System.out.println("got events: " + networkRequest.getReceivedEventNames());
-      System.out.println("CDN changes: " + cdnChanges);
+      Log.i(TAG,"got events: " + networkRequest.getReceivedEventNames());
+      Log.i(TAG,"CDN changes: " + cdnChanges);
+
+      List<String> videoCdnValues = cdnChanges.stream()
+          .map(it -> it.optString(VideoData.VIDEO_CDN))
+          .collect(Collectors.toList());
+      List<String> videoPrevCdnValues = cdnChanges.stream()
+          .map(it -> it.optString(VideoData.VIDEO_PREVIOUS_CDN))
+          .collect(Collectors.toList());
+      assertEquals(
+          "First cdnchange should be for cdn0",
+          "cdn0", videoCdnValues.get(0)
+      );
+      assertEquals(
+          "First cdnchange should have no previous cdn value",
+          "", videoPrevCdnValues.get(0)
+      );
+      assertEquals(
+          "Second cdnchange should be for cdn1",
+          "cdn1", videoCdnValues.get(1)
+      );
+      assertEquals(
+          "Second cdnchange should have no previous cdn value",
+          "cdn0", videoPrevCdnValues.get(1)
+      );
+
 
     } catch (Exception e) {
       fail(getExceptionFullTraceAndMessage(e));
@@ -124,7 +153,7 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
         fail("Playback did not start in " + waitForPlaybackToStartInMS + " milliseconds !!!");
       }
       for (int i = 0; i < manifestDelayList.length; i++) {
-        System.out.println("Waiting for segment number: " + i);
+        Log.i(TAG,"Waiting for segment number: " + i);
         httpServer.setHLSManifestDelay(manifestDelayList[i]);
         if (!httpServer.waitForNextSegmentToLoad(waitForPlaybackToStartInMS * 3)) {
           fail("HLS playback segment did not start in " + waitForPlaybackToStartInMS + " ms !!!");

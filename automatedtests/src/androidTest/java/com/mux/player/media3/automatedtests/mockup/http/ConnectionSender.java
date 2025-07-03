@@ -313,6 +313,7 @@ public class ConnectionSender extends Thread {
     if (bytesRead == -1) {
       // EOF reached
       Log.e(TAG, "EOF reached !!!");
+      httpOut.close();
       isRunning = false;
       segmentStat.setSegmentRespondedAt(System.currentTimeMillis());
       listener.segmentServed(requestUuid, segmentStat);

@@ -16,10 +16,13 @@ import androidx.media3.ui.PlayerView.SHOW_BUFFERING_WHEN_PLAYING
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
 import com.mux.stats.muxdatasdkformedia3.toMediaItem
+import com.mux.stats.sdk.core.events.IEvent
+import com.mux.stats.sdk.core.events.IEventListener
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
+import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.MuxDataSdk
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
@@ -59,8 +62,8 @@ class BasicPlayerActivity : AppCompatActivity() {
       // Plain HLS, subtitles
 //      "https://stream.mux.com/jylbh7Bh4nlUuZD00FPD5cky4Ub00MVNZQ2RKzAwGBcvY.m3u8"
       // Plain HLS, closed-captions
-      "https://stream.mux.com/qP5Eb2cj7MrNnoxBGz012pbZkMHqpIcrKMzd7ykGr01gM.m3u8"
-//      Constants.VOD_FIXTURE_SERVER_CDN_CHANGE
+//      "https://stream.mux.com/qP5Eb2cj7MrNnoxBGz012pbZkMHqpIcrKMzd7ykGr01gM.m3u8"
+      Constants.VOD_FIXTURE_SERVER_CDN_CHANGE
 //         "http://10.0.2.2:3000/mux-promo-manifest-fails/stream.m3u8"
     )
   }
@@ -118,12 +121,31 @@ class BasicPlayerActivity : AppCompatActivity() {
       CustomerViewData().apply { }
     )
 
+    MuxLogger.enable("all,exception", object: IEventListener {
+      var id: Int = 0
+
+      override fun setId(p0: Int) {
+        this.id = p0
+      }
+
+      override fun getId(): Int {
+        return id
+      }
+
+      override fun handle(p0: IEvent?) {
+      }
+
+      override fun flush() {
+      }
+
+    })
+    MuxLogger.setAllowLogcat(true)
     return player.monitorWithMuxData(
       context = this,
       envKey = Constants.MUX_DATA_ENV_KEY,
       customerData = customerData,
       playerView = view.playerView,
-      logLevel = MuxDataSdk.LogcatLevel.DEBUG,
+      logLevel = MuxDataSdk.LogcatLevel.VERBOSE,
     )
   }
 

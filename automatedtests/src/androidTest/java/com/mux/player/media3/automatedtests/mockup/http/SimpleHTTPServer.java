@@ -93,7 +93,6 @@ public class SimpleHTTPServer extends Thread implements ConnectionListener {
   }
 
   public void setAdditionalHeader(String headerName, String headerValue) {
-    System.out.println("Setting additional header: " + headerName + " = " + headerValue);
     additionalHeaders.put(headerName, headerValue);
   }
 
