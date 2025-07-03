@@ -97,18 +97,19 @@ public class ConnectionSender extends Thread {
     for (String headerName : headers.keySet()) {
       if (headerName.equalsIgnoreCase("Origin")) {
         this.originHeaderValue = headers.get(headerName);
-        Log.i(TAG, "Got range header value: " + this.serveDataFromPosition);
       }
     }
   }
 
   public void startServingFromPosition(String assetName, HashMap<String, String> headers)
       throws IOException, InterruptedException {
+    Log.i(TAG, "start serving for asset named: " + assetName);
     this.assetName = assetName;
     parseRangeHeader(headers);
     parseOriginHeader(headers);
     boolean sendPartialResponse = true;
     boolean acceptRangeHeader = true;
+    boolean sendResponseDataWith200 = true;
     String contentType = "video/mp4";
     segmentStat.setSegmentRequestedAt(System.currentTimeMillis());
     // Delay x milly seconds serving of request
@@ -122,8 +123,12 @@ public class ConnectionSender extends Thread {
     } else if (assetName.contains(".ts")) {
       contentType = "video/mp2t";
       acceptRangeHeader = false;
+      sendPartialResponse = this.serveDataFromPosition != 0;
+      sendResponseDataWith200 = false;
     } else if (assetName.contains(".aac")) {
       contentType = "audio/aac";
+      sendPartialResponse = this.serveDataFromPosition != 0;
+      sendResponseDataWith200 = false;
     } else if (assetName.contains(".png")) {
       contentType = "image/png";
       sendPartialResponse = false;
@@ -133,15 +138,14 @@ public class ConnectionSender extends Thread {
     assetInput.skip(serveDataFromPosition);
     segmentStat.setSegmentFileName(assetName);
     segmentStat.setSegmentLengthInBytes(assetInput.available() - serveDataFromPosition);
-    Log.i(TAG, "Serving file from position: " + serveDataFromPosition + ", remaining bytes: " +
+    Log.i(TAG, this.hashCode() + ": Serving file " + assetName + " from position: " + serveDataFromPosition + ", remaining bytes: " +
         assetInput.available() + ", total file size: " + assetFileSize);
     if (serveDataFromPosition < assetFileSize) {
       if (sendPartialResponse) {
         sendHTTPOKPartialResponse(contentType, acceptRangeHeader);
         isPaused = false;
       } else {
-        // Send complete response,, this is a short file
-        sendHTTPOKCompleteResponse(contentType);
+        sendHTTPOKCompleteResponse(contentType, sendResponseDataWith200);
       }
     } else {
       sendRequestedRangeNotSatisfiable();
@@ -155,6 +159,7 @@ public class ConnectionSender extends Thread {
   }
 
   public void run() {
+    Log.i(TAG, "run(): called");
     isRunning = true;
     while (isRunning) {
       try {
@@ -177,6 +182,7 @@ public class ConnectionSender extends Thread {
   private void openAssetFile(String assetFile) throws IOException {
     requestUuid = UUID.randomUUID().toString();
     if (assetInput != null) {
+      Log.e(TAG, "Another Asset already open");
       try {
         assetInput.close();
       } catch (IOException e) {
@@ -224,7 +230,7 @@ public class ConnectionSender extends Thread {
     listener.segmentServed(requestUuid, segmentStat);
   }
 
-  public void sendHTTPOKCompleteResponse(String contentType) throws IOException {
+  public void sendHTTPOKCompleteResponse(String contentType, boolean sendResponseData) throws IOException {
     PrintWriter writer = new PrintWriter(new OutputStreamWriter(
         httpOut, StandardCharsets.US_ASCII), true);
     String response = "HTTP/1.1 200 OK\r\n" +
@@ -244,23 +250,34 @@ public class ConnectionSender extends Thread {
     Log.w(TAG, "Sending response: \n" + response);
     writer.write(response);
     writer.flush();
-    int staticBuffSize = 200000;
-    byte[] staticBuff = new byte[staticBuffSize];
-    while (true) {
-      int bytesRead = assetInput.read(staticBuff);
-      String line = new String(staticBuff, 0, bytesRead, StandardCharsets.UTF_8);
-      Log.w(TAG, line);
-      writer.write(line);
-      writer.flush();
-      if (bytesRead < staticBuffSize) {
-        break;
+
+    // If not sent synchronously here, will send in run() after isPaused is set to false
+    if (sendResponseData) {
+      int staticBuffSize = 200000;
+      int totalWritten = 0;
+      byte[] staticBuff = new byte[staticBuffSize];
+      while (true) {
+        int bytesRead = assetInput.read(staticBuff);
+        String line = new String(staticBuff, 0, bytesRead, StandardCharsets.UTF_8);
+//      Log.w(TAG, line);
+        writer.write(line);
+        writer.flush();
+        totalWritten += bytesRead;
+        Log.v(TAG, "Wrote " + bytesRead + " bytes");
+        Log.v(TAG, totalWritten + " total");
+        if (bytesRead < staticBuffSize) {
+          break;
+        }
       }
+      Log.v(TAG, "Ending Request");
+      writer.write("\r\n\r\n");
+      writer.flush();
+      segmentStat.setSegmentRespondedAt(System.currentTimeMillis());
+      listener.segmentServed(requestUuid, segmentStat);
+      segmentStat = new SegmentStatistics();
+    } else {
+      isPaused = false;
     }
-    writer.write("\r\n\r\n");
-    writer.flush();
-    segmentStat.setSegmentRespondedAt(System.currentTimeMillis());
-    listener.segmentServed(requestUuid, segmentStat);
-    segmentStat = new SegmentStatistics();
   }
 
   /*
@@ -309,6 +326,7 @@ public class ConnectionSender extends Thread {
 //            Thread.sleep(seekLatency);
 //            seekLatencyServed = true;
 //        }
+    Log.i(TAG, hashCode() + ": serveStaticData(): called");
     int bytesToRead = transferBufferSize;
     if (networkJammingEndPeriod > System.currentTimeMillis()) {
       int jamFactor = this.networkJamFactor;

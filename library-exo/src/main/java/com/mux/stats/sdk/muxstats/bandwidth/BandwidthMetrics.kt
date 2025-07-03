@@ -59,6 +59,7 @@ internal open class BandwidthMetrics(
       segmentData = BandwidthMetricData()
     }
     segmentData.requestError = e.toString()
+    System.out.println("for url ${segmentData.requestUrl}: Request Error! $e")
     if (e is HttpDataSource.InvalidResponseCodeException) {
       segmentData.requestErrorCode = e.responseCode
       segmentData.requestErrorText = e.responseMessage
@@ -107,9 +108,9 @@ internal open class BandwidthMetrics(
       }
     }
     val segmentData = BandwidthMetricData()
-    segmentData.requestStart = loadStartTimeMs
+//    segmentData.requestStart = loadStartTimeMs
     // request_response_start not available
-//    segmentData.requestResponseStart = System.currentTimeMillis()
+    segmentData.requestResponseStart = System.currentTimeMillis()
     segmentData.requestMediaStartTime = mediaStartTimeMs
     if (segmentWidth != 0 && segmentHeight != 0) {
       segmentData.requestVideoWidth = segmentWidth

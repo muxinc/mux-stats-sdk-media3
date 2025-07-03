@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -92,6 +93,7 @@ public class SimpleHTTPServer extends Thread implements ConnectionListener {
   }
 
   public void setAdditionalHeader(String headerName, String headerValue) {
+    System.out.println("Setting additional header: " + headerName + " = " + headerValue);
     additionalHeaders.put(headerName, headerValue);
   }
 

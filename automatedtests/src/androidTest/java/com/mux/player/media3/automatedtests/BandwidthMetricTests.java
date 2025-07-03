@@ -11,6 +11,8 @@ import com.mux.stats.sdk.core.events.playback.RequestFailed;
 import com.mux.stats.sdk.core.model.BandwidthMetricData;
 import com.mux.stats.sdk.core.model.VideoData;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -53,9 +55,8 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
   public void init() {
     if( currentTestName.getMethodName().equalsIgnoreCase("testBandwidthMetricsHls") ) {
       urlToPlay = "http://localhost:5000/hls/google_glass/playlist.m3u8";
-    } else if (currentTestName.getMethodName().equalsIgnoreCase("testMultipleCDNHeaders")) {
-      // TODO put the multiple cdn link here
-      urlToPlay = "";
+    } else if (currentTestName.getMethodName().equalsIgnoreCase("testMultiCdnStream")) {
+      urlToPlay = "http://localhost:5000/hls/google_glass/playlist.m3u8";
     } else {
       urlToPlay = "http://localhost:5000/dash/google_glass/playlist.mpd";
       parsingDash = true;
@@ -71,8 +72,39 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
   }
 
   @Test
-  public void testMultipleCDNHeaders() {
+  public void testMultiCdnStream() {
+    // multi-cdn test doesn't need the 'automated.test.com' dummy cdn header
+    httpServer.setAdditionalHeader(SimpleHTTPServer.X_CDN_RESPONSE_HEADER, "cdn0");
 
+    try {
+      if (!testActivity.waitForPlaybackToStart(waitForPlaybackToStartInMS)) {
+        fail("Playback did not start in " + waitForPlaybackToStartInMS + " milliseconds !!!");
+      }
+      long startTime = System.currentTimeMillis();
+      for (int i = 0; i < manifestDelayList.length; i++) {
+        System.out.println("Waiting for segment number: " + i);
+        //httpServer.setHLSManifestDelay(manifestDelayList[i]);
+        httpServer.setAdditionalHeader("x-cdn", "cdn" + (i / 10));
+        if (!httpServer.waitForNextSegmentToLoad(waitForPlaybackToStartInMS * 3)) {
+          fail("HLS playback segment did not start in " + waitForPlaybackToStartInMS + " ms !!!");
+        }
+        if (System.currentTimeMillis() - startTime > PLAY_PERIOD_IN_MS) {
+          break;
+        }
+      }
+      testActivity.runOnUiThread(new Runnable() {
+        public void run() {
+          pView.getPlayer().stop();
+        }
+      });
+
+      List<JSONObject> cdnChanges = networkRequest.getAllEventsOfType("cdnchange");
+      System.out.println("got events: " + networkRequest.getReceivedEventNames());
+      System.out.println("CDN changes: " + cdnChanges);
+
+    } catch (Exception e) {
+      fail(getExceptionFullTraceAndMessage(e));
+    }
   }
 
 //  @Test
@@ -85,7 +117,6 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
 //    testBandwidthMetrics();
 //  }
 
-  @Test
   public void testBandwidthMetrics() {
     try {
       if (!testActivity.waitForPlaybackToStart(waitForPlaybackToStartInMS)) {
