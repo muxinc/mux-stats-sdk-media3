@@ -6,7 +6,7 @@ plugins {
 
 android {
   namespace 'com.mux.stats.sdk.media3_ima'
-  compileSdk 35
+  compileSdk 36
 
   buildFeatures {
     buildConfig = true
@@ -151,7 +151,7 @@ dependencies {
   //noinspection GradleDependency
   At_latestApi "androidx.media3:media3-exoplayer:1.6.0"
 
-  implementation 'androidx.core:core-ktx:1.15.0'
+  implementation 'androidx.core:core-ktx:1.16.0'
 
   testImplementation 'junit:junit:4.13.2'
   testImplementation 'androidx.test.ext:junit:1.2.1'
