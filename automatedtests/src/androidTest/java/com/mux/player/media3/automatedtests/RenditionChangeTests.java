@@ -60,11 +60,6 @@ public class RenditionChangeTests extends AdaptiveBitStreamTestBase {
               - networkRequest.getCreationTimeForEvent(playingIndex);
         Log.w(TAG, "last rendition change at: " + lastRenditionChangeAt);
 
-        // TODO: OK, so the server responding with 206/partial content changes the timing of the
-        //  rendntionchange events, maybe because it finishes the current segment before changing
-        //  renditions. This is good player behavior, and responding 200/OK is good server behavior
-        //  but it appears that our test relies on the server responding with 206/partial content
-        //  I think just change the logic here. The
         if (renditionChangeIndex == -1) {
           fail("Failed to find RenditionChangeEvent dispatched after: "
               + PLAY_PERIOD_IN_MS + " ms since playback started, with valid data"

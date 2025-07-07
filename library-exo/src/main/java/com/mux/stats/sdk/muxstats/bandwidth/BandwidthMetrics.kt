@@ -59,7 +59,6 @@ internal open class BandwidthMetrics(
       segmentData = BandwidthMetricData()
     }
     segmentData.requestError = e.toString()
-    System.out.println("for url ${segmentData.requestUrl}: Request Error! $e")
     if (e is HttpDataSource.InvalidResponseCodeException) {
       segmentData.requestErrorCode = e.responseCode
       segmentData.requestErrorText = e.responseMessage

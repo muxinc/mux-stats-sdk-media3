@@ -282,8 +282,6 @@ private class MuxAnalyticsListener(
     mediaLoadData: MediaLoadData
   ) {
     @Suppress("SENSELESS_COMPARISON")
-    println("onLoadCompleted on Thread ${Thread.currentThread().name}")
-    println("onLoadCompleted: ${loadEventInfo.responseHeaders}")
     if (loadEventInfo.uri != null) {
       bandwidthMetrics?.onLoadCompleted(
         loadEventInfo.loadTaskId,

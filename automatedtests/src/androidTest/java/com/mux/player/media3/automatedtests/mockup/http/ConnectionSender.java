@@ -179,7 +179,6 @@ public class ConnectionSender extends Thread {
   private void openAssetFile(String assetFile) throws IOException {
     requestUuid = UUID.randomUUID().toString();
     if (assetInput != null) {
-      Log.e(TAG, "Another Asset already open");
       try {
         assetInput.close();
       } catch (IOException e) {
@@ -310,7 +309,6 @@ public class ConnectionSender extends Thread {
     int bytesRead = assetInput.read(transferBuffer, 0, bytesToRead);
     if (bytesRead == -1) {
       // EOF reached
-      Log.e(TAG, "EOF reached !!!");
       httpOut.close();
       isRunning = false;
       segmentStat.setSegmentRespondedAt(System.currentTimeMillis());
