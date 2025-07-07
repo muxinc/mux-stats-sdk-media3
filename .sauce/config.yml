@@ -7,11 +7,10 @@ sauce:
     
   metadata:
     tags:
-      - mux-player
       - android
       - data
     # best overridden from the CLI using --build
-    build: "Mux Player Android"
+    build: "Mux Data for Media3"
 espresso:
   app: automatedtests/build/outputs/apk/At_latest/debug/automatedtests-At_latest-debug.apk
   testApp: automatedtests/build/outputs/apk/androidTest/At_latest/debug/automatedtests-At_latest-debug-androidTest.apk
