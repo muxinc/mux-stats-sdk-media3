@@ -21,8 +21,10 @@ import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
 import com.mux.stats.sdk.muxstats.internal.createErrorDataBinding
 import com.mux.stats.sdk.muxstats.internal.createExoSessionDataBinding
+import com.mux.stats.sdk.muxstats.internal.dataTypeString
 import com.mux.stats.sdk.muxstats.internal.isInAdGroup
 import com.mux.stats.sdk.muxstats.internal.populateLiveStreamData
+import com.mux.stats.sdk.muxstats.internal.trackTypeString
 import java.io.IOException
 import java.util.regex.Pattern
 
@@ -254,10 +256,23 @@ private class MuxAnalyticsListener(
       segmentWidth = format.width
       segmentHeight = format.height
     }
+
+    MuxLogger.d("ExoPlayerBinding", "onLoadStarted: For request: ${loadEventInfo.uri.path}:"
+        + "\nTrack type: ${trackTypeString( mediaLoadData.trackType)}"
+        + "\nData type: ${dataTypeString(mediaLoadData.dataType)}")
+
     bandwidthMetrics?.onLoadStarted(
-      loadEventInfo.loadTaskId, mediaLoadData.mediaStartTimeMs,
-      mediaLoadData.mediaEndTimeMs, loadEventInfo.uri.path, mediaLoadData.dataType,
-      loadEventInfo.uri.host, segmentMimeType, segmentWidth, segmentHeight
+      loadTaskId = loadEventInfo.loadTaskId,
+      loadStartTimeMs = System.currentTimeMillis(),
+      mediaStartTimeMs = mediaLoadData.mediaStartTimeMs,
+      mediaEndTimeMs = mediaLoadData.mediaEndTimeMs,
+      segmentUrl = loadEventInfo.uri.path,
+      dataType = mediaLoadData.dataType,
+      trackType = mediaLoadData.trackType,
+      host = loadEventInfo.uri.host,
+      segmentMimeType = segmentMimeType,
+      segmentWidth = segmentWidth,
+      segmentHeight = segmentHeight
     )
   }
 

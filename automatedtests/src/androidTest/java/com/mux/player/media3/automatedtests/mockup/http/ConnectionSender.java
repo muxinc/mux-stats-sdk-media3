@@ -97,13 +97,13 @@ public class ConnectionSender extends Thread {
     for (String headerName : headers.keySet()) {
       if (headerName.equalsIgnoreCase("Origin")) {
         this.originHeaderValue = headers.get(headerName);
-        Log.i(TAG, "Got range header value: " + this.serveDataFromPosition);
       }
     }
   }
 
   public void startServingFromPosition(String assetName, HashMap<String, String> headers)
       throws IOException, InterruptedException {
+    Log.i(TAG, "start serving for asset named: " + assetName);
     this.assetName = assetName;
     parseRangeHeader(headers);
     parseOriginHeader(headers);
@@ -122,8 +122,10 @@ public class ConnectionSender extends Thread {
     } else if (assetName.contains(".ts")) {
       contentType = "video/mp2t";
       acceptRangeHeader = false;
+      sendPartialResponse = this.serveDataFromPosition != 0;
     } else if (assetName.contains(".aac")) {
       contentType = "audio/aac";
+      sendPartialResponse = this.serveDataFromPosition != 0;
     } else if (assetName.contains(".png")) {
       contentType = "image/png";
       sendPartialResponse = false;
@@ -133,14 +135,13 @@ public class ConnectionSender extends Thread {
     assetInput.skip(serveDataFromPosition);
     segmentStat.setSegmentFileName(assetName);
     segmentStat.setSegmentLengthInBytes(assetInput.available() - serveDataFromPosition);
-    Log.i(TAG, "Serving file from position: " + serveDataFromPosition + ", remaining bytes: " +
+    Log.i(TAG, this.hashCode() + ": Serving file " + assetName + " from position: " + serveDataFromPosition + ", remaining bytes: " +
         assetInput.available() + ", total file size: " + assetFileSize);
     if (serveDataFromPosition < assetFileSize) {
       if (sendPartialResponse) {
         sendHTTPOKPartialResponse(contentType, acceptRangeHeader);
         isPaused = false;
       } else {
-        // Send complete response,, this is a short file
         sendHTTPOKCompleteResponse(contentType);
       }
     } else {
@@ -155,6 +156,7 @@ public class ConnectionSender extends Thread {
   }
 
   public void run() {
+    Log.i(TAG, "run(): called");
     isRunning = true;
     while (isRunning) {
       try {
@@ -244,23 +246,9 @@ public class ConnectionSender extends Thread {
     Log.w(TAG, "Sending response: \n" + response);
     writer.write(response);
     writer.flush();
-    int staticBuffSize = 200000;
-    byte[] staticBuff = new byte[staticBuffSize];
-    while (true) {
-      int bytesRead = assetInput.read(staticBuff);
-      String line = new String(staticBuff, 0, bytesRead, StandardCharsets.UTF_8);
-      Log.w(TAG, line);
-      writer.write(line);
-      writer.flush();
-      if (bytesRead < staticBuffSize) {
-        break;
-      }
-    }
-    writer.write("\r\n\r\n");
-    writer.flush();
-    segmentStat.setSegmentRespondedAt(System.currentTimeMillis());
-    listener.segmentServed(requestUuid, segmentStat);
-    segmentStat = new SegmentStatistics();
+
+    // Response body will be sent asynchronously, in run(), after isPaused becomes false
+    isPaused = false;
   }
 
   /*
@@ -321,7 +309,7 @@ public class ConnectionSender extends Thread {
     int bytesRead = assetInput.read(transferBuffer, 0, bytesToRead);
     if (bytesRead == -1) {
       // EOF reached
-      Log.e(TAG, "EOF reached !!!");
+      httpOut.close();
       isRunning = false;
       segmentStat.setSegmentRespondedAt(System.currentTimeMillis());
       listener.segmentServed(requestUuid, segmentStat);

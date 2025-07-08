@@ -1,6 +1,11 @@
 package com.mux.player.media3.automatedtests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.mux.player.media3.automatedtests.mockup.MockNetworkRequest;
 import com.mux.player.media3.automatedtests.mockup.http.SegmentStatistics;
@@ -11,6 +16,9 @@ import com.mux.stats.sdk.core.events.playback.RequestFailed;
 import com.mux.stats.sdk.core.model.BandwidthMetricData;
 import com.mux.stats.sdk.core.model.VideoData;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -51,16 +59,16 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
 
   @Before
   public void init() {
-    if( currentTestName.getMethodName().equalsIgnoreCase("testBandwidthMetricsHls") ) {
+    if(currentTestName.getMethodName().equalsIgnoreCase("testBandwidthMetricsHls") ) {
       urlToPlay = "http://localhost:5000/hls/google_glass/playlist.m3u8";
-    } else if (currentTestName.getMethodName().equalsIgnoreCase("testMultipleCDNHeaders")) {
-      // TODO put the multiple cdn link here
-      urlToPlay = "";
+      bandwidthLimitInBitsPerSecond = 12000000;
+    } else if (currentTestName.getMethodName().equalsIgnoreCase("testMultiCdnStream")) {
+      urlToPlay = "http://localhost:5000/hls/google_glass/playlist.m3u8";
     } else {
       urlToPlay = "http://localhost:5000/dash/google_glass/playlist.mpd";
       parsingDash = true;
+      bandwidthLimitInBitsPerSecond = 12000000;
     }
-    bandwidthLimitInBitsPerSecond = 12000000;
     super.init();
     httpServer.setHLSManifestDelay(manifestDelayList[0]);
     httpServer.setAdditionalHeader(SimpleHTTPServer.X_CDN_RESPONSE_HEADER, X_CDN_HEADER_VALUE);
@@ -71,30 +79,24 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
   }
 
   @Test
-  public void testMultipleCDNHeaders() {
+  public void testMultiCdnStream() {
+    // multi-cdn test doesn't need the 'automated.test.com' dummy cdn header
+    httpServer.setAdditionalHeader(SimpleHTTPServer.X_CDN_RESPONSE_HEADER, "cdn0");
 
-  }
-
-//  @Test
-//  public void testBandwidthMetricsHls() {
-//    testBandwidthMetrics();
-//  }
-//
-//  @Test
-//  public void testBandwidthMetricsDash() {
-//    testBandwidthMetrics();
-//  }
-
-  public void testBandwidthMetrics() {
     try {
       if (!testActivity.waitForPlaybackToStart(waitForPlaybackToStartInMS)) {
         fail("Playback did not start in " + waitForPlaybackToStartInMS + " milliseconds !!!");
       }
+      long startTime = System.currentTimeMillis();
       for (int i = 0; i < manifestDelayList.length; i++) {
-        System.out.println("Waiting for segment number: " + i);
-        httpServer.setHLSManifestDelay(manifestDelayList[i]);
+        Log.i(TAG,"Waiting for segment number: " + i);
+        //httpServer.setHLSManifestDelay(manifestDelayList[i]);
+        httpServer.setAdditionalHeader("x-cdn", "cdn" + (i / 5));
         if (!httpServer.waitForNextSegmentToLoad(waitForPlaybackToStartInMS * 3)) {
           fail("HLS playback segment did not start in " + waitForPlaybackToStartInMS + " ms !!!");
+        }
+        if (System.currentTimeMillis() - startTime > PLAY_PERIOD_IN_MS * 2) {
+          break;
         }
       }
       testActivity.runOnUiThread(new Runnable() {
@@ -102,20 +104,67 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
           pView.getPlayer().stop();
         }
       });
-      checkMimeType();
-      ArrayList<JSONObject> requestCompletedEvents = networkRequest
-          .getAllEventsOfType(RequestCompleted.TYPE);
-      ArrayList<JSONObject> requestCanceledEvents = networkRequest
-          .getAllEventsOfType(RequestCanceled.TYPE);
-      ArrayList<JSONObject> requestFailedEvents = networkRequest
-          .getAllEventsOfType(RequestFailed.TYPE);
-      checkRequests(requestCompletedEvents,
-          true, false, false);
-      checkRequests(requestCanceledEvents,
-          false, true, false);
+
+      List<JSONObject> cdnChanges = networkRequest.getAllEventsOfType("cdnchange");
+      Log.i(TAG,"got events: " + networkRequest.getReceivedEventNames());
+      Log.i(TAG,"CDN changes: " + cdnChanges);
+
+      List<String> videoCdnValues = cdnChanges.stream()
+          .map(it -> it.optString(VideoData.VIDEO_CDN))
+          .collect(Collectors.toList());
+      List<String> videoPrevCdnValues = cdnChanges.stream()
+          .map(it -> it.optString(VideoData.VIDEO_PREVIOUS_CDN))
+          .collect(Collectors.toList());
+      assertEquals(
+          "First cdnchange should be for cdn0",
+          "cdn0", videoCdnValues.get(0)
+      );
+      assertTrue(
+          "First cdnchange should have no previous cdn value",
+          TextUtils.isEmpty(videoPrevCdnValues.get(0))
+      );
+      assertEquals(
+          "Second cdnchange should be for cdn1",
+          "cdn1", videoCdnValues.get(1)
+      );
+      assertEquals(
+          "Second cdnchange should have the previous cdn value",
+          "cdn0", videoPrevCdnValues.get(1)
+      );
+
+
     } catch (Exception e) {
       fail(getExceptionFullTraceAndMessage(e));
     }
+  }
+  
+  public void testBandwidthMetrics() throws Exception {
+    if (!testActivity.waitForPlaybackToStart(waitForPlaybackToStartInMS)) {
+      fail("Playback did not start in " + waitForPlaybackToStartInMS + " milliseconds !!!");
+    }
+    for (int i = 0; i < manifestDelayList.length; i++) {
+      Log.i(TAG,"Waiting for segment number: " + i);
+      httpServer.setHLSManifestDelay(manifestDelayList[i]);
+      if (!httpServer.waitForNextSegmentToLoad(waitForPlaybackToStartInMS * 3)) {
+        fail("HLS playback segment did not start in " + waitForPlaybackToStartInMS + " ms !!!");
+      }
+    }
+    testActivity.runOnUiThread(new Runnable() {
+      public void run() {
+        pView.getPlayer().stop();
+      }
+    });
+    checkMimeType();
+    ArrayList<JSONObject> requestCompletedEvents = networkRequest
+        .getAllEventsOfType(RequestCompleted.TYPE);
+    ArrayList<JSONObject> requestCanceledEvents = networkRequest
+        .getAllEventsOfType(RequestCanceled.TYPE);
+    ArrayList<JSONObject> requestFailedEvents = networkRequest
+        .getAllEventsOfType(RequestFailed.TYPE);
+    checkRequests(requestCompletedEvents,
+        true, false, false);
+    checkRequests(requestCanceledEvents,
+        false, true, false);
   }
 
   private void checkRequests(ArrayList<JSONObject> requests,

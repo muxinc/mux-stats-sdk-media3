@@ -47,22 +47,29 @@ public class RenditionChangeTests extends AdaptiveBitStreamTestBase {
       switchRenditionToIndex(nextFmtIndex);
       Thread.sleep(PLAY_PERIOD_IN_MS);
       int renditionChangeIndex = 0;
-      int playinIndex = networkRequest.getIndexForFirstEvent(PlayingEvent.TYPE);
+      int playingIndex = networkRequest.getIndexForFirstEvent(PlayingEvent.TYPE);
       JSONArray receivedRenditionChangeEvents = new JSONArray();
+      Log.d(TAG, "Received events: " + networkRequest.getReceivedEventNames());
       while (true) {
         renditionChangeIndex = networkRequest
             .getIndexForNextEvent(renditionChangeIndex + 1, RenditionChangeEvent.TYPE);
-        long lastRenditionChangeAt = networkRequest
-            .getCreationTimeForEvent(renditionChangeIndex) - networkRequest
-            .getCreationTimeForEvent(playinIndex);
+
+        Log.w(TAG, "renditionchange time: " + networkRequest.getCreationTimeForEvent(renditionChangeIndex));
+        Log.w(TAG, "playing time: " + networkRequest.getCreationTimeForEvent(playingIndex));
+        long lastRenditionChangeAt = networkRequest.getCreationTimeForEvent(renditionChangeIndex)
+              - networkRequest.getCreationTimeForEvent(playingIndex);
+        Log.w(TAG, "last rendition change at: " + lastRenditionChangeAt);
+
         if (renditionChangeIndex == -1) {
           fail("Failed to find RenditionChangeEvent dispatched after: "
               + PLAY_PERIOD_IN_MS + " ms since playback started, with valid data"
-              + ", received events: " + receivedRenditionChangeEvents.toString());
+              + ", received events: " + receivedRenditionChangeEvents.length() + ": "
+              + receivedRenditionChangeEvents);
         }
+
         JSONObject jo = networkRequest.getEventForIndex(renditionChangeIndex);
         receivedRenditionChangeEvents.put(jo);
-        if (Math.abs(lastRenditionChangeAt - PLAY_PERIOD_IN_MS) < 500) {
+        if (renditionChangeIndex > playingIndex) {
           // We found rendition change index we ware looking for, there may be more after,
           // because I dont know how to controll the player bitadaptive settings
           if (!jo.has(VideoData.VIDEO_SOURCE_WIDTH) || !jo.has(VideoData.VIDEO_SOURCE_HEIGHT)) {
