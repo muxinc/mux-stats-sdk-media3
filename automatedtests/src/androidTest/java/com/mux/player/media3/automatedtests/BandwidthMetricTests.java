@@ -128,7 +128,7 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
           "cdn1", videoCdnValues.get(1)
       );
       assertEquals(
-          "Second cdnchange should have no previous cdn value",
+          "Second cdnchange should have the previous cdn value",
           "cdn0", videoPrevCdnValues.get(1)
       );
 
