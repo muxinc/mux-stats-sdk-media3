@@ -7,6 +7,7 @@ import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
 import androidx.media3.common.Tracks.Group
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.HttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import com.mux.android.util.weak
 import com.mux.stats.sdk.core.events.playback.PlaybackEvent
@@ -58,9 +59,13 @@ internal open class BandwidthMetrics(
       segmentData = BandwidthMetricData()
     }
     segmentData.requestError = e.toString()
-    // TODO see what error codes are
-    segmentData.requestErrorCode = -1
-    segmentData.requestErrorText = e.message
+    if (e is HttpDataSource.InvalidResponseCodeException) {
+      segmentData.requestErrorCode = e.responseCode
+      segmentData.requestErrorText = e.responseMessage
+    } else {
+      segmentData.requestErrorCode = -1
+      segmentData.requestErrorText = e.message
+    }
     segmentData.requestResponseEnd = System.currentTimeMillis()
     return segmentData
   }
@@ -85,8 +90,8 @@ internal open class BandwidthMetrics(
 
   @OptIn(UnstableApi::class) // opting-in to the bitrate api
   open fun onLoad(
-    loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
-    segmentUrl: String?, dataType: Int, host: String?, segmentMimeType: String?,
+    loadTaskId: Long, loadStartTimeMs: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
+    segmentUrl: String?, dataType: Int, trackType: Int, host: String?, segmentMimeType: String?,
     segmentWidth: Int, segmentHeight: Int
   ): BandwidthMetricData {
     // Populate segment time details.
@@ -102,8 +107,9 @@ internal open class BandwidthMetrics(
       }
     }
     val segmentData = BandwidthMetricData()
-    //RequestStart timestamp is currently not available from ExoPlayer
-    segmentData.requestResponseStart = System.currentTimeMillis()
+    segmentData.requestStart = loadStartTimeMs
+    // todo - this isn't right but requestResponseStart seems to be needed by the core
+    segmentData.requestResponseStart = loadStartTimeMs
     segmentData.requestMediaStartTime = mediaStartTimeMs
     if (segmentWidth != 0 && segmentHeight != 0) {
       segmentData.requestVideoWidth = segmentWidth
@@ -113,33 +119,55 @@ internal open class BandwidthMetrics(
       segmentData.requestVideoHeight = collector.sourceHeight
     }
     segmentData.requestUrl = segmentUrl
-    if (segmentMimeType != null) {
-      when (dataType) {
-        C.DATA_TYPE_MANIFEST -> {
-          collector.detectMimeType = false
-          segmentData.requestType = "manifest"
-        }
 
-        C.DATA_TYPE_MEDIA_INITIALIZATION -> {
-          if (segmentMimeType.contains("video")) {
-            segmentData.requestType = "video_init"
-          } else if (segmentMimeType.contains("audio")) {
-            segmentData.requestType = "audio_init"
-          }
-        }
-
-        C.DATA_TYPE_MEDIA -> {
-          segmentData.requestType = "media"
-          segmentData.requestMediaDuration = (mediaEndTimeMs
-                  - mediaStartTimeMs)
-        }
-      }
+    if (dataType == C.DATA_TYPE_MANIFEST) {
+      // Overall MIME type only applicable to progressive files
+      collector.detectMimeType = false
     }
+
+    fillRequestType(segmentData, dataType, trackType, mediaEndTimeMs, mediaStartTimeMs)
+    MuxLogger.d("BandwidthMetrics", "onLoad: For request: ${segmentUrl}:"
+        + "\nRequest type: ${segmentData.requestType}"
+        + "\nMedia duration: ${segmentData.requestMediaDuration}")
+
+    // headers will be picked up when we get onLoadCompleted
     segmentData.requestResponseHeaders = null
     segmentData.requestHostName = host
     segmentData.requestRenditionLists = collector.renditionList
     loadedSegments[loadTaskId] = segmentData
     return segmentData
+  }
+
+  @OptIn(UnstableApi::class)
+  private fun fillRequestType(
+    segmentData: BandwidthMetricData,
+    dataType: Int,
+    trackType: Int,
+    mediaEndTimeMs: Long,
+    mediaStartTimeMs: Long
+  ) {
+    when (dataType) {
+      C.DATA_TYPE_MANIFEST -> segmentData.requestType = "manifest"
+      C.DATA_TYPE_DRM -> segmentData.requestType = "encryption"
+      C.DATA_TYPE_MEDIA_INITIALIZATION -> {
+        when (trackType) {
+          C.TRACK_TYPE_VIDEO, C.TRACK_TYPE_DEFAULT -> segmentData.requestType = "video_init"
+          C.TRACK_TYPE_AUDIO -> segmentData.requestType = "audio_init"
+        }
+      }
+      C.DATA_TYPE_MEDIA -> {
+        segmentData.requestMediaDuration = mediaEndTimeMs - mediaStartTimeMs
+        when (trackType) {
+          // cmaf or plain hls with a video track
+          C.TRACK_TYPE_DEFAULT -> segmentData.requestType = "media"
+          // dash or cmaf hls audio segments, audio-only hls or dash
+          C.TRACK_TYPE_AUDIO -> segmentData.requestType = "audio"
+          // dash video
+          C.TRACK_TYPE_VIDEO -> segmentData.requestType = "video"
+          C.TRACK_TYPE_TEXT -> segmentData.requestType = "subtitle"
+        }
+      }
+    }
   }
 
   /**
@@ -161,23 +189,23 @@ internal open class BandwidthMetrics(
    * @return new segment.
    */
   open fun onLoadStarted(
-    loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
-    segmentUrl: String?, dataType: Int, host: String?, segmentMimeType: String?,
+    loadTaskId: Long, loadStartTimeMs: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long,
+    segmentUrl: String?, dataType: Int, trackType: Int, host: String?, segmentMimeType: String?,
     segmentWidth: Int, segmentHeight: Int
-  )
-          : BandwidthMetricData {
+  ) : BandwidthMetricData {
     val loadData = onLoad(
-      loadTaskId,
-      mediaStartTimeMs,
-      mediaEndTimeMs,
-      segmentUrl,
-      dataType,
-      host,
-      segmentMimeType,
-      segmentWidth,
-      segmentHeight
+      loadTaskId = loadTaskId,
+      loadStartTimeMs = loadStartTimeMs,
+      mediaStartTimeMs = mediaStartTimeMs,
+      mediaEndTimeMs = mediaEndTimeMs,
+      segmentUrl = segmentUrl,
+      dataType = dataType,
+      trackType = trackType,
+      host = host,
+      segmentMimeType = segmentMimeType,
+      segmentWidth = segmentWidth,
+      segmentHeight = segmentHeight
     )
-    loadData.requestResponseStart = System.currentTimeMillis()
     return loadData
   }
 
@@ -305,18 +333,21 @@ internal class BandwidthMetricDispatcher(
   }
 
   fun onLoadStarted(
-    loadTaskId: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long, segmentUrl: String?,
-    dataType: Int, host: String?, segmentMimeType: String?, segmentWidth: Int, segmentHeight: Int
+    loadTaskId: Long, loadStartTimeMs: Long, mediaStartTimeMs: Long, mediaEndTimeMs: Long, segmentUrl: String?,
+    dataType: Int, trackType: Int, host: String?, segmentMimeType: String?,
+    segmentWidth: Int, segmentHeight: Int
   ) {
     if (player == null || collector == null) {
       return
     }
     currentBandwidthMetric().onLoadStarted(
       loadTaskId,
+      loadStartTimeMs,
       mediaStartTimeMs,
       mediaEndTimeMs,
       segmentUrl,
       dataType,
+      trackType,
       host,
       segmentMimeType,
       segmentWidth,
@@ -351,6 +382,9 @@ internal class BandwidthMetricDispatcher(
     }
   }
 
+  /**
+   * Call when the player's track list changes, so we can report rendition lists on request events
+   */
   @OptIn(UnstableApi::class) // Opting-in to the Bitrate APIs
   fun onTracksChanged(tracks: Tracks) {
     MuxLogger.d("BandwidthMetrics", "onTracksChanged: Got ${tracks.groups.size} tracks")

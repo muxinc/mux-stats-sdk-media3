@@ -16,10 +16,13 @@ import androidx.media3.ui.PlayerView.SHOW_BUFFERING_WHEN_PLAYING
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
 import com.mux.stats.muxdatasdkformedia3.toMediaItem
+import com.mux.stats.sdk.core.events.IEvent
+import com.mux.stats.sdk.core.events.IEventListener
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
+import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.MuxDataSdk
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
 import com.mux.stats.sdk.muxstats.monitorWithMuxData
@@ -58,6 +61,11 @@ class BasicPlayerActivity : AppCompatActivity() {
     stopPlaying()
 
     player = createPlayer().also { newPlayer ->
+      newPlayer.trackSelectionParameters = newPlayer.trackSelectionParameters
+        .buildUpon()
+        .setPreferredTextLanguage("en")
+        .build()
+
       muxStats = monitorPlayer(newPlayer)
 
       view.playerView.player = newPlayer
@@ -97,6 +105,7 @@ class BasicPlayerActivity : AppCompatActivity() {
       CustomerViewData().apply { }
     )
 
+    MuxLogger.setAllowLogcat(true)
     return player.monitorWithMuxData(
       context = this,
       envKey = Constants.MUX_DATA_ENV_KEY,
