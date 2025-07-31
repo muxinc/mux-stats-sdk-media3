@@ -1,9 +1,7 @@
 # Mux Data SDK for media3
 
 Mux Data SDK for AndroidX Media3 is an SDK that can observe a media3 `Player` and report state and
-player metadata to [Mux Data](https://www.mux.com/data). This SDK is currently in beta, but reports
-all playback events, player startup time, experience score, etc. Additional Video Quality metrics
-are planned
+player metadata to [Mux Data](https://www.mux.com/data).
 
 ## Usage
 
