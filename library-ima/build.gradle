@@ -6,7 +6,7 @@ plugins {
 
 android {
   namespace 'com.mux.stats.sdk.media3_ima'
-  compileSdk 35
+  compileSdk 36
 
   buildFeatures {
     buildConfig = true
