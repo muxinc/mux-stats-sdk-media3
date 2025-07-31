@@ -36,11 +36,11 @@ android {
       minSdk 19 // minSdk is 19 before 1.4
     }
     at_1_2 {
-     dimension "media3"
+      dimension "media3"
       minSdk 19 // minSdk is 19 before 1.4
      }
     at_1_3 {
-     dimension "media3"
+      dimension "media3"
       minSdk 19 // minSdk is 19 before 1.4
      }
     at_1_4 {
