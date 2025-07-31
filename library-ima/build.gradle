@@ -124,6 +124,7 @@ dependencies {
 
   //noinspection GradleDependency
   at_1_0Api "androidx.media3:media3-exoplayer-ima:1.0.0"
+  //noinspection GradleDependency
   at_1_0Api "androidx.media3:media3-exoplayer:1.0.0"
   //noinspection GradleDependency
   at_1_1Api "androidx.media3:media3-exoplayer-ima:1.1.1"
