@@ -48,7 +48,8 @@ class BasicPlayerActivity : AppCompatActivity() {
   override fun onResume() {
     super.onResume()
     startPlaying(
-      intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY
+//      intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY
+      "http://10.0.2.2:3000/blue-moon/stream.m3u8"
     )
   }
 
@@ -79,7 +80,7 @@ class BasicPlayerActivity : AppCompatActivity() {
     return mediaUrl.toMediaItem().buildUpon()
       .setMediaMetadata(
         MediaMetadata.Builder()
-          .setTitle("Sample app, BasicPlayerActivity")
+          .setTitle("No X-CDN, No Cutomer CDN")
           .setDescription("A Basic test video")
           .build()
       ).build()
@@ -100,7 +101,8 @@ class BasicPlayerActivity : AppCompatActivity() {
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
         videoId = "A Custom ID"
-        videoTitle = "Sintel (First)"
+        videoTitle = "Yes X-CDN, No Customer CDN"
+//        videoCdn = "My-Video-CDN"
       },
       CustomerViewData().apply { }
     )

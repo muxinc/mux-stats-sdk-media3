@@ -25,7 +25,7 @@ import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.v18.BuildConfig;
 import com.mux.player.media3.R;
 import com.mux.player.media3.automatedtests.mockup.MockNetworkRequest;
-import com.mux.player.media3.automatedtests.mockup.http.SimpleHTTPServer;
+import com.mux.player.media3.automatedtests.mockup.http.KtorHTTPServer;
 import com.mux.stats.sdk.core.events.playback.PauseEvent;
 import com.mux.stats.sdk.core.events.playback.PlayEvent;
 import com.mux.stats.sdk.core.events.playback.PlayingEvent;
@@ -91,7 +91,7 @@ public abstract class TestBase {
   //    protected ActivityScenario<SimplePlayerTestActivity> testScenario;
   protected SimplePlayerTestActivity testActivity;
 //  protected Activity currentActivity;
-  protected SimpleHTTPServer httpServer;
+  protected KtorHTTPServer httpServer;
   protected PlayerView pView;
   protected MediaSource testMediaSource;
   protected MockNetworkRequest networkRequest;
@@ -112,7 +112,10 @@ public abstract class TestBase {
   @Before
   public void init() {
     try {
-      httpServer = new SimpleHTTPServer(runHttpServerOnPort, bandwidthLimitInBitsPerSecond);
+      httpServer = new KtorHTTPServer(runHttpServerOnPort, bandwidthLimitInBitsPerSecond);
+      // Wait a moment for server to start and check if it failed
+      Thread.sleep(1000);
+      httpServer.ensureServerStarted();
 //            httpServer.setSeekLatency(SEEK_PERIOD_IN_MS);
     } catch (IOException e) {
       e.printStackTrace();

@@ -4,7 +4,7 @@ import static org.junit.Assert.fail;
 
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.test.uiautomator.v18.BuildConfig;
-import com.mux.player.media3.automatedtests.mockup.http.SimpleHTTPServer;
+import com.mux.player.media3.automatedtests.mockup.http.KtorHTTPServer;
 import com.mux.stats.sdk.core.events.playback.PlayEvent;
 import com.mux.stats.sdk.core.events.playback.PlayingEvent;
 import com.mux.stats.sdk.core.events.playback.ViewStartEvent;
@@ -21,8 +21,11 @@ public class MissusageTests extends TestBase {
   @Before
   public void init() {
     try {
-      httpServer = new SimpleHTTPServer(runHttpServerOnPort, bandwidthLimitInBitsPerSecond);
-    } catch (IOException e) {
+      httpServer = new KtorHTTPServer(runHttpServerOnPort, bandwidthLimitInBitsPerSecond);
+      // Wait a moment for server to start and check if it failed
+      Thread.sleep(1000);
+      httpServer.ensureServerStarted();
+    } catch (Exception e) {
       e.printStackTrace();
       // Failed to start server
       fail("Failed to start HTTP server, why !!!");

@@ -4,7 +4,7 @@ package com.mux.player.media3.automatedtests;
 import static org.junit.Assert.fail;
 
 import androidx.test.uiautomator.v18.BuildConfig;
-import com.mux.player.media3.automatedtests.mockup.http.SimpleHTTPServer;
+import com.mux.player.media3.automatedtests.mockup.http.KtorHTTPServer;
 import com.mux.stats.sdk.core.events.playback.AdBreakEndEvent;
 import com.mux.stats.sdk.core.events.playback.AdBreakStartEvent;
 import com.mux.stats.sdk.core.events.playback.AdEndedEvent;
@@ -34,7 +34,7 @@ import org.junit.Test;
 //  @Before
 //  public void init() {
 //    try {
-//      httpServer = new SimpleHTTPServer(runHttpServerOnPort, bandwidthLimitInBitsPerSecond);
+//      httpServer = new KtorHTTPServer(runHttpServerOnPort, bandwidthLimitInBitsPerSecond);
 ////            httpServer.setSeekLatency(SEEK_PERIOD_IN_MS);
 //    } catch (IOException e) {
 //      e.printStackTrace();

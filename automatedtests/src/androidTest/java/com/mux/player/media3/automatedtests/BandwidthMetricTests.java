@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.mux.player.media3.automatedtests.mockup.MockNetworkRequest;
 import com.mux.player.media3.automatedtests.mockup.http.SegmentStatistics;
-import com.mux.player.media3.automatedtests.mockup.http.SimpleHTTPServer;
+import com.mux.player.media3.automatedtests.mockup.http.KtorHTTPServer;
 import com.mux.stats.sdk.core.events.playback.RequestCanceled;
 import com.mux.stats.sdk.core.events.playback.RequestCompleted;
 import com.mux.stats.sdk.core.events.playback.RequestFailed;
@@ -71,17 +71,17 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
     }
     super.init();
     httpServer.setHLSManifestDelay(manifestDelayList[0]);
-    httpServer.setAdditionalHeader(SimpleHTTPServer.X_CDN_RESPONSE_HEADER, X_CDN_HEADER_VALUE);
+    httpServer.setAdditionalHeader(KtorHTTPServer.X_CDN_RESPONSE_HEADER, X_CDN_HEADER_VALUE);
     // Allow parsing of these headers, we need it for test
-    testActivity.allowHeaderToBeSentToBackend(SimpleHTTPServer.FILE_NAME_RESPONSE_HEADER);
-    testActivity.allowHeaderToBeSentToBackend(SimpleHTTPServer.REQUEST_NETWORK_DELAY_HEADER);
-    testActivity.allowHeaderToBeSentToBackend(SimpleHTTPServer.REQUEST_UUID_HEADER);
+    testActivity.allowHeaderToBeSentToBackend(KtorHTTPServer.FILE_NAME_RESPONSE_HEADER);
+    testActivity.allowHeaderToBeSentToBackend(KtorHTTPServer.REQUEST_NETWORK_DELAY_HEADER);
+    testActivity.allowHeaderToBeSentToBackend(KtorHTTPServer.REQUEST_UUID_HEADER);
   }
 
   @Test
   public void testMultiCdnStream() {
     // multi-cdn test doesn't need the 'automated.test.com' dummy cdn header
-    httpServer.setAdditionalHeader(SimpleHTTPServer.X_CDN_RESPONSE_HEADER, "cdn0");
+    httpServer.setAdditionalHeader(KtorHTTPServer.X_CDN_RESPONSE_HEADER, "cdn0");
 
     try {
       if (!testActivity.waitForPlaybackToStart(waitForPlaybackToStartInMS)) {
@@ -179,9 +179,9 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
           .getString(BandwidthMetricData.REQUEST_RESPONSE_HEADERS);
       JSONObject headersJsonObject = new JSONObject(headerString);
       String fileNameHeaderValue = headersJsonObject
-          .getString(SimpleHTTPServer.FILE_NAME_RESPONSE_HEADER);
-      String segmentUuid = headersJsonObject.getString(SimpleHTTPServer.REQUEST_UUID_HEADER);
-      long networkDelay = headersJsonObject.getLong(SimpleHTTPServer.REQUEST_NETWORK_DELAY_HEADER);
+          .getString(KtorHTTPServer.FILE_NAME_RESPONSE_HEADER);
+      String segmentUuid = headersJsonObject.getString(KtorHTTPServer.REQUEST_UUID_HEADER);
+      long networkDelay = headersJsonObject.getLong(KtorHTTPServer.REQUEST_NETWORK_DELAY_HEADER);
       boolean expectingManifest = false;
       int mediaSegmentIndex = 0;
       if (fileNameHeaderValue.endsWith("m3u8") || fileNameHeaderValue.endsWith("mpd")
@@ -466,15 +466,15 @@ public class BandwidthMetricTests extends AdaptiveBitStreamTestBase {
     try {
       JSONObject headersJsonObject = requestCompletedJson
           .getJSONObject(BandwidthMetricData.REQUEST_RESPONSE_HEADERS);
-      String xCdnHeader = headersJsonObject.getString(SimpleHTTPServer.X_CDN_RESPONSE_HEADER);
+      String xCdnHeader = headersJsonObject.getString(KtorHTTPServer.X_CDN_RESPONSE_HEADER);
       String contentTypeHeader = headersJsonObject
-          .getString(SimpleHTTPServer.CONTENT_TYPE_RESPONSE_HEADER);
+          .getString(KtorHTTPServer.CONTENT_TYPE_RESPONSE_HEADER);
       if (!xCdnHeader.equalsIgnoreCase(X_CDN_HEADER_VALUE)) {
-        failOnHeaderValue(SimpleHTTPServer.X_CDN_RESPONSE_HEADER, xCdnHeader, X_CDN_HEADER_VALUE,
+        failOnHeaderValue(KtorHTTPServer.X_CDN_RESPONSE_HEADER, xCdnHeader, X_CDN_HEADER_VALUE,
             requestCompletedEventIndex, requestCompletedJson.toString());
       }
       if (!contentTypeHeader.equalsIgnoreCase(expectedContentType)) {
-        failOnHeaderValue(SimpleHTTPServer.CONTENT_TYPE_RESPONSE_HEADER, contentTypeHeader,
+        failOnHeaderValue(KtorHTTPServer.CONTENT_TYPE_RESPONSE_HEADER, contentTypeHeader,
             expectedContentType, requestCompletedEventIndex, requestCompletedJson.toString());
       }
     } catch (JSONException e) {
