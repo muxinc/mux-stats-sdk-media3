@@ -18,10 +18,12 @@ import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
 import com.mux.stats.muxdatasdkformedia3.toMediaItem
 import com.mux.stats.sdk.core.events.IEvent
 import com.mux.stats.sdk.core.events.IEventListener
+import com.mux.stats.sdk.core.model.CustomData
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
 import com.mux.stats.sdk.core.model.CustomerViewData
+import com.mux.stats.sdk.core.model.CustomerViewerData
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.MuxDataSdk
 import com.mux.stats.sdk.muxstats.MuxStatsSdkMedia3
@@ -48,7 +50,7 @@ class BasicPlayerActivity : AppCompatActivity() {
   override fun onResume() {
     super.onResume()
     startPlaying(
-      intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY
+      intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_TEARS_OF_STEEL
     )
   }
 
@@ -100,9 +102,17 @@ class BasicPlayerActivity : AppCompatActivity() {
       CustomerPlayerData().apply { },
       CustomerVideoData().apply {
         videoId = "A Custom ID"
-        videoTitle = "Sintel (First)"
+        videoTitle = "My Custom Video Title"
       },
-      CustomerViewData().apply { }
+      CustomerViewData().apply {
+        // User-readable client application name
+        viewClientApplicationName = "My Custom Application Name"
+        // User-readable client application version
+        viewClientApplicationVersion = "My Custom Application Version"
+      },
+      CustomData().apply {
+        customData1 = "Arbitrary custom dimension value"
+      },
     )
 
     MuxLogger.setAllowLogcat(true)
