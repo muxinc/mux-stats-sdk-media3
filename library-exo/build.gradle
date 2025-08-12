@@ -6,7 +6,7 @@ plugins {
 
 android {
   namespace 'com.mux.stats.sdk.muxstats.media3_exo'
-  compileSdk 35
+  compileSdk 36
 
   buildFeatures {
     buildConfig = true
@@ -50,6 +50,9 @@ android {
       dimension "media3"
     }
     at_1_6 {
+      dimension "media3"
+    }
+    at_1_8 {
       dimension "media3"
     }
   }
@@ -155,9 +158,14 @@ dependencies {
   at_1_6CompileOnly "androidx.media3:media3-exoplayer-hls:1.6.0"
 
   //noinspection GradleDependency
-  At_latestApi "androidx.media3:media3-exoplayer:1.6.0"
+  at_1_8Api "androidx.media3:media3-exoplayer:1.8.0"
   //noinspection GradleDependency
-  At_latestCompileOnly "androidx.media3:media3-exoplayer-hls:1.6.0"
+  at_1_8CompileOnly "androidx.media3:media3-exoplayer-hls:1.8.0"
+
+  //noinspection GradleDependency
+  At_latestApi "androidx.media3:media3-exoplayer:1.8.0"
+  //noinspection GradleDependency
+  At_latestCompileOnly "androidx.media3:media3-exoplayer-hls:1.8.0"
 
   testImplementation 'junit:junit:4.13.2'
   androidTestImplementation 'androidx.test.ext:junit:1.2.1'

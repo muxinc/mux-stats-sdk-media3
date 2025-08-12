@@ -5,7 +5,7 @@ plugins {
 
 android {
   namespace 'com.mux.stats.muxdatasdkformedia3'
-  compileSdk 35
+  compileSdk 36
 
   defaultConfig {
     applicationId "com.example.muxdatasdkformedia3"
@@ -33,6 +33,7 @@ android {
     at_1_4 { dimension "media3" }
     at_1_5 { dimension "media3" }
     at_1_6 { dimension "media3" }
+    at_1_8 { dimension "media3" }
   }
 
   sourceSets {
@@ -58,6 +59,9 @@ android {
       java.srcDirs += "src/compatFrom1_3/java"
     }
     at_1_6 {
+      java.srcDirs += "src/compatFrom1_3/java"
+    }
+    at_1_8 {
       java.srcDirs += "src/compatFrom1_3/java"
     }
   }
@@ -208,13 +212,28 @@ dependencies {
   //noinspection GradleDependency
   at_1_6Implementation "androidx.media3:media3-exoplayer-rtsp:1.6.0"
 
-  At_latestImplementation "androidx.media3:media3-exoplayer:1.6.0"
-  At_latestImplementation "androidx.media3:media3-session:1.6.0"
-  At_latestImplementation "androidx.media3:media3-ui:1.6.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-ima:1.6.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-dash:1.6.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-hls:1.6.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-rtsp:1.6.0"
+  //noinspection GradleDependency
+  at_1_8Implementation "androidx.media3:media3-exoplayer:1.8.0"
+  //noinspection GradleDependency
+  at_1_8Implementation "androidx.media3:media3-session:1.8.0"
+  //noinspection GradleDependency
+  at_1_8Implementation "androidx.media3:media3-ui:1.8.0"
+  //noinspection GradleDependency
+  at_1_8Implementation "androidx.media3:media3-exoplayer-ima:1.8.0"
+  //noinspection GradleDependency
+  at_1_8Implementation "androidx.media3:media3-exoplayer-dash:1.8.0"
+  //noinspection GradleDependency
+  at_1_8Implementation "androidx.media3:media3-exoplayer-hls:1.8.0"
+  //noinspection GradleDependency
+  at_1_8Implementation "androidx.media3:media3-exoplayer-rtsp:1.8.0"
+
+  At_latestImplementation "androidx.media3:media3-exoplayer:1.8.0"
+  At_latestImplementation "androidx.media3:media3-session:1.8.0"
+  At_latestImplementation "androidx.media3:media3-ui:1.8.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-ima:1.8.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-dash:1.8.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-hls:1.8.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-rtsp:1.8.0"
 
   implementation 'androidx.core:core-ktx:1.15.0'
   implementation 'androidx.appcompat:appcompat:1.7.0'
