@@ -3,7 +3,6 @@ package com.mux.player.media3.automatedtests;
 
 import static org.junit.Assert.fail;
 
-import androidx.test.uiautomator.v18.BuildConfig;
 import com.mux.player.media3.automatedtests.mockup.http.SimpleHTTPServer;
 import com.mux.stats.sdk.core.events.playback.AdBreakEndEvent;
 import com.mux.stats.sdk.core.events.playback.AdBreakStartEvent;

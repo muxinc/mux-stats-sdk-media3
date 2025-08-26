@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 import android.util.Log;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
-import androidx.test.uiautomator.v18.BuildConfig;
 import com.mux.stats.sdk.core.events.playback.EndedEvent;
 import com.mux.stats.sdk.core.events.playback.PauseEvent;
 import com.mux.stats.sdk.core.events.playback.PlayEvent;
