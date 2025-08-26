@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 
 android {
   namespace = "com.mux.player.media3"
-  compileSdk 36
+  compileSdk = 36
 
   defaultConfig {
     applicationId "com.mux.player.media3"

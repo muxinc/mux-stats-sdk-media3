@@ -5,12 +5,12 @@ plugins {
 
 android {
   namespace 'com.mux.stats.muxdatasdkformedia3'
-  compileSdk 36
+  compileSdk = 36
 
   defaultConfig {
     applicationId "com.example.muxdatasdkformedia3"
     //noinspection OldTargetApi
-    targetSdk 35
+    targetSdk 36
     minSdk 21
     versionCode 1
     def commit = "git rev-parse --short HEAD".execute().inputReader().readLines().join()
