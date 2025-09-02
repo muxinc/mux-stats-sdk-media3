@@ -3,8 +3,6 @@ package com.mux.stats.muxdatasdkformedia3
 object Constants {
   const val MUX_DATA_ENV_KEY = "YOUR MUX DATA ENV KEY HERE"
   const val VOD_TEST_URL_STEVE = "http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8"
-  const val VOD_TEST_URL_DRAGON_WARRIOR_LADY =
-    "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8"
   const val VOD_TEST_URL_TEARS_OF_STEEL = "https://stream.mux.com/u02xH9SB1ZZNNjPiQp4l6mhzBKJ101uExYx4LU02J5Xm88.m3u8"
   const val VOD_TEST_URL_BIG_BUCK_BUNNY = "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
   const val VOD_TEST_SHORT_VIDEO = "https://stream.mux.com/a4nOgmxGWg6gULfcBbAa00gXyfcwPnAFldF8RdsNyk8M.m3u8"
