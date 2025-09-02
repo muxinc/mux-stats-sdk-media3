@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -68,7 +70,10 @@ class ComposeUiExampleActivity : ComponentActivity() {
     setContent {
       MuxDataSDKForMedia3Theme {
         // A surface container using the 'background' color from the theme
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Surface(
+          modifier = Modifier.fillMaxSize().statusBarsPadding(),
+          color = MaterialTheme.colorScheme.background
+        ) {
           //Greeting("Android")
           VideoSwitchingScreen()
         }
@@ -113,7 +118,7 @@ private fun createPlayer(context: Context): ExoPlayer {
 }
 
 val videoList = listOf(
-  VideoInformation(Uri.parse(Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY), "Sintel"),
+  VideoInformation(Uri.parse(Constants.VOD_TEST_URL_TEARS_OF_STEEL), "Tears of Steel"),
   VideoInformation(Uri.parse(Constants.VOD_TEST_URL_BIG_BUCK_BUNNY), "Big Buck Bunny"),
   VideoInformation(Uri.parse(Constants.VOD_TEST_URL_STEVE), "Old Keynote"),
 )
@@ -152,7 +157,6 @@ fun VideoSwitchingScreen(
     Box(
       modifier = modifier
         .fillMaxWidth()
-        .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
 
       VideoPlayer(
@@ -162,7 +166,8 @@ fun VideoSwitchingScreen(
         configurePlayerView = { },
         modifier = modifier
           .fillMaxWidth()
-          .height(500.dp)
+          .aspectRatio(ratio = 4.0f/3.0f)
+//          .height(500.dp)
       )
       Button(onClick = {
         val nextIdx = if (currentVideoIdx.intValue >= videoList.size) {
@@ -172,7 +177,7 @@ fun VideoSwitchingScreen(
         }
         currentVideoIdx.intValue = nextIdx
       },
-        modifier = Modifier.align(Alignment.TopCenter).padding(all = 12.dp)
+        modifier = Modifier.align(Alignment.TopCenter)//.padding(all = 12.dp)
       ) {
         Text("Change video")
       }
@@ -190,7 +195,7 @@ fun VideoPlayer(
   modifier: Modifier = Modifier,
 ) {
   Box(
-    modifier = modifier.padding(vertical = 4.dp)
+    modifier = modifier//.padding(vertical = 4.dp)
   ) {
     val recentPlayerProvider = rememberUpdatedState(newValue = playerProvider)
     val recentMuxStatsProvider = rememberUpdatedState(newValue = muxStatsProvider)
