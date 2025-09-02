@@ -107,7 +107,7 @@ class BackgroundPlayService : MediaSessionService() {
     val VIDEO_IDS = listOf(
       PlayableVideo("bunny", Constants.VOD_TEST_URL_BIG_BUCK_BUNNY, "Big Buck Bunny"),
       PlayableVideo("steve", Constants.VOD_TEST_URL_STEVE, "Apple Keynote"),
-      PlayableVideo("sintel", Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY, "Sintel"),
+      PlayableVideo("sintel", Constants.VOD_TEST_URL_TEARS_OF_STEEL, "Tears of Steel"),
     )
   }
 }
