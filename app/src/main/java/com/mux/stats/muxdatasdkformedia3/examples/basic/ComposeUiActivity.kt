@@ -152,7 +152,6 @@ fun VideoSwitchingScreen(
         modifier = modifier
           .fillMaxWidth()
           .aspectRatio(ratio = 4.0f/3.0f)
-//          .height(500.dp)
       )
       Button(onClick = {
         val nextIdx = if (currentVideoIdx.intValue >= videoList.size) {
