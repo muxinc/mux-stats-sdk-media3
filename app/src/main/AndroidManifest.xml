@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MuxDataSDKForMedia3"
         android:usesCleartextTraffic="true"
-        tools:targetApi="31">
+        >
         <activity
             android:name=".examples.basic.ComposeUiExampleActivity"
             android:exported="false"
