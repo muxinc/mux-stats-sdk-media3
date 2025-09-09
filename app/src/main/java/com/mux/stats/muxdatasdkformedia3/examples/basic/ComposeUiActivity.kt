@@ -3,7 +3,6 @@ package com.mux.stats.muxdatasdkformedia3.examples.basic
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,14 +12,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -32,24 +27,16 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
-import com.google.common.collect.Queues
 import com.mux.stats.muxdatasdkformedia3.Constants
 import com.mux.stats.muxdatasdkformedia3.R
 import com.mux.stats.muxdatasdkformedia3.examples.basic.ui.theme.MuxDataSDKForMedia3Theme
@@ -68,7 +55,10 @@ class ComposeUiExampleActivity : ComponentActivity() {
     setContent {
       MuxDataSDKForMedia3Theme {
         // A surface container using the 'background' color from the theme
-        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+        Surface(
+          modifier = Modifier.fillMaxSize().statusBarsPadding(),
+          color = MaterialTheme.colorScheme.background
+        ) {
           //Greeting("Android")
           VideoSwitchingScreen()
         }
@@ -113,7 +103,7 @@ private fun createPlayer(context: Context): ExoPlayer {
 }
 
 val videoList = listOf(
-  VideoInformation(Uri.parse(Constants.VOD_TEST_URL_DRAGON_WARRIOR_LADY), "Sintel"),
+  VideoInformation(Uri.parse(Constants.VOD_TEST_URL_TEARS_OF_STEEL), "Tears of Steel"),
   VideoInformation(Uri.parse(Constants.VOD_TEST_URL_BIG_BUCK_BUNNY), "Big Buck Bunny"),
   VideoInformation(Uri.parse(Constants.VOD_TEST_URL_STEVE), "Old Keynote"),
 )
@@ -152,7 +142,6 @@ fun VideoSwitchingScreen(
     Box(
       modifier = modifier
         .fillMaxWidth()
-        .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
 
       VideoPlayer(
@@ -162,7 +151,7 @@ fun VideoSwitchingScreen(
         configurePlayerView = { },
         modifier = modifier
           .fillMaxWidth()
-          .height(500.dp)
+          .aspectRatio(ratio = 4.0f/3.0f)
       )
       Button(onClick = {
         val nextIdx = if (currentVideoIdx.intValue >= videoList.size) {
@@ -172,7 +161,7 @@ fun VideoSwitchingScreen(
         }
         currentVideoIdx.intValue = nextIdx
       },
-        modifier = Modifier.align(Alignment.TopCenter).padding(all = 12.dp)
+        modifier = Modifier.align(Alignment.TopCenter)
       ) {
         Text("Change video")
       }
@@ -190,7 +179,7 @@ fun VideoPlayer(
   modifier: Modifier = Modifier,
 ) {
   Box(
-    modifier = modifier.padding(vertical = 4.dp)
+    modifier = modifier
   ) {
     val recentPlayerProvider = rememberUpdatedState(newValue = playerProvider)
     val recentMuxStatsProvider = rememberUpdatedState(newValue = muxStatsProvider)

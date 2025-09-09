@@ -41,6 +41,7 @@ class ImaClientAdsActivity : AppCompatActivity() {
   @OptIn(UnstableApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
     view = ActivityImaClientAdsBinding.inflate(layoutInflater)
     setContentView(view.root)
 

@@ -7,6 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityMainBinding
@@ -23,8 +27,22 @@ class MainActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
     view = ActivityMainBinding.inflate(layoutInflater)
     setContentView(view.root)
+
+    ViewCompat.setOnApplyWindowInsetsListener(view.root) { v, insets ->
+      val bars = insets.getInsets(
+        WindowInsetsCompat.Type.systemBars()
+            or WindowInsetsCompat.Type.displayCutout()
+      )
+      v.updatePadding(
+        top = bars.top,
+        bottom = bars.bottom,
+      )
+      WindowInsetsCompat.CONSUMED
+    }
+
     view.recycler.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     view.recycler.adapter = ExampleListAdapter(this, examples())
   }

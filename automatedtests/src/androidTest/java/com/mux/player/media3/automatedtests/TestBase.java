@@ -22,7 +22,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.v18.BuildConfig;
+
+import com.mux.player.media3.BuildConfig;
 import com.mux.player.media3.R;
 import com.mux.player.media3.automatedtests.mockup.MockNetworkRequest;
 import com.mux.player.media3.automatedtests.mockup.http.SimpleHTTPServer;

@@ -24,9 +24,7 @@ import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.ui.PlayerView
 import com.google.ads.interactivemedia.v3.api.AdEvent
 import com.mux.stats.muxdatasdkformedia3.Constants
-import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerBinding
 import com.mux.stats.muxdatasdkformedia3.databinding.ActivityPlayerSsaiBinding
-import com.mux.stats.sdk.core.events.playback.AdEndedEvent
 import com.mux.stats.sdk.core.model.CustomerData
 import com.mux.stats.sdk.core.model.CustomerPlayerData
 import com.mux.stats.sdk.core.model.CustomerVideoData
