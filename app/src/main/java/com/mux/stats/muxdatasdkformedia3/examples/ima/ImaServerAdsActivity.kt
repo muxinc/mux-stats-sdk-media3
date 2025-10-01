@@ -132,7 +132,6 @@ class ImaServerAdsActivity : AppCompatActivity() {
         newPlayer.setMediaItem(
           MediaItem.Builder()
             .setUri(ssaiStreamUri)
-            .setAdsConfiguration(AdsConfiguration.Builder(Uri.parse(adTagUri)).build())
             .build()
         )
       }

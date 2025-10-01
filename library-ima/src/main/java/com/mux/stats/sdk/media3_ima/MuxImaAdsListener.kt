@@ -64,6 +64,7 @@ class MuxImaAdsListener private constructor(
    * @param event, event to be updated.
    * @param ad, current ad event that is being processed.
    */
+  @Suppress("UNNECESSARY_SAFE_CALL") // have seen some properties of Ad be null
   private fun setupAdViewData(event: MuxAdEvent, ad: Ad?) {
     val viewData = ViewData()
     val adData = AdData()
@@ -75,21 +76,26 @@ class MuxImaAdsListener private constructor(
         }
       }
 
-      exoPlayer?.getAdTagUrl()?.let { adData.adTagUrl = it }
       ad.adId?.let { adData.adId = it }
       ad.creativeId?.let { adData.adCreativeId = it }
       @Suppress("DEPRECATION") // This is only deprecated on android, we need consistency
       ad.universalAdIdValue?.let { adData.adUniversalId = it }
 
-      val adType = ad.adPodInfo?.let {
-        // per the IMA docs
-        when (it.timeOffset) {
-          0.0 -> AdType.PRE_ROLL
-          -1.0 -> AdType.POST_ROLL
-          else -> AdType.MID_ROLL
+      val adTagUrl = exoPlayer?.getAdTagUrl()
+      adData.adTagUrl = adTagUrl
+
+      if (adTagUrl != null) {
+        // Only detect ad type for CSAI (detected by adTagUrl). DAI timeOffsets are always 0
+        val adType = ad.adPodInfo?.let {
+          // per the IMA docs
+          when (it.timeOffset) {
+            0.0 -> AdType.PRE_ROLL
+            -1.0 -> AdType.POST_ROLL
+            else -> AdType.MID_ROLL
+          }
         }
+        adData.adType = adType
       }
-      adData.adType = adType
     }
     
     event.viewData = viewData
