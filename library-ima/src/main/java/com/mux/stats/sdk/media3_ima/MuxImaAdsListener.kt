@@ -90,9 +90,8 @@ class MuxImaAdsListener private constructor(
         }
       }
       adData.adType = adType
-      Log.d(TAG, "Set ad type to $adType")
-
     }
+    
     event.viewData = viewData
     event.adData = adData
   }
