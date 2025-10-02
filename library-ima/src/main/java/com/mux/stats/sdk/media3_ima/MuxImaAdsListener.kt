@@ -88,9 +88,9 @@ class MuxImaAdsListener private constructor(
         // Only detect ad type for CSAI (detected by adTagUrl). DAI timeOffsets are always 0
         val adType = ad.adPodInfo?.let {
           // per the IMA docs
-          when (it.timeOffset) {
-            0.0 -> AdType.PRE_ROLL
-            -1.0 -> AdType.POST_ROLL
+          when (it.podIndex) {
+            0 -> AdType.PRE_ROLL
+            -1 -> AdType.POST_ROLL
             else -> AdType.MID_ROLL
           }
         }
