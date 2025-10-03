@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.media3_ima
 
+import android.util.Log
 import androidx.media3.common.Player
 import com.google.ads.interactivemedia.v3.api.Ad
 import com.google.ads.interactivemedia.v3.api.AdErrorEvent
@@ -12,6 +13,7 @@ import com.google.ads.interactivemedia.v3.api.player.VideoProgressUpdate
 import com.mux.android.util.oneOf
 import com.mux.stats.sdk.core.events.playback.*
 import com.mux.stats.sdk.core.model.AdData
+import com.mux.stats.sdk.core.model.AdType
 import com.mux.stats.sdk.core.model.ViewData
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.AdCollector
@@ -62,6 +64,7 @@ class MuxImaAdsListener private constructor(
    * @param event, event to be updated.
    * @param ad, current ad event that is being processed.
    */
+  @Suppress("UNNECESSARY_SAFE_CALL") // have seen some properties of Ad be null
   private fun setupAdViewData(event: MuxAdEvent, ad: Ad?) {
     val viewData = ViewData()
     val adData = AdData()
@@ -73,12 +76,28 @@ class MuxImaAdsListener private constructor(
         }
       }
 
-      exoPlayer?.getAdTagUrl()?.let { adData.adTagUrl = it }
       ad.adId?.let { adData.adId = it }
       ad.creativeId?.let { adData.adCreativeId = it }
       @Suppress("DEPRECATION") // This is only deprecated on android, we need consistency
       ad.universalAdIdValue?.let { adData.adUniversalId = it }
+
+      val adTagUrl = exoPlayer?.getAdTagUrl()
+      adData.adTagUrl = adTagUrl
+
+      if (adTagUrl != null) {
+        // Only detect ad type for CSAI (detected by adTagUrl). DAI timeOffsets are always 0
+        val adType = ad.adPodInfo?.let {
+          // per the IMA docs
+          when (it.timeOffset) {
+            0.0 -> AdType.PRE_ROLL
+            -1.0 -> AdType.POST_ROLL
+            else -> AdType.MID_ROLL
+          }
+        }
+        adData.adType = adType
+      }
     }
+    
     event.viewData = viewData
     event.adData = adData
   }
