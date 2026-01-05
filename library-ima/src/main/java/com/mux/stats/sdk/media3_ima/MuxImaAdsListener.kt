@@ -78,8 +78,10 @@ class MuxImaAdsListener private constructor(
 
       ad.adId?.let { adData.adId = it }
       ad.creativeId?.let { adData.adCreativeId = it }
-      @Suppress("DEPRECATION") // This is only deprecated on android, we need consistency
-      ad.universalAdIdValue?.let { adData.adUniversalId = it }
+      ad.universalAdIds
+        ?.takeIf { it.isNotEmpty() }
+        ?.get(0)
+        ?.let { adData.adUniversalId = it.adIdValue }
 
       val adTagUrl = exoPlayer?.getAdTagUrl()
       adData.adTagUrl = adTagUrl
