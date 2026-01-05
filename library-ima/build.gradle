@@ -71,6 +71,7 @@ android {
     }
   }
   compileOptions {
+    coreLibraryDesugaringEnabled = true
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
   }
@@ -128,6 +129,8 @@ muxDistribution {
 
 dependencies {
   debugImplementation project(':library')
+
+  coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
   //noinspection GradleDependency
   at_1_0Api "androidx.media3:media3-exoplayer-ima:1.0.0"
