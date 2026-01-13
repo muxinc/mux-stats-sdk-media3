@@ -50,13 +50,11 @@ internal fun MuxStateCollector.populateLiveStreamData(window: Window) {
   if (window.isLive()) {
     val hlsManifest = window.manifest as HlsManifest
     val mediaPlaylist = hlsManifest.mediaPlaylist
-    Log.d("LIVESTREAM", "Media Playlist: $mediaPlaylist")
+
     @Suppress("SENSELESS_COMPARISON") // nullable, but the library class isn't annotated
     if (mediaPlaylist != null) {
       hlsManifestNewestTime = mediaPlaylist.tags.lastOrNull { it.matches(RX_PDT_TAG) }
         ?.let { parseProgramDateTime(it) }
-
-      Log.d("LIVESTREAM", "manifestNewestTime set to $hlsManifestNewestTime")
 
       hlsHoldBack = parseManifestTagL(window, "HOLD-BACK")
       hlsPartHoldBack = parseManifestTagL(window, "PART-HOLD-BACK")
