@@ -47,7 +47,7 @@ internal fun isHlsExtensionAvailable() = hlsExtensionAvailable
 @OptIn(UnstableApi::class)
 internal fun MuxStateCollector.populateLiveStreamData(window: Window) {
   @Suppress("UsePropertyAccessSyntax") // isLive is also a field in some media3 versions
-  if (window.isLive()) {
+  if (isHlsExtensionAvailable() && window.isLive()) {
     val hlsManifest = window.manifest as? HlsManifest
     val mediaPlaylist = hlsManifest?.mediaPlaylist
 
@@ -99,10 +99,6 @@ internal fun parseManifestTagL(currentWindow: Window, tagName: String): Long {
 @OptIn(UnstableApi::class)
 @JvmSynthetic
 internal fun parseManifestTag(currentWindow: Timeline.Window, tagName: String): String {
-  if (!isHlsExtensionAvailable()) {
-    return "-1"
-  }
-
   if (currentWindow.manifest != null && tagName.isNotEmpty()) {
     if (currentWindow.manifest is HlsManifest) {
       val manifest = currentWindow.manifest as HlsManifest
