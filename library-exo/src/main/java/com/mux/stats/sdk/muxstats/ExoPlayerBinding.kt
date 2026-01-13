@@ -118,6 +118,7 @@ private class MuxAnalyticsListener(
   }
 
   override fun onTimelineChanged(eventTime: AnalyticsListener.EventTime, reason: Int) {
+    Log.d("LIVESTREAM", "called")
     eventTime.timeline.takeIf { it.windowCount > 0 }?.let { tl ->
       val window = Timeline.Window().apply { tl.getWindow(0, this) }
       collector.sourceDurationMs = window.durationMs
