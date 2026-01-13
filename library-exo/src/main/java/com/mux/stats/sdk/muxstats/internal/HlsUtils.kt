@@ -64,6 +64,7 @@ internal fun MuxStateCollector.populateLiveStreamData(window: Window) {
 }
 
 @JvmSynthetic
+@OptIn(UnstableApi::class)
 internal fun parseProgramDateTime(pdtTag: String): Long {
   val matchResult = RX_PDT_TAG.matchEntire(pdtTag)
   return if (matchResult != null) {
