@@ -3,8 +3,8 @@ package com.mux.stats.sdk.muxstats.internal
 import androidx.annotation.OptIn
 import androidx.media3.common.Timeline
 import androidx.media3.common.Timeline.Window
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
 import androidx.media3.exoplayer.hls.HlsManifest
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.MuxStateCollector
@@ -12,6 +12,8 @@ import com.mux.stats.sdk.muxstats.MuxStateCollector
 /*
  * HlsUtils.kt: Utility functions for working with HLS playlists in exoplayer
  */
+
+private val RX_PDT_TAG = """^#EXT-X-PROGRAM-DATE-TIME:(.*)$""".toRegex()
 
 // lazily-cached check for the HLS extension, which may not be available at runtime
 @OptIn(UnstableApi::class) // opting-in to HlsManifest
@@ -41,13 +43,38 @@ internal fun isHlsExtensionAvailable() = hlsExtensionAvailable
  * Add livestream data to a [MuxStateCollector] if the given [Window] represents a live stream
  */
 @JvmSynthetic
+@OptIn(UnstableApi::class)
 internal fun MuxStateCollector.populateLiveStreamData(window: Window) {
-  if (window.isLive()) {
-    hlsManifestNewestTime = window.windowStartTimeMs
-    hlsHoldBack = parseManifestTagL(window, "HOLD-BACK")
-    hlsPartHoldBack = parseManifestTagL(window, "PART-HOLD-BACK")
-    hlsPartTargetDuration = parseManifestTagL(window, "PART-TARGET")
-    hlsTargetDuration = parseManifestTagL(window, "EXT-X-TARGETDURATION")
+  @Suppress("UsePropertyAccessSyntax") // isLive is also a field in some media3 versions
+  if (isHlsExtensionAvailable() && window.isLive()) {
+    val hlsManifest = window.manifest as? HlsManifest
+    val mediaPlaylist = hlsManifest?.mediaPlaylist
+
+    if (mediaPlaylist != null) {
+      hlsManifestNewestTime = mediaPlaylist.tags.lastOrNull { it.matches(RX_PDT_TAG) }
+        ?.let { parseProgramDateTime(it) }
+
+      hlsHoldBack = parseManifestTagL(window, "HOLD-BACK")
+      hlsPartHoldBack = parseManifestTagL(window, "PART-HOLD-BACK")
+      hlsPartTargetDuration = parseManifestTagL(window, "PART-TARGET")
+      hlsTargetDuration = parseManifestTagL(window, "EXT-X-TARGETDURATION")
+    }
+  }
+}
+
+@JvmSynthetic
+@OptIn(UnstableApi::class)
+internal fun parseProgramDateTime(pdtTag: String): Long {
+  val matchResult = RX_PDT_TAG.matchEntire(pdtTag)
+  return if (matchResult != null) {
+    runCatching {
+      Util.parseXsDateTime(matchResult.groupValues[1])
+    }.getOrElse { exception ->
+      MuxLogger.exception(exception, "HlsUtlis", "Failed to parse PROGRAM-DATE-TIME $pdtTag")
+      -1L
+    }
+  } else {
+    -1L
   }
 }
 
@@ -72,10 +99,6 @@ internal fun parseManifestTagL(currentWindow: Window, tagName: String): Long {
 @OptIn(UnstableApi::class)
 @JvmSynthetic
 internal fun parseManifestTag(currentWindow: Timeline.Window, tagName: String): String {
-  if (!isHlsExtensionAvailable()) {
-    return "-1"
-  }
-
   if (currentWindow.manifest != null && tagName.isNotEmpty()) {
     if (currentWindow.manifest is HlsManifest) {
       val manifest = currentWindow.manifest as HlsManifest
