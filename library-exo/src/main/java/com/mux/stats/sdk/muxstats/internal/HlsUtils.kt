@@ -71,7 +71,7 @@ internal fun parseProgramDateTime(pdtTag: String): Long {
     runCatching {
       Util.parseXsDateTime(matchResult.groupValues[1])
     }.getOrElse { exception ->
-      Log.w("HlsUtils", "Failed to parse PROGRAM-DATE-TIME $pdtTag", exception)
+      MuxLogger.exception(exception, "HlsUtlis", "Failed to parse PROGRAM-DATE-TIME $pdtTag")
       -1L
     }
   } else {
