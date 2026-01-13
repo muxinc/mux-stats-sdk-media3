@@ -10,9 +10,10 @@ internal object ImaCompat {
   /**
    * Return a universalAdId using an API available on this media3 version
    *
-   * This implementation returns the first universalAdId, since Mux Data supports only oneyy
+   * This implementation returns the first universalAdId, since Mux Data supports only one
    */
   fun universalAdId(ad: Ad): String? {
-    return ad.universalAdIds.takeIf { it.isNotEmpty() }?.firstOrNull()?.adIdValue
+    @Suppress("UNNECESSARY_SAFE_CALL") // Don't trust this. Have seen ad data be null
+    return ad.universalAdIds?.firstOrNull()?.adIdValue
   }
 }
