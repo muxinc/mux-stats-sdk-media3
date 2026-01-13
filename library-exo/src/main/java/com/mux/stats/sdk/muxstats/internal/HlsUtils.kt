@@ -3,7 +3,6 @@ package com.mux.stats.sdk.muxstats.internal
 import androidx.annotation.OptIn
 import androidx.media3.common.Timeline
 import androidx.media3.common.Timeline.Window
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.exoplayer.hls.HlsManifest
