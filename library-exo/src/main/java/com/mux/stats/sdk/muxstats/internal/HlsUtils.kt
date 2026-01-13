@@ -48,10 +48,9 @@ internal fun isHlsExtensionAvailable() = hlsExtensionAvailable
 internal fun MuxStateCollector.populateLiveStreamData(window: Window) {
   @Suppress("UsePropertyAccessSyntax") // isLive is also a field in some media3 versions
   if (window.isLive()) {
-    val hlsManifest = window.manifest as HlsManifest
-    val mediaPlaylist = hlsManifest.mediaPlaylist
+    val hlsManifest = window.manifest as? HlsManifest
+    val mediaPlaylist = hlsManifest?.mediaPlaylist
 
-    @Suppress("SENSELESS_COMPARISON") // nullable, but the library class isn't annotated
     if (mediaPlaylist != null) {
       hlsManifestNewestTime = mediaPlaylist.tags.lastOrNull { it.matches(RX_PDT_TAG) }
         ?.let { parseProgramDateTime(it) }
