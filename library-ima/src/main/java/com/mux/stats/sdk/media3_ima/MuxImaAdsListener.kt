@@ -78,10 +78,7 @@ class MuxImaAdsListener private constructor(
 
       ad.adId?.let { adData.adId = it }
       ad.creativeId?.let { adData.adCreativeId = it }
-      ad.universalAdIds
-        ?.takeIf { it.isNotEmpty() }
-        ?.get(0)
-        ?.let { adData.adUniversalId = it.adIdValue }
+      ImaCompat.universalAdId(ad)?.let { adData.adUniversalId = it }
 
       val adTagUrl = exoPlayer?.getAdTagUrl()
       adData.adTagUrl = adTagUrl

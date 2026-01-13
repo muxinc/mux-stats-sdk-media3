@@ -64,6 +64,39 @@ android {
     }
   }
 
+  sourceSets {
+    at_1_0 {
+      java.srcDirs += 'src/compatFrom_1_0/java'
+    }
+    at_1_1 {
+      java.srcDirs += 'src/compatFrom_1_0/java'
+    }
+    at_1_2 {
+      java.srcDirs += 'src/compatFrom_1_0/java'
+    }
+    at_1_3 {
+      java.srcDirs += 'src/compatFrom_1_0/java'
+    }
+    at_1_4 {
+      java.srcDirs += 'src/compatFrom_1_0/java'
+    }
+    at_1_5 {
+      java.srcDirs += 'src/compatFrom_1_0/java'
+    }
+    at_1_6 {
+      java.srcDirs += 'src/compatFrom_1_0/java'
+    }
+    at_1_8 {
+      java.srcDirs += 'src/compatFrom_1_0/java'
+    }
+    at_1_9 {
+      java.srcDirs += 'src/compatFrom_1_9/java'
+    }
+    At_latest {
+      java.srcDirs += 'src/compatFrom_1_9/java'
+    }
+  }
+
   buildTypes {
     release {
       minifyEnabled false
