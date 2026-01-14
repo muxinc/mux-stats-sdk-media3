@@ -7,7 +7,7 @@ android {
 
   defaultConfig {
     applicationId "com.mux.player.media3"
-    minSdkVersion 21
+    minSdkVersion 23
     //noinspection EditedTargetSdkVersion
     targetSdk 36
     versionCode 1
@@ -30,6 +30,7 @@ android {
     at_1_5 { dimension "media3" }
     at_1_6 { dimension "media3" }
     at_1_8 { dimension "media3" }
+    at_1_9 { dimension "media3" }
   }
 
   buildFeatures {
@@ -62,6 +63,7 @@ android {
   }
 
   compileOptions {
+    coreLibraryDesugaringEnabled = true // only needed if using IMA
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
   }
@@ -74,6 +76,8 @@ dependencies {
   implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
   implementation 'androidx.navigation:navigation-fragment:2.9.3'
   implementation 'androidx.navigation:navigation-ui:2.9.3'
+
+  coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
   //noinspection GradleDependency
   at_1_0Implementation "androidx.media3:media3-exoplayer:1.0.0"
@@ -195,13 +199,28 @@ dependencies {
   //noinspection GradleDependency
   at_1_8Implementation "androidx.media3:media3-exoplayer-rtsp:1.8.0"
 
-  At_latestImplementation "androidx.media3:media3-exoplayer:1.8.0"
-  At_latestImplementation "androidx.media3:media3-session:1.8.0"
-  At_latestImplementation "androidx.media3:media3-ui:1.8.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-ima:1.8.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-dash:1.8.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-hls:1.8.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-rtsp:1.8.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-exoplayer:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-session:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-ui:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-exoplayer-ima:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-exoplayer-dash:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-exoplayer-hls:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-exoplayer-rtsp:1.9.0"
+
+  At_latestImplementation "androidx.media3:media3-exoplayer:1.9.0"
+  At_latestImplementation "androidx.media3:media3-session:1.9.0"
+  At_latestImplementation "androidx.media3:media3-ui:1.9.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-ima:1.9.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-dash:1.9.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-hls:1.9.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-rtsp:1.9.0"
 
   androidTestImplementation 'androidx.test:runner:1.7.0'
   androidTestImplementation 'androidx.test:rules:1.7.0'

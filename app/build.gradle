@@ -12,7 +12,7 @@ android {
     applicationId "com.example.muxdatasdkformedia3"
     //noinspection EditedTargetSdkVersion
     targetSdk 36
-    minSdk 21
+    minSdk 23
     versionCode 1
     def commit = "git rev-parse --short HEAD".execute().inputReader().readLines().join()
     def branch = "git branch --show-current".execute().inputReader().readLines().join()
@@ -35,6 +35,7 @@ android {
     at_1_5 { dimension "media3" }
     at_1_6 { dimension "media3" }
     at_1_8 { dimension "media3" }
+    at_1_9 { dimension "media3" }
   }
 
   sourceSets {
@@ -65,6 +66,9 @@ android {
     at_1_8 {
       java.srcDirs += "src/compatFrom1_3/java"
     }
+    at_1_9 {
+      java.srcDirs += "src/compatFrom1_3/java"
+    }
   }
 
   buildTypes {
@@ -78,6 +82,7 @@ android {
     compose true
   }
   compileOptions {
+    coreLibraryDesugaringEnabled = true // only needed if using IMA
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
   }
@@ -107,6 +112,8 @@ dependencies {
   implementation 'androidx.compose.material3:material3'
   androidTestImplementation platform('androidx.compose:compose-bom:2025.08.00')
   androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+
+  coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
   //noinspection GradleDependency
   at_1_0Implementation "androidx.media3:media3-exoplayer:1.0.0"
@@ -228,13 +235,28 @@ dependencies {
   //noinspection GradleDependency
   at_1_8Implementation "androidx.media3:media3-exoplayer-rtsp:1.8.0"
 
-  At_latestImplementation "androidx.media3:media3-exoplayer:1.8.0"
-  At_latestImplementation "androidx.media3:media3-session:1.8.0"
-  At_latestImplementation "androidx.media3:media3-ui:1.8.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-ima:1.8.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-dash:1.8.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-hls:1.8.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-rtsp:1.8.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-exoplayer:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-session:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-ui:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-exoplayer-ima:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-exoplayer-dash:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-exoplayer-hls:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Implementation "androidx.media3:media3-exoplayer-rtsp:1.9.0"
+
+  At_latestImplementation "androidx.media3:media3-exoplayer:1.9.0"
+  At_latestImplementation "androidx.media3:media3-session:1.9.0"
+  At_latestImplementation "androidx.media3:media3-ui:1.9.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-ima:1.9.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-dash:1.9.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-hls:1.9.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-rtsp:1.9.0"
 
   implementation 'androidx.core:core-ktx:1.17.0'
   implementation 'androidx.appcompat:appcompat:1.7.1'
