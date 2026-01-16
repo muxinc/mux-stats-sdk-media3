@@ -10,7 +10,7 @@ plugins {
 
 allprojects {
   project.ext {
-    androidCoreVersion = 'dev-network-change-d4b6021'
+    androidCoreVersion = 'dev-network-change-events-e7646a8'
     javaCoreVersion = 'dev-network-change-events-579c5e0'
   }
 
