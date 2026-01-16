@@ -10,8 +10,8 @@ plugins {
 
 allprojects {
   project.ext {
-    androidCoreVersion = '1.5.0'
-    javaCoreVersion = '8.6.0'
+    androidCoreVersion = 'dev-network-change-d4b6021'
+    javaCoreVersion = 'dev-network-change-events-579c5e0'
   }
 
   tasks.withType(DokkaTaskPartial.class) {
