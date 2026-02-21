@@ -190,7 +190,7 @@ private class MuxAnalyticsListener(
       val groupId = format.id // not mediaTrackGroup.id, that's some internal thing
       // NOTE - format.id for HLS seems to include both the GROUP and the NAME, so parse that out
       val mimeType = format.codecs // surprise! it's not format.mimeType for text tracks
-
+      val bitrate = format.bitrate // reported separately with DASH but not HLS
       val isClosedCaps = (format.roleFlags and C.ROLE_FLAG_CAPTION) != 0
       val isSubtitles = (format.roleFlags and C.ROLE_FLAG_SUBTITLE) != 0
 
@@ -201,6 +201,7 @@ private class MuxAnalyticsListener(
       Log.i("TRACKCHANGE", "MIME type: $mimeType")
       Log.i("TRACKCHANGE", "isClosedCaps $isClosedCaps")
       Log.i("TRACKCHANGE", "isSubtitles $isSubtitles")
+      Log.i("TRACKCHANGE", "reported bitrate: $bitrate")
 
     } else {
       Log.i("TRACKCHANGE", "no selected text track")
@@ -218,6 +219,7 @@ private class MuxAnalyticsListener(
       // NOTE - format.id for HLS seems to include both the GROUP and the NAME, so parse out the name
       val mimeType = format.sampleMimeType
       val audioCodecs = format.codecs
+      val bitrate = format.bitrate // reported separately with DASH but not HLS
 
       Log.v("TRACKCHANGE", "Selected Audio Track format: ${Format.toLogString(format)}")
       Log.v("TRACKCHANGE", "Language: $lang")
@@ -225,6 +227,7 @@ private class MuxAnalyticsListener(
       Log.v("TRACKCHANGE", "GroupID (GROUP in media tag?): $groupId")
       Log.v("TRACKCHANGE", "MIME type $mimeType")
       Log.v("TRACKCHANGE", "Audio CODECS: $audioCodecs")
+      Log.v("TRACKCHANGE", "Reported bitrate: $bitrate")
     } else {
       Log.v("TRACKCHANGE", "no selected audio track")
     }
