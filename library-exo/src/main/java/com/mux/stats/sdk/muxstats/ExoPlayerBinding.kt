@@ -179,30 +179,54 @@ private class MuxAnalyticsListener(
     bandwidthMetrics?.onTracksChanged(tracks)
     collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
 
-    val selectedTrackGroup = tracks.groups.filter { it.type == C.TRACK_TYPE_TEXT }
+    val selectedTextTrackGroup = tracks.groups.filter { it.type == C.TRACK_TYPE_TEXT }
         .find { it.isSelected }
-    if (selectedTrackGroup != null) {
-      val indexInTrackGroup = selectedTrackGroup.findSelectedTrackIndex()!! // safe by contract
-      val format = selectedTrackGroup.getTrackFormat(indexInTrackGroup)
+    if (selectedTextTrackGroup != null) {
+      val indexInTrackGroup = selectedTextTrackGroup.findSelectedTrackIndex()!! // safe by contract (but..)
+      val format = selectedTextTrackGroup.getTrackFormat(indexInTrackGroup)
       val lang = format.language
       val name = format.label
 //      val groupId = selectedTrackGroup.mediaTrackGroup.id // nope: this is internal
       val groupId = format.id // not mediaTrackGroup.id, that's some internal thing
       // NOTE - format.id for HLS seems to include both the GROUP and the NAME, so parse that out
-      val mimeType = format.codecs // surprise! it's not format.mimeType
+      val mimeType = format.codecs // surprise! it's not format.mimeType for text tracks
 
       val isClosedCaps = (format.roleFlags and C.ROLE_FLAG_CAPTION) != 0
       val isSubtitles = (format.roleFlags and C.ROLE_FLAG_SUBTITLE) != 0
 
-      Log.i("TEXTTRACK", "Selected Text Format: ${Format.toLogString(format)}")
-      Log.i("TEXTTRACK", "Language: $lang")
-      Log.i("TEXTTRACK", "Name (format.label): $name")
-      Log.i("TEXTTRACK", "GroupID (GROUP in media tag?): $groupId")
-      Log.i("TEXTTRACK", "isClosedCaps $isClosedCaps")
-      Log.i("TEXTTRACK", "isSubtitles $isSubtitles")
+      Log.i("TRACKCHANGE", "Selected Text Format: ${Format.toLogString(format)}")
+      Log.i("TRACKCHANGE", "Language: $lang")
+      Log.i("TRACKCHANGE", "Name (format.label): $name")
+      Log.i("TRACKCHANGE", "GroupID (GROUP in media tag?): $groupId")
+      Log.i("TRACKCHANGE", "MIME type: $mimeType")
+      Log.i("TRACKCHANGE", "isClosedCaps $isClosedCaps")
+      Log.i("TRACKCHANGE", "isSubtitles $isSubtitles")
 
     } else {
-      Log.i("TEXTTRACK", "no selected text track")
+      Log.i("TRACKCHANGE", "no selected text track")
+    }
+
+    val selectedAudioTrackGroup = tracks.groups.filter { it.type == C.TRACK_TYPE_AUDIO }
+      .find { it.isSelected }
+    if (selectedAudioTrackGroup != null) {
+      val indexInTrackGroup = selectedAudioTrackGroup.findSelectedTrackIndex()!! // safe by contract (but..)
+      val format = selectedAudioTrackGroup.getTrackFormat(indexInTrackGroup)
+      val lang = format.language
+      val name = format.label
+//      val groupId = selectedTrackGroup.mediaTrackGroup.id // nope: this is internal
+      val groupId = format.id // not mediaTrackGroup.id, that's some internal thing
+      // NOTE - format.id for HLS seems to include both the GROUP and the NAME, so parse out the name
+      val mimeType = format.sampleMimeType
+      val audioCodecs = format.codecs
+
+      Log.v("TRACKCHANGE", "Selected Audio Track format: ${Format.toLogString(format)}")
+      Log.v("TRACKCHANGE", "Language: $lang")
+      Log.v("TRACKCHANGE", "Name (format.label): $name")
+      Log.v("TRACKCHANGE", "GroupID (GROUP in media tag?): $groupId")
+      Log.v("TRACKCHANGE", "MIME type $mimeType")
+      Log.v("TRACKCHANGE", "Audio CODECS: $audioCodecs")
+    } else {
+      Log.v("TRACKCHANGE", "no selected audio track")
     }
 
   }
