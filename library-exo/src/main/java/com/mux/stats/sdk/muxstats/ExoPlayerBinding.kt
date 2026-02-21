@@ -2,6 +2,7 @@ package com.mux.stats.sdk.muxstats
 
 import android.util.Log
 import androidx.annotation.OptIn
+import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -174,9 +175,46 @@ private class MuxAnalyticsListener(
 
     player?.let {
       collector.watchPlayerPos(it)
-      collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     }
     bandwidthMetrics?.onTracksChanged(tracks)
+    collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
+
+    val selectedTrackGroup = tracks.groups.filter { it.type == C.TRACK_TYPE_TEXT }
+        .find { it.isSelected }
+    if (selectedTrackGroup != null) {
+      val indexInTrackGroup = selectedTrackGroup.findSelectedTrackIndex()!! // safe by contract
+      val format = selectedTrackGroup.getTrackFormat(indexInTrackGroup)
+      val lang = format.language
+      val name = format.label
+//      val groupId = selectedTrackGroup.mediaTrackGroup.id // nope: this is internal
+      val groupId = format.id // not mediaTrackGroup.id, that's some internal thing
+      // NOTE - format.id for HLS seems to include both the GROUP and the NAME, so parse that out
+      val mimeType = format.codecs // surprise! it's not format.mimeType
+
+      val isClosedCaps = (format.roleFlags and C.ROLE_FLAG_CAPTION) != 0
+      val isSubtitles = (format.roleFlags and C.ROLE_FLAG_SUBTITLE) != 0
+
+      Log.i("TEXTTRACK", "Selected Text Format: ${Format.toLogString(format)}")
+      Log.i("TEXTTRACK", "Language: $lang")
+      Log.i("TEXTTRACK", "Name (format.label): $name")
+      Log.i("TEXTTRACK", "GroupID (GROUP in media tag?): $groupId")
+      Log.i("TEXTTRACK", "isClosedCaps $isClosedCaps")
+      Log.i("TEXTTRACK", "isSubtitles $isSubtitles")
+
+    } else {
+      Log.i("TEXTTRACK", "no selected text track")
+    }
+
+  }
+
+  fun Tracks.Group.findSelectedTrackIndex(): Int? {
+    for (i in 0..<length) {
+      if (isTrackSelected(i)) {
+        return i
+      }
+    }
+
+    return null
   }
 
   override fun onDownstreamFormatChanged(

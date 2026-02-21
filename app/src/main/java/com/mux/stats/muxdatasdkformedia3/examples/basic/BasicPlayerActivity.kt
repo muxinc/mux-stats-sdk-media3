@@ -47,7 +47,9 @@ class BasicPlayerActivity : AppCompatActivity() {
   override fun onResume() {
     super.onResume()
     startPlaying(
-      intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_TEARS_OF_STEEL
+      //intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_TEARS_OF_STEEL
+      "https://stream.mux.com/3x5wDUHxkd8NkEfspLUK3OpSQEJe3pom.m3u8"
+//      "https://dash.akamaized.net/dash264/TestCases/4b/qualcomm/1/ED_OnDemand_5SecSeg_Subtitles.mpd"
     )
   }
 
@@ -62,7 +64,8 @@ class BasicPlayerActivity : AppCompatActivity() {
     player = createPlayer().also { newPlayer ->
       newPlayer.trackSelectionParameters = newPlayer.trackSelectionParameters
         .buildUpon()
-        .setPreferredTextLanguage("en")
+//        .setPreferredTextLanguage("en")
+        .setPreferredTextLanguage("fr")
         .build()
 
       muxStats = monitorPlayer(newPlayer)
