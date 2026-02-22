@@ -179,6 +179,9 @@ private class MuxAnalyticsListener(
     bandwidthMetrics?.onTracksChanged(tracks)
     collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
 
+    // todo - we can look up manifest/mvp info from the Timeline if we want to get URLs, or
+    //  CLOSED_CAPTION vs SUBTITLES in hls
+
     val selectedTextTrackGroup = tracks.groups.filter { it.type == C.TRACK_TYPE_TEXT }
         .find { it.isSelected }
     if (selectedTextTrackGroup != null) {

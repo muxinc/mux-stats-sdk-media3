@@ -48,9 +48,9 @@ class BasicPlayerActivity : AppCompatActivity() {
     super.onResume()
     startPlaying(
       //intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_TEARS_OF_STEEL
-//      "https://stream.mux.com/3x5wDUHxkd8NkEfspLUK3OpSQEJe3pom.m3u8"
+      "https://stream.mux.com/3x5wDUHxkd8NkEfspLUK3OpSQEJe3pom.m3u8"
 //      "https://dash.akamaized.net/dash264/TestCases/4b/qualcomm/1/ED_OnDemand_5SecSeg_Subtitles.mpd"
-      "https://rdmedia.bbc.co.uk/elephants_dream/1/client_manifest-all.mpd"
+//      "https://rdmedia.bbc.co.uk/elephants_dream/1/client_manifest-all.mpd"
     )
   }
 
