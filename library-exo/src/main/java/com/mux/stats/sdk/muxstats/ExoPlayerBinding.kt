@@ -215,7 +215,7 @@ private class MuxAnalyticsListener(
       val lang = format.language
       val name = format.label
 //      val groupId = selectedTrackGroup.mediaTrackGroup.id // nope: this is internal
-      val groupId = format.id // not mediaTrackGroup.id, that's some internal thing
+      val groupId = format.id // not mediaTrackGroup.id, that's some internal thing (also for DASH, this is a Representation ID)
       // NOTE - format.id for HLS seems to include both the GROUP and the NAME, so parse out the name
       val mimeType = format.sampleMimeType
       val audioCodecs = format.codecs
