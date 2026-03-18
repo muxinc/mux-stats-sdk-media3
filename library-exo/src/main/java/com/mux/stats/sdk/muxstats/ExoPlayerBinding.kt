@@ -190,12 +190,12 @@ private class MuxAnalyticsListener(
       val lang = format.language
       val name = format.label
 //      val groupId = selectedTrackGroup.mediaTrackGroup.id // nope: this is internal
-      val groupId = format.id // not mediaTrackGroup.id, that's some internal thing
+      val groupId = format.id // (almost) EXT-X-MEDIA GROUP in HLS, Representation ID in DASH
       // NOTE - format.id for HLS seems to include both the GROUP and the NAME, so parse that out
       val mimeType = format.codecs // surprise! it's not format.mimeType for text tracks
       val bitrate = format.bitrate // reported separately with DASH but not HLS
-      val isClosedCaps = (format.roleFlags and C.ROLE_FLAG_CAPTION) != 0
-      val isSubtitles = (format.roleFlags and C.ROLE_FLAG_SUBTITLE) != 0
+      val isClosedCaps = (format.roleFlags and C.ROLE_FLAG_CAPTION) != 0 // not implemented for HLS
+      val isSubtitles = (format.roleFlags and C.ROLE_FLAG_SUBTITLE) != 0 // not implemented for HLS
 
       Log.i("TRACKCHANGE", "Selected Text Format: ${Format.toLogString(format)}")
       Log.i("TRACKCHANGE", "Language: $lang")
@@ -218,7 +218,7 @@ private class MuxAnalyticsListener(
       val lang = format.language
       val name = format.label
 //      val groupId = selectedTrackGroup.mediaTrackGroup.id // nope: this is internal
-      val groupId = format.id // not mediaTrackGroup.id, that's some internal thing (also for DASH, this is a Representation ID)
+      val groupId = format.id // (almost) EXT-X-MEDIA GROUP in HLS, Representation ID in DASH
       // NOTE - format.id for HLS seems to include both the GROUP and the NAME, so parse out the name
       val mimeType = format.sampleMimeType
       val audioCodecs = format.codecs
