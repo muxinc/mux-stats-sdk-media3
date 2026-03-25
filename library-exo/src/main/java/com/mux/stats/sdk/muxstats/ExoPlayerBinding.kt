@@ -197,6 +197,9 @@ private class MuxAnalyticsListener(
       val isClosedCaps = (format.roleFlags and C.ROLE_FLAG_CAPTION) != 0 // not implemented for HLS
       val isSubtitles = (format.roleFlags and C.ROLE_FLAG_SUBTITLE) != 0 // not implemented for HLS
 
+      // If you want the URL of the media playlist, you have to get the HlsManifest and search for
+      //  the Rendition matching attributes. (maybe you can get CC vs subtitles this way too)
+
       Log.i("TRACKCHANGE", "Selected Text Format: ${Format.toLogString(format)}")
       Log.i("TRACKCHANGE", "Language: $lang")
       Log.i("TRACKCHANGE", "Name (format.label): $name")
