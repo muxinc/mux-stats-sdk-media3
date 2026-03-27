@@ -48,11 +48,7 @@ class BasicPlayerActivity : AppCompatActivity() {
   override fun onResume() {
     super.onResume()
     startPlaying(
-      //intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_TEARS_OF_STEEL
-      "https://stream.mux.com/3x5wDUHxkd8NkEfspLUK3OpSQEJe3pom.m3u8"
-//      "https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8?82741="
-//      "https://dash.akamaized.net/dash264/TestCases/4b/qualcomm/1/ED_OnDemand_5SecSeg_Subtitles.mpd"
-//      "https://rdmedia.bbc.co.uk/elephants_dream/1/client_manifest-all.mpd"
+      intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_TEARS_OF_STEEL
     )
   }
 
@@ -67,8 +63,7 @@ class BasicPlayerActivity : AppCompatActivity() {
     player = createPlayer().also { newPlayer ->
       newPlayer.trackSelectionParameters = newPlayer.trackSelectionParameters
         .buildUpon()
-//        .setPreferredTextLanguage("en")
-        .setPreferredTextLanguage("fr")
+        .setPreferredTextLanguage("en")
         .build()
 
       muxStats = monitorPlayer(newPlayer)

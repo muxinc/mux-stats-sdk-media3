@@ -1,6 +1,5 @@
 package com.mux.stats.sdk.muxstats
 
-import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
@@ -17,6 +16,7 @@ import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.source.LoadEventInfo
 import androidx.media3.exoplayer.source.MediaLoadData
 import com.mux.android.util.weak
+import com.mux.stats.sdk.core.events.playback.TextTrackChangeEvent
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
@@ -94,6 +94,15 @@ private class MuxAnalyticsListener(
 
   private val player by weak(player)
   private var lastVideoFormat: Format? = null
+  private val textTrackChangeReporter = TextTrackChangeReporter { state ->
+    collector.muxStats.textTrackChange(
+      state.enabled,
+      state.type,
+      state.format,
+      state.name,
+      state.language
+    )
+  }
 
   override fun onPlayWhenReadyChanged(
     eventTime: AnalyticsListener.EventTime,
@@ -131,6 +140,7 @@ private class MuxAnalyticsListener(
     mediaItem: MediaItem?,
     reason: Int
   ) {
+    textTrackChangeReporter.reset()
     mediaItem?.let { collector.handleMediaItemChanged(it) }
   }
 
@@ -178,76 +188,9 @@ private class MuxAnalyticsListener(
     }
     bandwidthMetrics?.onTracksChanged(tracks)
     collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
-
-    // todo - we can look up manifest/mvp info from the Timeline if we want to get URLs, or
-    //  CLOSED_CAPTION vs SUBTITLES in hls
-
-    val selectedTextTrackGroup = tracks.groups.filter { it.type == C.TRACK_TYPE_TEXT }
-        .find { it.isSelected }
-    if (selectedTextTrackGroup != null) {
-      val indexInTrackGroup = selectedTextTrackGroup.findSelectedTrackIndex()!! // safe by contract (but..)
-      val format = selectedTextTrackGroup.getTrackFormat(indexInTrackGroup)
-      val lang = format.language
-      val name = format.label
-//      val groupId = selectedTrackGroup.mediaTrackGroup.id // nope: this is internal
-      val groupId = format.id // (almost) EXT-X-MEDIA GROUP in HLS, Representation ID in DASH
-      // NOTE - format.id for HLS seems to include both the GROUP and the NAME, so parse that out
-      val mimeType = format.codecs // surprise! it's not format.mimeType for text tracks
-      val bitrate = format.bitrate // reported separately with DASH but not HLS
-      val isClosedCaps = (format.roleFlags and C.ROLE_FLAG_CAPTION) != 0 // not implemented for HLS
-      val isSubtitles = (format.roleFlags and C.ROLE_FLAG_SUBTITLE) != 0 // not implemented for HLS
-
-      // If you want the URL of the media playlist, you have to get the HlsManifest and search for
-      //  the Rendition matching attributes. (maybe you can get CC vs subtitles this way too)
-
-      Log.i("TRACKCHANGE", "Selected Text Format: ${Format.toLogString(format)}")
-      Log.i("TRACKCHANGE", "Language: $lang")
-      Log.i("TRACKCHANGE", "Name (format.label): $name")
-      Log.i("TRACKCHANGE", "GroupID (GROUP in media tag?): $groupId")
-      Log.i("TRACKCHANGE", "MIME type: $mimeType")
-      Log.i("TRACKCHANGE", "isClosedCaps $isClosedCaps")
-      Log.i("TRACKCHANGE", "isSubtitles $isSubtitles")
-      Log.i("TRACKCHANGE", "reported bitrate: $bitrate")
-
-    } else {
-      Log.i("TRACKCHANGE", "no selected text track")
+    if (eventTime.mediaPeriodId?.isInAdGroup() != true) {
+      textTrackChangeReporter.reportTracksChanged(tracks)
     }
-
-    val selectedAudioTrackGroup = tracks.groups.filter { it.type == C.TRACK_TYPE_AUDIO }
-      .find { it.isSelected }
-    if (selectedAudioTrackGroup != null) {
-      val indexInTrackGroup = selectedAudioTrackGroup.findSelectedTrackIndex()!! // safe by contract (but..)
-      val format = selectedAudioTrackGroup.getTrackFormat(indexInTrackGroup)
-      val lang = format.language
-      val name = format.label
-//      val groupId = selectedTrackGroup.mediaTrackGroup.id // nope: this is internal
-      val groupId = format.id // (almost) EXT-X-MEDIA GROUP in HLS, Representation ID in DASH
-      // NOTE - format.id for HLS seems to include both the GROUP and the NAME, so parse out the name
-      val mimeType = format.sampleMimeType
-      val audioCodecs = format.codecs
-      val bitrate = format.bitrate // reported separately with DASH but not HLS
-
-      Log.v("TRACKCHANGE", "Selected Audio Track format: ${Format.toLogString(format)}")
-      Log.v("TRACKCHANGE", "Language: $lang")
-      Log.v("TRACKCHANGE", "Name (format.label): $name")
-      Log.v("TRACKCHANGE", "GroupID (GROUP in media tag?): $groupId")
-      Log.v("TRACKCHANGE", "MIME type $mimeType")
-      Log.v("TRACKCHANGE", "Audio CODECS: $audioCodecs")
-      Log.v("TRACKCHANGE", "Reported bitrate: $bitrate")
-    } else {
-      Log.v("TRACKCHANGE", "no selected audio track")
-    }
-
-  }
-
-  fun Tracks.Group.findSelectedTrackIndex(): Int? {
-    for (i in 0..<length) {
-      if (isTrackSelected(i)) {
-        return i
-      }
-    }
-
-    return null
   }
 
   override fun onDownstreamFormatChanged(
@@ -381,3 +324,103 @@ private class MuxAnalyticsListener(
     MuxLogger.d(TAG, "Listening to ExoPlayer $player")
   }
 }
+
+internal data class TextTrackState(
+  val enabled: Boolean,
+  val type: String? = null,
+  val format: String? = null,
+  val name: String? = null,
+  val language: String? = null,
+)
+
+internal class TextTrackChangeReporter(
+  private val dispatch: (TextTrackState) -> Unit,
+) {
+  private var lastReportedState: TextTrackState? = null
+
+  fun reportTracksChanged(tracks: Tracks) {
+    val nextState = tracks.toTextTrackState()
+    if (nextState != lastReportedState) {
+      dispatch(nextState)
+      lastReportedState = nextState
+    }
+  }
+
+  fun reset() {
+    lastReportedState = null
+  }
+}
+
+internal fun Tracks.toTextTrackState(): TextTrackState {
+  val selectedTextTrackGroup = groups.firstOrNull {
+    it.type == C.TRACK_TYPE_TEXT && it.isSelected
+  } ?: return TextTrackState(enabled = false)
+
+  val selectedTrackIndex = selectedTextTrackGroup.findSelectedTrackIndex()
+    ?: return TextTrackState(enabled = false)
+  val format = selectedTextTrackGroup.getTrackFormat(selectedTrackIndex)
+
+  return TextTrackState(
+    enabled = true,
+    type = format.toTextTrackType(),
+    format = format.toTextTrackFormat(),
+    name = format.label.toMeaningfulValue(),
+    language = format.language.toMeaningfulLanguage(),
+  )
+}
+
+internal fun Tracks.Group.findSelectedTrackIndex(): Int? {
+  for (i in 0..<length) {
+    if (isTrackSelected(i)) {
+      return i
+    }
+  }
+
+  return null
+}
+
+private fun Format.toTextTrackType(): String? = when {
+  roleFlags.hasFlag(C.ROLE_FLAG_CAPTION) -> TextTrackChangeEvent.TEXT_TRACK_TYPE_CLOSED_CAPTIONS
+  roleFlags.hasFlag(C.ROLE_FLAG_SUBTITLE) -> TextTrackChangeEvent.TEXT_TRACK_TYPE_SUBTITLES
+  else -> null
+}
+
+private fun Format.toTextTrackFormat(): String? {
+  val values = buildList {
+    sampleMimeType?.toNormalizedLookupValue()?.let(::add)
+    containerMimeType?.toNormalizedLookupValue()?.let(::add)
+    codecs
+      ?.split(',')
+      ?.mapNotNull { it.toNormalizedLookupValue() }
+      ?.let(::addAll)
+  }
+
+  return when {
+    values.any { it == "text/vtt" || it == "application/x-mp4-vtt" || it.contains("wvtt") } ->
+      TextTrackChangeEvent.TEXT_TRACK_FORMAT_WEBVTT
+    values.any { it == "application/x-subrip" || it.contains("subrip") || it == "srt" } ->
+      TextTrackChangeEvent.TEXT_TRACK_FORMAT_SRT
+    values.any {
+      it == "application/cea-608" || it.contains("cea608") || it.contains("cea-608")
+        || it.contains("eia608") || it.contains("eia-608")
+    } -> TextTrackChangeEvent.TEXT_TRACK_FORMAT_CEA_608
+    values.any {
+      it == "application/cea-708" || it.contains("cea708") || it.contains("cea-708")
+        || it.contains("eia708") || it.contains("eia-708")
+    } -> TextTrackChangeEvent.TEXT_TRACK_FORMAT_CEA_708
+    else -> null
+  }
+}
+
+private fun String?.toMeaningfulLanguage(): String? = toMeaningfulValue()
+  ?.takeUnless { it.equals("und", ignoreCase = true) }
+
+private fun String?.toMeaningfulValue(): String? = this
+  ?.trim()
+  ?.takeUnless { it.isEmpty() }
+
+private fun String.toNormalizedLookupValue(): String? = trim()
+  .lowercase()
+  .takeUnless { it.isEmpty() }
+
+private fun Int.hasFlag(flag: Int): Boolean = this and flag != 0
