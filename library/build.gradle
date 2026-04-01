@@ -61,6 +61,9 @@ android {
     at_1_9 {
       dimension "media3"
     }
+    at_1_10 {
+      dimension "media3"
+    }
   }
 
   buildTypes {
@@ -148,7 +151,9 @@ dependencies {
   //noinspection GradleDependency // benefit from optimistic matching
   at_1_9Api "androidx.media3:media3-common:1.9.0"
   //noinspection GradleDependency // benefit from optimistic matching
-  At_latestApi "androidx.media3:media3-common:1.9.0"
+  at_1_10Api "androidx.media3:media3-common:1.10.0"
+  //noinspection GradleDependency // benefit from optimistic matching
+  At_latestApi "androidx.media3:media3-common:1.10.0"
 
   implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
 

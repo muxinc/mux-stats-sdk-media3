@@ -59,6 +59,9 @@ android {
       dimension "media3"
       minSdk = 21 // minSdk is 21 before 1.9
     }
+    at_1_10 {
+      dimension "media3"
+    }
     at_1_9 {
       dimension "media3"
     }
@@ -90,6 +93,9 @@ android {
       java.srcDirs += 'src/compatFrom_1_0/java'
     }
     at_1_9 {
+      java.srcDirs += 'src/compatFrom_1_9/java'
+    }
+    at_1_10 {
       java.srcDirs += 'src/compatFrom_1_9/java'
     }
     At_latest {
@@ -201,11 +207,15 @@ dependencies {
   at_1_9Api "androidx.media3:media3-exoplayer:1.9.0"
   //noinspection GradleDependency
   at_1_9Api "androidx.media3:media3-exoplayer-ima:1.9.0"
+  //noinspection GradleDependency
+  at_1_9Api "androidx.media3:media3-exoplayer:1.10.0"
+  //noinspection GradleDependency
+  at_1_10Api "androidx.media3:media3-exoplayer-ima:1.10.0"
 
   //noinspection GradleDependency
-  At_latestApi "androidx.media3:media3-exoplayer-ima:1.9.0"
+  At_latestApi "androidx.media3:media3-exoplayer-ima:1.10.0"
   //noinspection GradleDependency
-  At_latestApi "androidx.media3:media3-exoplayer:1.9.0"
+  At_latestApi "androidx.media3:media3-exoplayer:1.10.0"
 
   implementation 'androidx.core:core-ktx:1.17.0'
 
