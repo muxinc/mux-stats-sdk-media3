@@ -208,7 +208,7 @@ dependencies {
   //noinspection GradleDependency
   at_1_9Api "androidx.media3:media3-exoplayer-ima:1.9.0"
   //noinspection GradleDependency
-  at_1_9Api "androidx.media3:media3-exoplayer:1.10.0"
+  at_1_9Api "androidx.media3:media3-exoplayer:1.9.0"
   //noinspection GradleDependency
   at_1_10Api "androidx.media3:media3-exoplayer-ima:1.10.0"
 
