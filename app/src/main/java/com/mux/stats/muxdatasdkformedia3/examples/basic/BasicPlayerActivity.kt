@@ -40,6 +40,7 @@ class BasicPlayerActivity : AppCompatActivity() {
 
     view.playerView.apply {
       setShowBuffering(SHOW_BUFFERING_WHEN_PLAYING)
+      setShowSubtitleButton(true)
     }
     window.addFlags(KEEP_SCREEN_ON)
   }

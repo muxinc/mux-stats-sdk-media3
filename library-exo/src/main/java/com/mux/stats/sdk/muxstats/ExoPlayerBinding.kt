@@ -1,7 +1,7 @@
 package com.mux.stats.sdk.muxstats
 
-import android.util.Log
 import androidx.annotation.OptIn
+import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -16,6 +16,7 @@ import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.source.LoadEventInfo
 import androidx.media3.exoplayer.source.MediaLoadData
 import com.mux.android.util.weak
+import com.mux.stats.sdk.core.events.playback.TextTrackChangeEvent
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
 import com.mux.stats.sdk.muxstats.bandwidth.TrackedHeader
@@ -93,6 +94,15 @@ private class MuxAnalyticsListener(
 
   private val player by weak(player)
   private var lastVideoFormat: Format? = null
+  private val textTrackChangeReporter = TextTrackChangeReporter { state ->
+    collector.muxStats.textTrackChange(
+      state.enabled,
+      state.type,
+      state.format,
+      state.name,
+      state.language
+    )
+  }
 
   override fun onPlayWhenReadyChanged(
     eventTime: AnalyticsListener.EventTime,
@@ -130,6 +140,7 @@ private class MuxAnalyticsListener(
     mediaItem: MediaItem?,
     reason: Int
   ) {
+    textTrackChangeReporter.reset()
     mediaItem?.let { collector.handleMediaItemChanged(it) }
   }
 
@@ -174,9 +185,12 @@ private class MuxAnalyticsListener(
 
     player?.let {
       collector.watchPlayerPos(it)
-      collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     }
     bandwidthMetrics?.onTracksChanged(tracks)
+    collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
+    if (eventTime.mediaPeriodId?.isInAdGroup() != true) {
+      textTrackChangeReporter.reportTracksChanged(tracks)
+    }
   }
 
   override fun onDownstreamFormatChanged(
@@ -310,3 +324,103 @@ private class MuxAnalyticsListener(
     MuxLogger.d(TAG, "Listening to ExoPlayer $player")
   }
 }
+
+internal data class TextTrackState(
+  val enabled: Boolean,
+  val type: String? = null,
+  val format: String? = null,
+  val name: String? = null,
+  val language: String? = null,
+)
+
+internal class TextTrackChangeReporter(
+  private val dispatch: (TextTrackState) -> Unit,
+) {
+  private var lastReportedState: TextTrackState? = null
+
+  fun reportTracksChanged(tracks: Tracks) {
+    val nextState = tracks.toTextTrackState()
+    if (nextState != lastReportedState) {
+      dispatch(nextState)
+      lastReportedState = nextState
+    }
+  }
+
+  fun reset() {
+    lastReportedState = null
+  }
+}
+
+internal fun Tracks.toTextTrackState(): TextTrackState {
+  val selectedTextTrackGroup = groups.firstOrNull {
+    it.type == C.TRACK_TYPE_TEXT && it.isSelected
+  } ?: return TextTrackState(enabled = false)
+
+  val selectedTrackIndex = selectedTextTrackGroup.findSelectedTrackIndex()
+    ?: return TextTrackState(enabled = false)
+  val format = selectedTextTrackGroup.getTrackFormat(selectedTrackIndex)
+
+  return TextTrackState(
+    enabled = true,
+    type = format.toTextTrackType(),
+    format = format.toTextTrackFormat(),
+    name = format.label.toMeaningfulValue(),
+    language = format.language.toMeaningfulLanguage(),
+  )
+}
+
+internal fun Tracks.Group.findSelectedTrackIndex(): Int? {
+  for (i in 0..<length) {
+    if (isTrackSelected(i)) {
+      return i
+    }
+  }
+
+  return null
+}
+
+private fun Format.toTextTrackType(): String? = when {
+  roleFlags.hasFlag(C.ROLE_FLAG_CAPTION) -> TextTrackChangeEvent.TEXT_TRACK_TYPE_CLOSED_CAPTIONS
+  roleFlags.hasFlag(C.ROLE_FLAG_SUBTITLE) -> TextTrackChangeEvent.TEXT_TRACK_TYPE_SUBTITLES
+  else -> null
+}
+
+private fun Format.toTextTrackFormat(): String? {
+  val values = buildList {
+    sampleMimeType?.toNormalizedLookupValue()?.let(::add)
+    containerMimeType?.toNormalizedLookupValue()?.let(::add)
+    codecs
+      ?.split(',')
+      ?.mapNotNull { it.toNormalizedLookupValue() }
+      ?.let(::addAll)
+  }
+
+  return when {
+    values.any { it == "text/vtt" || it == "application/x-mp4-vtt" || it.contains("wvtt") } ->
+      TextTrackChangeEvent.TEXT_TRACK_FORMAT_WEBVTT
+    values.any { it == "application/x-subrip" || it.contains("subrip") || it == "srt" } ->
+      TextTrackChangeEvent.TEXT_TRACK_FORMAT_SRT
+    values.any {
+      it == "application/cea-608" || it.contains("cea608") || it.contains("cea-608")
+        || it.contains("eia608") || it.contains("eia-608")
+    } -> TextTrackChangeEvent.TEXT_TRACK_FORMAT_CEA_608
+    values.any {
+      it == "application/cea-708" || it.contains("cea708") || it.contains("cea-708")
+        || it.contains("eia708") || it.contains("eia-708")
+    } -> TextTrackChangeEvent.TEXT_TRACK_FORMAT_CEA_708
+    else -> null
+  }
+}
+
+private fun String?.toMeaningfulLanguage(): String? = toMeaningfulValue()
+  ?.takeUnless { it.equals("und", ignoreCase = true) }
+
+private fun String?.toMeaningfulValue(): String? = this
+  ?.trim()
+  ?.takeUnless { it.isEmpty() }
+
+private fun String.toNormalizedLookupValue(): String? = trim()
+  .lowercase()
+  .takeUnless { it.isEmpty() }
+
+private fun Int.hasFlag(flag: Int): Boolean = this and flag != 0
