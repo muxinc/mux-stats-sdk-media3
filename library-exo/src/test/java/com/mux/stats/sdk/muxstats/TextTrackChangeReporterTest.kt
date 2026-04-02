@@ -178,7 +178,7 @@ class TextTrackChangeReporterTest {
   )
 
   private fun textFormat(
-    sampleMimeType: String? = "text/vtt",
+    sampleMimeType: String?,
     codecs: String? = null,
     label: String? = null,
     language: String? = null,
