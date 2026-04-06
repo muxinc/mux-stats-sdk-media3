@@ -11,7 +11,7 @@ plugins {
 allprojects {
   project.ext {
     androidCoreVersion = '1.7.2'
-    javaCoreVersion = '8.9.0'
+    javaCoreVersion = '8.9.'
   }
 
   tasks.withType(DokkaTaskPartial.class) {
