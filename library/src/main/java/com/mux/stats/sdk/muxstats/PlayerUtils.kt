@@ -156,14 +156,12 @@ fun MuxStateCollector.handleExoPlaybackState(
         seeked()
       }
 
-      if (muxPlayerState != MuxPlayerState.PLAYING_ADS) {
-        // If playWhenReady && READY, we're playing or else we're paused
-        if (playWhenReady) {
-          MuxLogger.d(LOG_TAG, "entered READY && pwr is true, dispatching playing()")
-          playing()
-        } else if (muxPlayerState != MuxPlayerState.PAUSED) {
-          pause()
-        }
+      // If playWhenReady && READY, we're playing or else we're paused
+      if (playWhenReady) {
+        MuxLogger.d(LOG_TAG, "entered READY && pwr is true, dispatching playing()")
+        playing()
+      } else if (muxPlayerState != MuxPlayerState.PAUSED) {
+        pause()
       }
     }
 
