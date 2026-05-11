@@ -9,6 +9,7 @@ import androidx.media3.common.Player.DISCONTINUITY_REASON_SEEK_ADJUSTMENT
 import androidx.media3.common.Player.DISCONTINUITY_REASON_SKIP
 import androidx.media3.common.Player.DiscontinuityReason
 import androidx.media3.common.Player.STATE_IDLE
+import com.mux.android.util.oneOf
 import com.mux.core_android.test.tools.log
 import com.mux.stats.media3.test.tools.AbsRobolectricTest
 import io.mockk.every
@@ -52,6 +53,7 @@ class PlayerUtilsTests : AbsRobolectricTest() {
       val mockStateCollector = mockk<MuxStateCollector> {
         every { play() } just runs
         every { playing() } just runs
+        every { muxPlayerState } returns MuxPlayerState.INIT
       }
       mockStateCollector.handlePlayWhenReady(true, playerState)
       verify { mockStateCollector.play() }
@@ -77,7 +79,7 @@ class PlayerUtilsTests : AbsRobolectricTest() {
 
       mockStateCollector.handlePlayWhenReady(false, dummyPlayerState)
 
-      val times = if (from == MuxPlayerState.PAUSED) 0 else 1
+      val times = if (from.oneOf(MuxPlayerState.PAUSED, MuxPlayerState.PLAYING_ADS)) 0 else 1
       verify(exactly = times) { mockStateCollector.pause() }
     }
 
