@@ -13,7 +13,7 @@ import com.mux.stats.sdk.muxstats.MuxStateCollector
  * HlsUtils.kt: Utility functions for working with HLS playlists in exoplayer
  */
 
-private val RX_PDT_TAG = """^#EXT-X-PROGRAM-DATE-TIME:(.*)$""".toRegex()
+private val RX_PDT_TAG by lazy { """^#EXT-X-PROGRAM-DATE-TIME:(.*)$""".toRegex() }
 
 // lazily-cached check for the HLS extension, which may not be available at runtime
 @OptIn(UnstableApi::class) // opting-in to HlsManifest
