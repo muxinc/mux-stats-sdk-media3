@@ -1,0 +1,324 @@
+[versions]
+# Plugins
+agp = "8.13.2"
+kotlin = "2.2.10"
+muxAndroidDistribution = "1.3.0"
+dokka = "1.6.10"
+
+# Mux core deps
+muxCoreAndroid = "1.7.2"
+muxCoreJava = "8.9.2"
+
+# media3 per-variant pins.
+#
+# Naming: `at<MAJOR><MINOR>` = the matching `at_<MAJOR>_<MINOR>` Android flavor.
+# (We can't use dashes or underscores here because version-catalog accessor
+# segments can't start with a digit — `at-1-0` becomes the unusable `at.1.0`.)
+#
+# `at_1_1` and `at_1_4` each have two refs:
+#   * the bare `atNN` is the .0 patch used by :library and :library-exo so
+#     downstream consumers benefit from optimistic version matching.
+#   * `atNNapp` is the patch we actually build and test against in :app,
+#     :automatedtests, and (for at_1_1 only) :library-ima.
+media3-at10 = "1.0.0"
+media3-at11 = "1.1.0"
+media3-at11app = "1.1.1"
+media3-at12 = "1.2.0"
+media3-at13 = "1.3.0"
+media3-at14 = "1.4.0"
+media3-at14app = "1.4.1"
+media3-at15 = "1.5.0"
+media3-at16 = "1.6.0"
+media3-at18 = "1.8.0"
+media3-at19 = "1.9.0"
+media3-at110 = "1.10.0"
+media3-atLatest = "1.10.0"
+
+# AndroidX / Compose / Material
+androidx-coreKtx = "1.17.0"
+androidx-appcompat = "1.7.1"
+androidx-constraintlayout = "2.2.1"
+androidx-lifecycleRuntimeKtx = "2.9.2"
+androidx-activityCompose = "1.10.1"
+androidx-composeBom = "2025.08.00"
+androidx-navigation = "2.9.3"
+material = "1.12.0"
+
+# Misc
+kotlinxCoroutines = "1.10.2"
+desugarJdkLibs = "2.1.5"
+checkerQual = "3.49.5"
+kotlinComposeCompilerExt = "1.5.14"
+
+# Testing
+junit = "4.13.2"
+androidx-testJunit = "1.3.0"
+androidx-testEspresso = "3.7.0"
+androidx-testRunner = "1.7.0"
+androidx-testRules = "1.7.0"
+androidx-testUiautomator = "2.3.0"
+hamcrest = "3.0"
+mockk = "1.14.5"
+robolectric = "4.15.1"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+mux-android-distribution = { id = "com.mux.gradle.android.mux-android-distribution", version.ref = "muxAndroidDistribution" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+
+[libraries]
+# --- Mux core ---
+mux-core-android = { group = "com.mux.stats.sdk.muxstats", name = "android", version.ref = "muxCoreAndroid" }
+mux-core-java = { group = "com.mux", name = "stats.muxcore", version.ref = "muxCoreJava" }
+
+# --- media3-common (only :library) ---
+media3-common-at10 = { group = "androidx.media3", name = "media3-common", version.ref = "media3-at10" }
+media3-common-at11 = { group = "androidx.media3", name = "media3-common", version.ref = "media3-at11" }
+media3-common-at12 = { group = "androidx.media3", name = "media3-common", version.ref = "media3-at12" }
+media3-common-at13 = { group = "androidx.media3", name = "media3-common", version.ref = "media3-at13" }
+media3-common-at14 = { group = "androidx.media3", name = "media3-common", version.ref = "media3-at14" }
+media3-common-at15 = { group = "androidx.media3", name = "media3-common", version.ref = "media3-at15" }
+media3-common-at16 = { group = "androidx.media3", name = "media3-common", version.ref = "media3-at16" }
+media3-common-at18 = { group = "androidx.media3", name = "media3-common", version.ref = "media3-at18" }
+media3-common-at19 = { group = "androidx.media3", name = "media3-common", version.ref = "media3-at19" }
+media3-common-at110 = { group = "androidx.media3", name = "media3-common", version.ref = "media3-at110" }
+media3-common-atLatest = { group = "androidx.media3", name = "media3-common", version.ref = "media3-atLatest" }
+
+# --- media3-exoplayer (:library-exo uses bare alias; :library-ima at_1_1 + :app + :automatedtests use `app` variants) ---
+media3-exoplayer-at10 = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at10" }
+media3-exoplayer-at11 = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at11" }
+media3-exoplayer-at11app = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at11app" }
+media3-exoplayer-at12 = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at12" }
+media3-exoplayer-at13 = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at13" }
+media3-exoplayer-at14 = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at14" }
+media3-exoplayer-at14app = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at14app" }
+media3-exoplayer-at15 = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at15" }
+media3-exoplayer-at16 = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at16" }
+media3-exoplayer-at18 = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at18" }
+media3-exoplayer-at19 = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at19" }
+media3-exoplayer-at110 = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-at110" }
+media3-exoplayer-atLatest = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-atLatest" }
+
+# --- media3-exoplayer-hls (:library-exo bare; :app + :automatedtests use `app` variants) ---
+media3-exoplayerHls-at10 = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at10" }
+media3-exoplayerHls-at11 = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at11" }
+media3-exoplayerHls-at11app = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at11app" }
+media3-exoplayerHls-at12 = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at12" }
+media3-exoplayerHls-at13 = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at13" }
+media3-exoplayerHls-at14 = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at14" }
+media3-exoplayerHls-at14app = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at14app" }
+media3-exoplayerHls-at15 = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at15" }
+media3-exoplayerHls-at16 = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at16" }
+media3-exoplayerHls-at18 = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at18" }
+media3-exoplayerHls-at19 = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at19" }
+media3-exoplayerHls-at110 = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-at110" }
+media3-exoplayerHls-atLatest = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3-atLatest" }
+
+# --- media3-exoplayer-ima (:library-ima bare for at_1_4, `app` for at_1_1; :app + :automatedtests `app`) ---
+media3-exoplayerIma-at10 = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-at10" }
+media3-exoplayerIma-at11app = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-at11app" }
+media3-exoplayerIma-at12 = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-at12" }
+media3-exoplayerIma-at13 = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-at13" }
+media3-exoplayerIma-at14 = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-at14" }
+media3-exoplayerIma-at14app = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-at14app" }
+media3-exoplayerIma-at15 = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-at15" }
+media3-exoplayerIma-at16 = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-at16" }
+media3-exoplayerIma-at18 = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-at18" }
+media3-exoplayerIma-at19 = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-at19" }
+media3-exoplayerIma-at110 = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-at110" }
+media3-exoplayerIma-atLatest = { group = "androidx.media3", name = "media3-exoplayer-ima", version.ref = "media3-atLatest" }
+
+# --- media3-exoplayer-dash (:app + :automatedtests; always the `app` patch where applicable) ---
+media3-exoplayerDash-at10 = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-at10" }
+media3-exoplayerDash-at11app = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-at11app" }
+media3-exoplayerDash-at12 = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-at12" }
+media3-exoplayerDash-at13 = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-at13" }
+media3-exoplayerDash-at14app = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-at14app" }
+media3-exoplayerDash-at15 = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-at15" }
+media3-exoplayerDash-at16 = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-at16" }
+media3-exoplayerDash-at18 = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-at18" }
+media3-exoplayerDash-at19 = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-at19" }
+media3-exoplayerDash-at110 = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-at110" }
+media3-exoplayerDash-atLatest = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3-atLatest" }
+
+# --- media3-exoplayer-rtsp (:app + :automatedtests; always the `app` patch where applicable) ---
+media3-exoplayerRtsp-at10 = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3-at10" }
+media3-exoplayerRtsp-at11app = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3-at11app" }
+media3-exoplayerRtsp-at12 = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3-at12" }
+media3-exoplayerRtsp-at13 = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3-at13" }
+media3-exoplayerRtsp-at14app = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3-at14app" }
+media3-exoplayerRtsp-at15 = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3-at15" }
+media3-exoplayerRtsp-at16 = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3-at16" }
+media3-exoplayerRtsp-at18 = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3-at18" }
+media3-exoplayerRtsp-at19 = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3-at19" }
+media3-exoplayerRtsp-at110 = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3-at110" }
+media3-exoplayerRtsp-atLatest = { group = "androidx.media3", name = "media3-exoplayer-rtsp", version.ref = "media3-atLatest" }
+
+# --- media3-session (:app + :automatedtests; always the `app` patch where applicable) ---
+media3-session-at10 = { group = "androidx.media3", name = "media3-session", version.ref = "media3-at10" }
+media3-session-at11app = { group = "androidx.media3", name = "media3-session", version.ref = "media3-at11app" }
+media3-session-at12 = { group = "androidx.media3", name = "media3-session", version.ref = "media3-at12" }
+media3-session-at13 = { group = "androidx.media3", name = "media3-session", version.ref = "media3-at13" }
+media3-session-at14app = { group = "androidx.media3", name = "media3-session", version.ref = "media3-at14app" }
+media3-session-at15 = { group = "androidx.media3", name = "media3-session", version.ref = "media3-at15" }
+media3-session-at16 = { group = "androidx.media3", name = "media3-session", version.ref = "media3-at16" }
+media3-session-at18 = { group = "androidx.media3", name = "media3-session", version.ref = "media3-at18" }
+media3-session-at19 = { group = "androidx.media3", name = "media3-session", version.ref = "media3-at19" }
+media3-session-at110 = { group = "androidx.media3", name = "media3-session", version.ref = "media3-at110" }
+media3-session-atLatest = { group = "androidx.media3", name = "media3-session", version.ref = "media3-atLatest" }
+
+# --- media3-ui (:app + :automatedtests; always the `app` patch where applicable) ---
+media3-ui-at10 = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-at10" }
+media3-ui-at11app = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-at11app" }
+media3-ui-at12 = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-at12" }
+media3-ui-at13 = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-at13" }
+media3-ui-at14app = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-at14app" }
+media3-ui-at15 = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-at15" }
+media3-ui-at16 = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-at16" }
+media3-ui-at18 = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-at18" }
+media3-ui-at19 = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-at19" }
+media3-ui-at110 = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-at110" }
+media3-ui-atLatest = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-atLatest" }
+
+# --- AndroidX, Material, Compose ---
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx-coreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx-appcompat" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
+androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "androidx-lifecycleRuntimeKtx" }
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidx-activityCompose" }
+androidx-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "androidx-navigation" }
+androidx-navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "androidx-navigation" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+# Compose (versions from the BOM)
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidx-composeBom" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui" }
+androidx-compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3" }
+
+# --- Misc ---
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugarJdkLibs" }
+checker-qual = { group = "org.checkerframework", name = "checker-qual", version.ref = "checkerQual" }
+
+# --- Testing ---
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-test-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-testJunit" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidx-testEspresso" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidx-testRunner" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidx-testRules" }
+androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidx-testUiautomator" }
+hamcrest-library = { group = "org.hamcrest", name = "hamcrest-library", version.ref = "hamcrest" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+
+[bundles]
+# media3 deps for :app and :automatedtests, per variant. Each variant pulls in
+# 7 sibling artifacts (exoplayer, session, ui, exoplayer-ima, exoplayer-dash,
+# exoplayer-hls, exoplayer-rtsp) at the patch we test against.
+media3-app-at10 = [
+  "media3-exoplayer-at10",
+  "media3-session-at10",
+  "media3-ui-at10",
+  "media3-exoplayerIma-at10",
+  "media3-exoplayerDash-at10",
+  "media3-exoplayerHls-at10",
+  "media3-exoplayerRtsp-at10",
+]
+media3-app-at11 = [
+  "media3-exoplayer-at11app",
+  "media3-session-at11app",
+  "media3-ui-at11app",
+  "media3-exoplayerIma-at11app",
+  "media3-exoplayerDash-at11app",
+  "media3-exoplayerHls-at11app",
+  "media3-exoplayerRtsp-at11app",
+]
+media3-app-at12 = [
+  "media3-exoplayer-at12",
+  "media3-session-at12",
+  "media3-ui-at12",
+  "media3-exoplayerIma-at12",
+  "media3-exoplayerDash-at12",
+  "media3-exoplayerHls-at12",
+  "media3-exoplayerRtsp-at12",
+]
+media3-app-at13 = [
+  "media3-exoplayer-at13",
+  "media3-session-at13",
+  "media3-ui-at13",
+  "media3-exoplayerIma-at13",
+  "media3-exoplayerDash-at13",
+  "media3-exoplayerHls-at13",
+  "media3-exoplayerRtsp-at13",
+]
+media3-app-at14 = [
+  "media3-exoplayer-at14app",
+  "media3-session-at14app",
+  "media3-ui-at14app",
+  "media3-exoplayerIma-at14app",
+  "media3-exoplayerDash-at14app",
+  "media3-exoplayerHls-at14app",
+  "media3-exoplayerRtsp-at14app",
+]
+media3-app-at15 = [
+  "media3-exoplayer-at15",
+  "media3-session-at15",
+  "media3-ui-at15",
+  "media3-exoplayerIma-at15",
+  "media3-exoplayerDash-at15",
+  "media3-exoplayerHls-at15",
+  "media3-exoplayerRtsp-at15",
+]
+media3-app-at16 = [
+  "media3-exoplayer-at16",
+  "media3-session-at16",
+  "media3-ui-at16",
+  "media3-exoplayerIma-at16",
+  "media3-exoplayerDash-at16",
+  "media3-exoplayerHls-at16",
+  "media3-exoplayerRtsp-at16",
+]
+media3-app-at18 = [
+  "media3-exoplayer-at18",
+  "media3-session-at18",
+  "media3-ui-at18",
+  "media3-exoplayerIma-at18",
+  "media3-exoplayerDash-at18",
+  "media3-exoplayerHls-at18",
+  "media3-exoplayerRtsp-at18",
+]
+media3-app-at19 = [
+  "media3-exoplayer-at19",
+  "media3-session-at19",
+  "media3-ui-at19",
+  "media3-exoplayerIma-at19",
+  "media3-exoplayerDash-at19",
+  "media3-exoplayerHls-at19",
+  "media3-exoplayerRtsp-at19",
+]
+media3-app-at110 = [
+  "media3-exoplayer-at110",
+  "media3-session-at110",
+  "media3-ui-at110",
+  "media3-exoplayerIma-at110",
+  "media3-exoplayerDash-at110",
+  "media3-exoplayerHls-at110",
+  "media3-exoplayerRtsp-at110",
+]
+media3-app-atLatest = [
+  "media3-exoplayer-atLatest",
+  "media3-session-atLatest",
+  "media3-ui-atLatest",
+  "media3-exoplayerIma-atLatest",
+  "media3-exoplayerDash-atLatest",
+  "media3-exoplayerHls-atLatest",
+  "media3-exoplayerRtsp-atLatest",
+]

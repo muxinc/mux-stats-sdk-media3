@@ -1,7 +1,7 @@
 plugins {
-  id 'com.android.library'
-  id 'org.jetbrains.kotlin.android'
-  id 'com.mux.gradle.android.mux-android-distribution'
+  alias(libs.plugins.android.library)
+  alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.mux.android.distribution)
 }
 
 android {
@@ -129,39 +129,39 @@ muxDistribution {
 }
 
 dependencies {
-  api "com.mux.stats.sdk.muxstats:android:${androidCoreVersion}"
-  api "com.mux:stats.muxcore:${javaCoreVersion}"
+  api libs.mux.core.android
+  api libs.mux.core.java
 
   //noinspection GradleDependency
-  at_1_0Api "androidx.media3:media3-common:1.0.0"
+  at_1_0Api libs.media3.common.at10
   //noinspection GradleDependency
-  at_1_1Api "androidx.media3:media3-common:1.1.0"
+  at_1_1Api libs.media3.common.at11
   //noinspection GradleDependency
-  at_1_2Api "androidx.media3:media3-common:1.2.0"
+  at_1_2Api libs.media3.common.at12
   //noinspection GradleDependency
-  at_1_3Api "androidx.media3:media3-common:1.3.0"
+  at_1_3Api libs.media3.common.at13
   //noinspection GradleDependency // benefit from optimistic matching
-  at_1_4Api "androidx.media3:media3-common:1.4.0"
+  at_1_4Api libs.media3.common.at14
   //noinspection GradleDependency // benefit from optimistic matching
-  at_1_5Api "androidx.media3:media3-common:1.5.0"
+  at_1_5Api libs.media3.common.at15
   //noinspection GradleDependency // benefit from optimistic matching
-  at_1_6Api "androidx.media3:media3-common:1.6.0"
+  at_1_6Api libs.media3.common.at16
   //noinspection GradleDependency // benefit from optimistic matching
-  at_1_8Api "androidx.media3:media3-common:1.8.0"
+  at_1_8Api libs.media3.common.at18
   //noinspection GradleDependency // benefit from optimistic matching
-  at_1_9Api "androidx.media3:media3-common:1.9.0"
+  at_1_9Api libs.media3.common.at19
   //noinspection GradleDependency // benefit from optimistic matching
-  at_1_10Api "androidx.media3:media3-common:1.10.0"
+  at_1_10Api libs.media3.common.at110
   //noinspection GradleDependency // benefit from optimistic matching
-  At_latestApi "androidx.media3:media3-common:1.10.0"
+  At_latestApi libs.media3.common.atLatest
 
-  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
+  implementation libs.kotlinx.coroutines.android
 
-  testImplementation 'junit:junit:4.13.2'
-  testImplementation 'androidx.test.ext:junit:1.3.0'
-  testImplementation "io.mockk:mockk:1.14.5"
-  testImplementation 'org.robolectric:robolectric:4.15.1'
+  testImplementation libs.junit
+  testImplementation libs.androidx.test.junit
+  testImplementation libs.mockk
+  testImplementation libs.robolectric
 
-  androidTestImplementation 'androidx.test.ext:junit:1.3.0'
-  androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+  androidTestImplementation libs.androidx.test.junit
+  androidTestImplementation libs.androidx.test.espresso.core
 }
