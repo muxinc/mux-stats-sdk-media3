@@ -31,6 +31,7 @@ android {
     at_1_6 { dimension "media3" }
     at_1_8 { dimension "media3" }
     at_1_9 { dimension "media3" }
+    at_1_10 { dimension "media3" }
   }
 
   buildFeatures {
@@ -214,13 +215,28 @@ dependencies {
   //noinspection GradleDependency
   at_1_9Implementation "androidx.media3:media3-exoplayer-rtsp:1.9.0"
 
-  At_latestImplementation "androidx.media3:media3-exoplayer:1.9.0"
-  At_latestImplementation "androidx.media3:media3-session:1.9.0"
-  At_latestImplementation "androidx.media3:media3-ui:1.9.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-ima:1.9.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-dash:1.9.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-hls:1.9.0"
-  At_latestImplementation "androidx.media3:media3-exoplayer-rtsp:1.9.0"
+  //noinspection GradleDependency
+  at_1_10Implementation "androidx.media3:media3-exoplayer:1.10.0"
+  //noinspection GradleDependency
+  at_1_10Implementation "androidx.media3:media3-session:1.10.0"
+  //noinspection GradleDependency
+  at_1_10Implementation "androidx.media3:media3-ui:1.10.0"
+  //noinspection GradleDependency
+  at_1_10Implementation "androidx.media3:media3-exoplayer-ima:1.10.0"
+  //noinspection GradleDependency
+  at_1_10Implementation "androidx.media3:media3-exoplayer-dash:1.10.0"
+  //noinspection GradleDependency
+  at_1_10Implementation "androidx.media3:media3-exoplayer-hls:1.10.0"
+  //noinspection GradleDependency
+  at_1_10Implementation "androidx.media3:media3-exoplayer-rtsp:1.10.0"
+
+  At_latestImplementation "androidx.media3:media3-exoplayer:1.10.0"
+  At_latestImplementation "androidx.media3:media3-session:1.10.0"
+  At_latestImplementation "androidx.media3:media3-ui:1.10.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-ima:1.10.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-dash:1.10.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-hls:1.10.0"
+  At_latestImplementation "androidx.media3:media3-exoplayer-rtsp:1.10.0"
 
   androidTestImplementation 'androidx.test:runner:1.7.0'
   androidTestImplementation 'androidx.test:rules:1.7.0'
