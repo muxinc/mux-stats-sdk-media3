@@ -1,10 +1,3 @@
-// The release-gluing afterEvaluate block reaches for AGP's old variant API
-// (libraryVariants / AndroidSourceSet.apiConfigurationName), hard-deprecated but
-// still present at runtime — the path the Groovy script used.
-@file:Suppress("DEPRECATION", "DEPRECATION_ERROR")
-
-import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.api.AndroidSourceSet
 import java.time.Year
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -219,22 +212,26 @@ dependencies {
   androidTestImplementation(libs.androidx.test.espresso.core)
 }
 
-afterEvaluate {
-  // Release builds need mvn coordinates to depend on modules from this project
-  //  We only want to add this to release builds, and it has to be the same variant to work.
-  //  There's 'at_1_1Api '..' and releaseApi '..', but no at_1_1ReleaseApi '..'
-  extensions.getByType(LibraryExtension::class.java).libraryVariants
-          .filter { it.buildType.name.contains("release") }
-          .forEach { variant ->
-            val flavorName = variant.productFlavors[0].name
-            val suffix = if (flavorName.contains("at_latest", ignoreCase = true)) {
-              "" // 'at_latest' variant has no -at_X_X
-            } else {
-              "-$flavorName"
-            }
-            val depNotation =
-                    "com.mux.stats.sdk.muxstats:data-media3-custom$suffix:${project.version}"
-            val sourceSet = variant.sourceSets.last() as AndroidSourceSet // Last src set is most specific
-            project.dependencies.add(sourceSet.apiConfigurationName, depNotation)
-          }
+// Release builds need maven coordinates to depend on :library from this project.
+//  We only add it to release variants, matched to the same flavor. AGP exposes a
+//  per-variant api configuration named "<variantName>Api" (e.g. at_1_4ReleaseApi) —
+//  there's 'at_1_4Api'/'releaseApi' but no combined 'at_1_4ReleaseApi' source set, so
+//  we target the variant configuration directly. The coordinate is wrapped in a
+//  provider so project.version is read lazily, after muxDistribution has set it
+//  (onVariants runs before the plugin's afterEvaluate).
+androidComponents {
+  onVariants { variant ->
+    if (variant.buildType == "release") {
+      val flavorName = variant.productFlavors.first().second
+      val suffix = if (flavorName.contains("at_latest", ignoreCase = true)) {
+        "" // 'at_latest' variant has no -at_X_X
+      } else {
+        "-$flavorName"
+      }
+      project.dependencies.add(
+              "${variant.name}Api",
+              project.provider { "com.mux.stats.sdk.muxstats:data-media3-custom$suffix:${project.version}" }
+      )
+    }
+  }
 }
