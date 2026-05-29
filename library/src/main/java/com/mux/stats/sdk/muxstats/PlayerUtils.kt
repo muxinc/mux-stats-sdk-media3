@@ -94,6 +94,12 @@ fun MuxStateCollector.handlePlayWhenReady(
   @Player.State playbackState: Int
 ) {
   MuxLogger.d("PlayerUtils", "handlePlayWhenReady: Called. pwr is $playWhenReady")
+
+  if (muxPlayerState == MuxPlayerState.PLAYING_ADS) {
+    MuxLogger.d("PlayerUtils", "handlePlayWhenReady: Called during ad break. ignoring")
+    return
+  }
+
   if (playWhenReady) {
     MuxLogger.d("PlayerUtils", "handlePlayWhenReady: dispatching play")
     play()
@@ -177,7 +183,7 @@ fun MuxStateCollector.handleExoPlaybackState(
 @JvmSynthetic
 fun MuxStateCollector.handleMediaItemChanged(mediaItem: MediaItem) {
   mediaItem.localConfiguration?.let { localConfig ->
-    val sourceUrl = localConfig.uri;
+    val sourceUrl = localConfig.uri
     val sourceDomain = sourceUrl.authority
     val videoData = VideoData().apply {
       videoSourceDomain = sourceDomain
