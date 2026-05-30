@@ -194,6 +194,7 @@ dependencies {
   "At_latestCompileOnly"(libs.media3.exoplayerHls.atLatest)
 
   testImplementation(libs.junit)
+  testImplementation(libs.robolectric)
   androidTestImplementation(libs.androidx.test.junit)
   androidTestImplementation(libs.androidx.test.espresso.core)
 }
