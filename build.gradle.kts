@@ -1,4 +1,6 @@
+import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 import org.jetbrains.dokka.gradle.DokkaTaskPartial
+
 plugins {
   alias(libs.plugins.android.application) apply false
   alias(libs.plugins.android.library) apply false
@@ -9,13 +11,13 @@ plugins {
 }
 
 allprojects {
-  tasks.withType(DokkaTaskPartial.class) {
+  tasks.withType<DokkaTaskPartial>().configureEach {
     dokkaSourceSets.configureEach {
       //includes.from("README.md")
     }
   }
 }
 
-tasks.named("dokkaHtmlMultiModule").configure {
-  outputDirectory.set(new File(buildDir, "dokkaOutput"))
+tasks.named<DokkaMultiModuleTask>("dokkaHtmlMultiModule").configure {
+  outputDirectory.set(layout.buildDirectory.get().asFile.resolve("dokkaOutput"))
 }

@@ -1,0 +1,28 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
+pluginManagement {
+  repositories {
+    gradlePluginPortal()
+    google()
+    mavenCentral()
+    mavenLocal()
+    maven { url = uri("https://muxinc.jfrog.io/artifactory/default-maven-release-local") }
+    maven { url = uri("https://muxinc.jfrog.io/artifactory/default-maven-local") }
+  }
+}
+dependencyResolutionManagement {
+  repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+  repositories {
+    google()
+    mavenCentral()
+    mavenLocal()
+    maven { url = uri("https://muxinc.jfrog.io/artifactory/default-maven-release-local") }
+    maven { url = uri("https://muxinc.jfrog.io/artifactory/default-maven-local") }
+  }
+}
+rootProject.name = "Mux Data SDK for Media3"
+include(":app")
+include(":automatedtests")
+include(":library")
+include(":library-exo")
+include(":library-ima")
