@@ -7,7 +7,7 @@ dokka = "1.6.10"
 
 # Mux core deps
 muxCoreAndroid = "1.7.2"
-muxCoreJava = "8.10.0"
+muxCoreJava = "dev-audio-track-change-api-35046c3"
 
 # media3 per-variant pins.
 #
