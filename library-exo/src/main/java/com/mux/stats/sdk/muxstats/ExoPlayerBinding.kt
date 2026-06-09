@@ -207,6 +207,14 @@ private class MuxAnalyticsListener(
     }
   }
 
+  override fun onAudioInputFormatChanged(
+    eventTime: AnalyticsListener.EventTime,
+    format: Format,
+    decoderReuseEvaluation: DecoderReuseEvaluation?
+  ) {
+    super.onAudioInputFormatChanged(eventTime, format, decoderReuseEvaluation)
+  }
+
   override fun onDownstreamFormatChanged(
     eventTime: AnalyticsListener.EventTime,
     mediaLoadData: MediaLoadData
