@@ -1,5 +1,6 @@
 package com.mux.stats.sdk.muxstats
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
@@ -203,7 +204,7 @@ private class MuxAnalyticsListener(
     collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     if (eventTime.mediaPeriodId?.isInAdGroup() != true) {
       textTrackChangeReporter.reportTracksChanged(tracks)
-      audioTrackChangeReporter.reportTracksChanged(tracks)
+//      audioTrackChangeReporter.reportTracksChanged(tracks)
     }
   }
 
@@ -212,7 +213,8 @@ private class MuxAnalyticsListener(
     format: Format,
     decoderReuseEvaluation: DecoderReuseEvaluation?
   ) {
-    super.onAudioInputFormatChanged(eventTime, format, decoderReuseEvaluation)
+    Log.d("ExoPlayerBinding", "onAudioInputFormatChanged: ${Format.toLogString(format)}")
+    audioTrackChangeReporter.reportAudioInputFormatChanged(format)
   }
 
   override fun onDownstreamFormatChanged(
@@ -413,6 +415,14 @@ internal class AudioTrackChangeReporter(
     }
   }
 
+  fun reportAudioInputFormatChanged(format: Format) {
+    val nextState = format.toAudioTrackState()
+    if (nextState != lastReportedState) {
+      dispatch(nextState)
+      lastReportedState = nextState
+    }
+  }
+
   fun reset() {
     lastReportedState = null
   }
@@ -426,14 +436,17 @@ internal fun Tracks.toAudioTrackState(): AudioTrackState {
   val selectedTrackIndex = selectedAudioTrackGroup.findSelectedTrackIndex()
     ?: return AudioTrackState(enabled = false)
   val format = selectedAudioTrackGroup.getTrackFormat(selectedTrackIndex)
+  return format.toAudioTrackState()
+}
 
+internal fun Format.toAudioTrackState(): AudioTrackState {
   return AudioTrackState(
     enabled = true,
-    codec = format.toAudioTrackCodec(),
-    name = format.label.toMeaningfulValue(),
-    language = format.language.toMeaningfulLanguage(),
-    bitrate = format.toAudioTrackBitrate(),
-    channels = format.toAudioTrackChannels(),
+    codec = toAudioTrackCodec(),
+    name = label.toMeaningfulValue(),
+    language = language.toMeaningfulLanguage(),
+    bitrate = toAudioTrackBitrate(),
+    channels = toAudioTrackChannels(),
   )
 }
 
