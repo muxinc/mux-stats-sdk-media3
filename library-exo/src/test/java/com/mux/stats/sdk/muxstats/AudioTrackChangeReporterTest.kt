@@ -1,9 +1,6 @@
 package com.mux.stats.sdk.muxstats
 
-import androidx.media3.common.C
 import androidx.media3.common.Format
-import androidx.media3.common.TrackGroup
-import androidx.media3.common.Tracks
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -16,21 +13,14 @@ import org.robolectric.annotation.Config
 class AudioTrackChangeReporterTest {
 
   @Test
-  fun `selected audio track reports the audio portion of a codecs string`() {
-    val tracks = tracksOf(
-      audioGroup(
-        format = audioFormat(
-          codecs = "avc1.640028,mp4a.40.2",
-          label = "English",
-          language = "en-US",
-          bitrate = 128_000,
-          channelCount = 2,
-        ),
-        selected = true,
-      )
-    )
-
-    val state = tracks.toAudioTrackState()
+  fun `selected audio format reports the audio portion of a codecs string`() {
+    val state = audioFormat(
+      codecs = "avc1.640028,mp4a.40.2",
+      label = "English",
+      language = "en-US",
+      bitrate = 128_000,
+      channelCount = 2,
+    ).toAudioTrackState()
 
     assertEquals(
       AudioTrackState(
@@ -47,10 +37,7 @@ class AudioTrackChangeReporterTest {
 
   @Test
   fun `single audio codec is reported as-is`() {
-    val state = tracksOf(audioGroup(audioFormat(codecs = "ec-3"), selected = true))
-      .toAudioTrackState()
-
-    assertEquals("ec-3", state.codec)
+    assertEquals("ec-3", audioFormat(codecs = "ec-3").toAudioTrackState().codec)
   }
 
   @Test
@@ -66,34 +53,12 @@ class AudioTrackChangeReporterTest {
     assertEquals("3", channelsFor(channelCount = 3))
   }
 
-  private fun channelsFor(channelCount: Int): String? = tracksOf(
-    audioGroup(audioFormat(codecs = "mp4a.40.2", channelCount = channelCount), selected = true)
-  ).toAudioTrackState().channels
-
-  @Test
-  fun `missing audio selection normalizes to disabled with cleared metadata`() {
-    val tracks = tracksOf(
-      audioGroup(
-        format = audioFormat(codecs = "mp4a.40.2", label = "English", language = "en"),
-        selected = false,
-      )
-    )
-
-    val state = tracks.toAudioTrackState()
-
-    assertEquals(AudioTrackState(enabled = false), state)
-  }
+  private fun channelsFor(channelCount: Int): String? =
+    audioFormat(codecs = "mp4a.40.2", channelCount = channelCount).toAudioTrackState().channels
 
   @Test
   fun `unidentifiable codec and non-meaningful fields are omitted`() {
-    val tracks = tracksOf(
-      audioGroup(
-        format = audioFormat(codecs = null, label = " ", language = "und"),
-        selected = true,
-      )
-    )
-
-    val state = tracks.toAudioTrackState()
+    val state = audioFormat(codecs = null, label = " ", language = "und").toAudioTrackState()
 
     assertEquals(true, state.enabled)
     assertNull(state.codec)
@@ -104,66 +69,40 @@ class AudioTrackChangeReporterTest {
   }
 
   @Test
-  fun `reporter dispatches initial state, dedupes repeats, and reports disable`() {
+  fun `reporter dispatches initial state, dedupes repeats, and reports changes`() {
     val reportedStates = mutableListOf<AudioTrackState>()
     val reporter = AudioTrackChangeReporter { reportedStates += it }
-    val selectedTracks = tracksOf(
-      audioGroup(
-        format = audioFormat(codecs = "mp4a.40.2", label = "English", language = "en"),
-        selected = true,
-      )
-    )
-    val disabledTracks = tracksOf(
-      audioGroup(
-        format = audioFormat(codecs = "mp4a.40.2", label = "English", language = "en"),
-        selected = false,
-      )
-    )
+    val english = audioFormat(codecs = "mp4a.40.2", label = "English", language = "en")
+    val spanish = audioFormat(codecs = "mp4a.40.2", label = "Spanish", language = "es")
 
-    reporter.reportTracksChanged(selectedTracks)
-    reporter.reportTracksChanged(selectedTracks)
-    reporter.reportTracksChanged(disabledTracks)
+    reporter.reportAudioInputFormatChanged(english)
+    reporter.reportAudioInputFormatChanged(english)
+    reporter.reportAudioInputFormatChanged(spanish)
 
     assertEquals(2, reportedStates.size)
     assertEquals(
-      AudioTrackState(
-        enabled = true,
-        codec = "mp4a.40.2",
-        name = "English",
-        language = "en",
-      ),
+      AudioTrackState(enabled = true, codec = "mp4a.40.2", name = "English", language = "en"),
       reportedStates[0]
     )
-    assertEquals(AudioTrackState(enabled = false), reportedStates[1])
+    assertEquals(
+      AudioTrackState(enabled = true, codec = "mp4a.40.2", name = "Spanish", language = "es"),
+      reportedStates[1]
+    )
   }
 
   @Test
   fun `reporter reset allows same state to be emitted for a new view`() {
     val reportedStates = mutableListOf<AudioTrackState>()
     val reporter = AudioTrackChangeReporter { reportedStates += it }
-    val selectedTracks = tracksOf(
-      audioGroup(
-        format = audioFormat(codecs = "mp4a.40.2", label = "English", language = "en"),
-        selected = true,
-      )
-    )
+    val format = audioFormat(codecs = "mp4a.40.2", label = "English", language = "en")
 
-    reporter.reportTracksChanged(selectedTracks)
+    reporter.reportAudioInputFormatChanged(format)
     reporter.reset()
-    reporter.reportTracksChanged(selectedTracks)
+    reporter.reportAudioInputFormatChanged(format)
 
     assertEquals(2, reportedStates.size)
     assertEquals(reportedStates[0], reportedStates[1])
   }
-
-  private fun tracksOf(vararg groups: Tracks.Group): Tracks = Tracks(groups.toList())
-
-  private fun audioGroup(format: Format, selected: Boolean): Tracks.Group = Tracks.Group(
-    TrackGroup(format),
-    false,
-    intArrayOf(C.FORMAT_HANDLED),
-    booleanArrayOf(selected),
-  )
 
   private fun audioFormat(
     codecs: String?,

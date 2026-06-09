@@ -204,7 +204,6 @@ private class MuxAnalyticsListener(
     collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     if (eventTime.mediaPeriodId?.isInAdGroup() != true) {
       textTrackChangeReporter.reportTracksChanged(tracks)
-//      audioTrackChangeReporter.reportTracksChanged(tracks)
     }
   }
 
@@ -407,14 +406,6 @@ internal class AudioTrackChangeReporter(
 ) {
   private var lastReportedState: AudioTrackState? = null
 
-  fun reportTracksChanged(tracks: Tracks) {
-    val nextState = tracks.toAudioTrackState()
-    if (nextState != lastReportedState) {
-      dispatch(nextState)
-      lastReportedState = nextState
-    }
-  }
-
   fun reportAudioInputFormatChanged(format: Format) {
     val nextState = format.toAudioTrackState()
     if (nextState != lastReportedState) {
@@ -426,17 +417,6 @@ internal class AudioTrackChangeReporter(
   fun reset() {
     lastReportedState = null
   }
-}
-
-internal fun Tracks.toAudioTrackState(): AudioTrackState {
-  val selectedAudioTrackGroup = groups.firstOrNull {
-    it.type == C.TRACK_TYPE_AUDIO && it.isSelected
-  } ?: return AudioTrackState(enabled = false)
-
-  val selectedTrackIndex = selectedAudioTrackGroup.findSelectedTrackIndex()
-    ?: return AudioTrackState(enabled = false)
-  val format = selectedAudioTrackGroup.getTrackFormat(selectedTrackIndex)
-  return format.toAudioTrackState()
 }
 
 internal fun Format.toAudioTrackState(): AudioTrackState {
