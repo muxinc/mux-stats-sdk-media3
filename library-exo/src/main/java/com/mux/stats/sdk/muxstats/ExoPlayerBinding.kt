@@ -434,7 +434,10 @@ internal class AudioTrackChangeReporter(
         dispatch(nextState)
       }
     } else {
-      dispatch(AudioTrackState(enabled = false))
+      val nextState = AudioTrackState(enabled = false)
+      if (nextState != this.lastReportedState) {
+        dispatch(nextState)
+      }
     }
   }
 
