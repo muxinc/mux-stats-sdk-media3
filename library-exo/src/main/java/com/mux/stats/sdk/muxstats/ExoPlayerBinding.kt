@@ -208,8 +208,8 @@ private class MuxAnalyticsListener(
       // report audio track disabled when no audio tracks are selected, but report enabled elsewhere
       // onAudioInputFormatChanged handles tracks being enabled, so channel count/bitrate/etc
       //  can be picked up even when dash manifest or hls multivariant pl don't specify them
-      val selectedAudioTrackGroup = tracks.groups.firstOrNull { it.type == C .TRACK_TYPE_AUDIO }
-        ?.findSelectedTrackIndex()
+      val selectedAudioTrackGroup =
+        tracks.groups.firstOrNull { it.type == C.TRACK_TYPE_AUDIO  && it.isSelected }
       if (selectedAudioTrackGroup == null) {
         audioTrackChangeReporter.reportAudioTrackDisabled()
       }
