@@ -223,7 +223,9 @@ private class MuxAnalyticsListener(
   ) {
     Log.d("ExoPlayerBinding", "onAudioInputFormatChanged: ${Format.toLogString(format)}")
     // Report audio track change here: channel count/bitrate/etc extracted from hls chunks by now
-    audioTrackChangeReporter.reportAudioInputFormatChanged(format)
+    if (eventTime.mediaPeriodId?.isInAdGroup() != true) {
+      audioTrackChangeReporter.reportAudioInputFormatChanged(format)
+    }
   }
 
   override fun onDownstreamFormatChanged(
@@ -428,6 +430,7 @@ internal class AudioTrackChangeReporter(
         channels = lastState.channels,
       )
       if (lastState != nextState) {
+        this.lastReportedState = nextState
         dispatch(nextState)
       }
     } else {
