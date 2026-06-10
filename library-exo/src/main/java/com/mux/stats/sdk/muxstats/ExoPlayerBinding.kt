@@ -208,7 +208,7 @@ private class MuxAnalyticsListener(
       // report audio track disabled when no audio tracks are selected, but report enabled elsewhere
       // onAudioInputFormatChanged handles tracks being enabled, so channel count/bitrate/etc
       //  can be picked up even when dash manifest or hls multivariant pl don't specify them
-      if (tracks.groups.any { it.type == C.TRACK_TYPE_AUDIO  && it.isSelected }) {
+      if (tracks.groups.none { it.type == C.TRACK_TYPE_AUDIO  && it.isSelected }) {
         audioTrackChangeReporter.reportAudioTrackDisabled()
       }
     }
@@ -219,7 +219,6 @@ private class MuxAnalyticsListener(
     format: Format,
     decoderReuseEvaluation: DecoderReuseEvaluation?
   ) {
-    Log.d("ExoPlayerBinding", "onAudioInputFormatChanged: ${Format.toLogString(format)}")
     // Report audio track change here: channel count/bitrate/etc extracted from hls chunks by now
     if (eventTime.mediaPeriodId?.isInAdGroup() != true) {
       audioTrackChangeReporter.reportAudioInputFormatChanged(format)
