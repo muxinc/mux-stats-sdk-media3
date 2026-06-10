@@ -417,24 +417,10 @@ internal class AudioTrackChangeReporter(
 
   fun reportAudioTrackDisabled() {
     val lastState = this.lastReportedState
-    if (lastState != null) {
-      val nextState = AudioTrackState(
-        enabled = false,
-        codec = lastState.codec,
-        name = lastState.name,
-        language = lastState.language,
-        bitrate = lastState.bitrate,
-        channels = lastState.channels,
-      )
-      if (lastState != nextState) {
-        this.lastReportedState = nextState
-        dispatch(nextState)
-      }
-    } else {
-      val nextState = AudioTrackState(enabled = false)
-      if (nextState != this.lastReportedState) {
-        dispatch(nextState)
-      }
+    if (lastState == null || lastState.enabled) {
+      val disabledState = AudioTrackState(enabled = false)
+      this.lastReportedState = disabledState
+      dispatch(disabledState)
     }
   }
 
