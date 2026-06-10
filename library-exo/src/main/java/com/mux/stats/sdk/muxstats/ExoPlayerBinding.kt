@@ -12,6 +12,7 @@ import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
 import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.DecoderCounters
 import androidx.media3.exoplayer.DecoderReuseEvaluation
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.analytics.AnalyticsListener
@@ -216,6 +217,20 @@ private class MuxAnalyticsListener(
     audioTrackChangeReporter.reportAudioInputFormatChanged(format)
   }
 
+  override fun onAudioDisabled(
+    eventTime: AnalyticsListener.EventTime,
+    decoderCounters: DecoderCounters
+  ) {
+    audioTrackChangeReporter.reportAudioInputDisabled()
+  }
+
+  override fun onAudioEnabled(
+    eventTime: AnalyticsListener.EventTime,
+    decoderCounters: DecoderCounters
+  ) {
+    audioTrackChangeReporter.reportAudioInputEnabled()
+  }
+
   override fun onDownstreamFormatChanged(
     eventTime: AnalyticsListener.EventTime,
     mediaLoadData: MediaLoadData
@@ -405,6 +420,45 @@ internal class AudioTrackChangeReporter(
   private val dispatch: (AudioTrackState) -> Unit,
 ) {
   private var lastReportedState: AudioTrackState? = null
+
+  fun reportAudioInputDisabled() {
+    val lastState = this.lastReportedState
+    if (lastState != null) {
+      val nextState = AudioTrackState(
+        enabled = false,
+        codec = lastState.codec,
+        name = lastState.name,
+        language = lastState.language,
+        bitrate = lastState.bitrate,
+        channels = lastState.channels,
+      )
+      if (lastState != nextState) {
+        dispatch(nextState)
+      }
+    } else {
+      dispatch(
+        AudioTrackState(
+          enabled = false
+      ))
+    }
+  }
+
+  fun reportAudioInputEnabled() {
+    // If we already have a state stored, report that it's enabled
+    // No need to handle if we don't have a state, it will be reported via onAudioInputFormatChanged
+    val lastState = this.lastReportedState
+    if (lastState != null) {
+      val nextState = AudioTrackState(
+        enabled = true,
+        codec = lastState.codec,
+        name = lastState.name,
+        language = lastState.language,
+        bitrate = lastState.bitrate,
+        channels = lastState.channels,
+      )
+      dispatch(nextState)
+    }
+  }
 
   fun reportAudioInputFormatChanged(format: Format) {
     val nextState = format.toAudioTrackState()
