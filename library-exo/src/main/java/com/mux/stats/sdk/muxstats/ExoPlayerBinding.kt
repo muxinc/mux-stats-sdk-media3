@@ -431,10 +431,7 @@ internal class AudioTrackChangeReporter(
         dispatch(nextState)
       }
     } else {
-      dispatch(
-        AudioTrackState(
-          enabled = false
-      ))
+      dispatch(AudioTrackState(enabled = false))
     }
   }
 
