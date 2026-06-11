@@ -48,7 +48,7 @@ class BasicPlayerActivity : AppCompatActivity() {
   override fun onResume() {
     super.onResume()
     startPlaying(
-      intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_MULTI_LANGUAGE_MUX_VIDEO
+      intent.getStringExtra(EXTRA_URL) ?: Constants.VOD_TEST_URL_TEARS_OF_STEEL
     )
   }
 
