@@ -1,10 +1,12 @@
 package com.mux.stats.sdk.muxstats
 
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.common.Timeline
 import androidx.media3.common.Tracks
@@ -16,6 +18,7 @@ import androidx.media3.exoplayer.analytics.AnalyticsListener
 import androidx.media3.exoplayer.source.LoadEventInfo
 import androidx.media3.exoplayer.source.MediaLoadData
 import com.mux.android.util.weak
+import com.mux.stats.sdk.core.events.playback.AudioTrackChangeEvent
 import com.mux.stats.sdk.core.events.playback.TextTrackChangeEvent
 import com.mux.stats.sdk.core.util.MuxLogger
 import com.mux.stats.sdk.muxstats.bandwidth.BandwidthMetricDispatcher
@@ -103,6 +106,16 @@ private class MuxAnalyticsListener(
       state.language
     )
   }
+  private val audioTrackChangeReporter = AudioTrackChangeReporter { state ->
+    collector.muxStats.audioTrackChange(
+      state.enabled,
+      state.name,
+      state.language,
+      state.codec,
+      state.bitrate,
+      state.channels
+    )
+  }
 
   override fun onPlayWhenReadyChanged(
     eventTime: AnalyticsListener.EventTime,
@@ -141,6 +154,7 @@ private class MuxAnalyticsListener(
     reason: Int
   ) {
     textTrackChangeReporter.reset()
+    audioTrackChangeReporter.reset()
     mediaItem?.let { collector.handleMediaItemChanged(it) }
   }
 
@@ -190,6 +204,24 @@ private class MuxAnalyticsListener(
     collector.mediaHasVideoTrack = tracks.hasAtLeastOneVideoTrack()
     if (eventTime.mediaPeriodId?.isInAdGroup() != true) {
       textTrackChangeReporter.reportTracksChanged(tracks)
+
+      // report audio track disabled when no audio tracks are selected, but report enabled elsewhere
+      // onAudioInputFormatChanged handles tracks being enabled, so channel count/bitrate/etc
+      //  can be picked up even when dash manifest or hls multivariant pl don't specify them
+      if (tracks.groups.none { it.type == C.TRACK_TYPE_AUDIO  && it.isSelected }) {
+        audioTrackChangeReporter.reportAudioTrackDisabled()
+      }
+    }
+  }
+
+  override fun onAudioInputFormatChanged(
+    eventTime: AnalyticsListener.EventTime,
+    format: Format,
+    decoderReuseEvaluation: DecoderReuseEvaluation?
+  ) {
+    // Report audio track change here: channel count/bitrate/etc extracted from hls chunks by now
+    if (eventTime.mediaPeriodId?.isInAdGroup() != true) {
+      audioTrackChangeReporter.reportAudioInputFormatChanged(format)
     }
   }
 
@@ -369,6 +401,53 @@ internal fun Tracks.toTextTrackState(): TextTrackState {
   )
 }
 
+internal data class AudioTrackState(
+  val enabled: Boolean,
+  val codec: String? = null,
+  val name: String? = null,
+  val language: String? = null,
+  val bitrate: String? = null,
+  val channels: String? = null,
+)
+
+internal class AudioTrackChangeReporter(
+  private val dispatch: (AudioTrackState) -> Unit,
+) {
+  private var lastReportedState: AudioTrackState? = null
+
+  fun reportAudioTrackDisabled() {
+    val lastState = this.lastReportedState
+    if (lastState == null || lastState.enabled) {
+      val disabledState = AudioTrackState(enabled = false)
+      this.lastReportedState = disabledState
+      dispatch(disabledState)
+    }
+  }
+
+  fun reportAudioInputFormatChanged(format: Format) {
+    val nextState = format.toAudioTrackState()
+    if (nextState != lastReportedState) {
+      dispatch(nextState)
+      lastReportedState = nextState
+    }
+  }
+
+  fun reset() {
+    lastReportedState = null
+  }
+}
+
+internal fun Format.toAudioTrackState(): AudioTrackState {
+  return AudioTrackState(
+    enabled = true,
+    codec = toAudioTrackCodec(),
+    name = label.toMeaningfulValue(),
+    language = language.toMeaningfulLanguage(),
+    bitrate = toAudioTrackBitrate(),
+    channels = toAudioTrackChannels(),
+  )
+}
+
 internal fun Tracks.Group.findSelectedTrackIndex(): Int? {
   for (i in 0..<length) {
     if (isTrackSelected(i)) {
@@ -411,6 +490,39 @@ private fun Format.toTextTrackFormat(): String? {
     else -> null
   }
 }
+
+/**
+ * Reports the audio portion of this format's `CODECS` string. A `CODECS` value can list codecs for
+ * several track types (e.g. `"avc1.640028,mp4a.40.2"`), so we return the first entry whose media
+ * MIME type is an audio type, or `null` if none can be identified.
+ */
+@OptIn(UnstableApi::class)
+private fun Format.toAudioTrackCodec(): String? = codecs
+  ?.split(',')
+  ?.mapNotNull { it.trim().takeUnless(String::isEmpty) }
+  ?.firstOrNull { MimeTypes.isAudio(MimeTypes.getMediaMimeType(it)) }
+
+@OptIn(UnstableApi::class)
+private fun Format.toAudioTrackBitrate(): String? = bitrate
+  .takeIf { it != Format.NO_VALUE && it >= 0 }
+  ?.toString()
+
+/**
+ * Maps this format's channel count to a known channel configuration when possible, falling back to
+ * the raw channel count. `atmos` is intentionally not inferred here since it can't be determined
+ * from a channel count alone.
+ */
+private fun Format.toAudioTrackChannels(): String? = channelCount
+  .takeIf { it != Format.NO_VALUE && it > 0 }
+  ?.let { count ->
+    when (count) {
+      1 -> AudioTrackChangeEvent.AUDIO_TRACK_CHANNELS_MONO
+      2 -> AudioTrackChangeEvent.AUDIO_TRACK_CHANNELS_STEREO
+      6 -> AudioTrackChangeEvent.AUDIO_TRACK_CHANNELS_5_1
+      8 -> AudioTrackChangeEvent.AUDIO_TRACK_CHANNELS_7_1
+      else -> count.toString()
+    }
+  }
 
 private fun String?.toMeaningfulLanguage(): String? = toMeaningfulValue()
   ?.takeUnless { it.equals("und", ignoreCase = true) }
