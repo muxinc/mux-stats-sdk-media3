@@ -2,7 +2,7 @@
 # Plugins
 agp = "9.2.1"
 kotlin = "2.2.10"
-muxAndroidDistribution = "1.4.0-ng3"
+muxAndroidDistribution = "1.4.0-ng4"
 dokka = "1.6.10"
 
 # Mux core deps
