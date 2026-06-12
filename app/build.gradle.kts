@@ -7,12 +7,12 @@ plugins {
 
 android {
   namespace = "com.mux.stats.muxdatasdkformedia3"
-  compileSdk = 36
+  compileSdk = 37
 
   defaultConfig {
     applicationId = "com.example.muxdatasdkformedia3"
     //noinspection EditedTargetSdkVersion
-    targetSdk = 36
+    targetSdk = 37
     minSdk = 23
     versionCode = 1
     val commit = providers.exec { commandLine("git", "rev-parse", "--short", "HEAD") }
