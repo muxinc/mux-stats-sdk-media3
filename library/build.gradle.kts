@@ -91,12 +91,9 @@ muxDistribution {
   releaseVersion(versionFromTag())
   artifactIds { variant ->
     val media3Variant = variant.productFlavors.first { it.first == "media3" }.second
-//    val media3Variant = variant.productFlavors.first { }.name
     if (media3Variant.contains("at_latest", ignoreCase = true)) {
-      println(">>>>>>media3Variant: $media3Variant")
       "data-media3-custom"
     } else {
-      println(">>>>>media3Variant: $media3Variant")
       "data-media3-custom-$media3Variant"
     }
   }
