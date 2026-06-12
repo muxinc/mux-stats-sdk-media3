@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
+//  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.mux.android.distribution)
 }
 
@@ -91,10 +91,13 @@ muxDistribution {
   devVersion(versionFromCommitHash("dev-"))
   releaseVersion(versionFromTag())
   artifactIds { variant ->
-    val media3Variant = variant.productFlavors.first { it.dimension == "media3" }.name
+    val media3Variant = variant.productFlavors.first { it.first == "media3" }.second
+//    val media3Variant = variant.productFlavors.first { }.name
     if (media3Variant.contains("at_latest", ignoreCase = true)) {
+      println(">>>>>>media3Variant: $media3Variant")
       "data-media3-custom"
     } else {
+      println(">>>>>media3Variant: $media3Variant")
       "data-media3-custom-$media3Variant"
     }
   }
