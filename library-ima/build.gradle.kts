@@ -71,17 +71,17 @@ android {
   }
 
   sourceSets {
-    getByName("at_1_0") { java.directories += "src/compatFrom_1_0/java" }
-    getByName("at_1_1") { java.directories += "src/compatFrom_1_0/java" }
-    getByName("at_1_2") { java.directories += "src/compatFrom_1_0/java" }
-    getByName("at_1_3") { java.directories += "src/compatFrom_1_0/java" }
-    getByName("at_1_4") { java.directories += "src/compatFrom_1_0/java" }
-    getByName("at_1_5") { java.directories += "src/compatFrom_1_0/java" }
-    getByName("at_1_6") { java.directories += "src/compatFrom_1_0/java" }
-    getByName("at_1_8") { java.directories += "src/compatFrom_1_0/java" }
-    getByName("at_1_9") { java.directories += "src/compatFrom_1_9/java" }
-    getByName("at_1_10") { java.directories += "src/compatFrom_1_9/java" }
-    getByName("At_latest") { java.directories += "src/compatFrom_1_9/java" }
+    getByName("at_1_0") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_1") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_2") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_3") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_4") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_5") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_6") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_8") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_9") { kotlin.directories += "src/compatFrom_1_9/java" }
+    getByName("at_1_10") { kotlin.directories += "src/compatFrom_1_9/java" }
+    getByName("At_latest") { kotlin.directories += "src/compatFrom_1_9/java" }
   }
 
   buildTypes {
