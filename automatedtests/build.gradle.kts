@@ -8,13 +8,13 @@ plugins {
 
 android {
   namespace = "com.mux.player.media3"
-  compileSdk = 36
+  compileSdk = 37
 
   defaultConfig {
     applicationId = "com.mux.player.media3"
     minSdk = 23
     //noinspection EditedTargetSdkVersion
-    targetSdk = 36
+    targetSdk = 37
     versionCode = 1
     versionName = "1.0"
     multiDexEnabled = true
@@ -64,7 +64,7 @@ android {
   sourceSets {
     getByName("androidTest") {
       // Important, can't get asset file in instrumentation test without this
-      assets.srcDir("src/main/assets")
+      assets.directories += "src/main/assets"
     }
   }
 

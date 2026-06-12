@@ -2,18 +2,17 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   alias(libs.plugins.android.application)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.compose)
 }
 
 android {
   namespace = "com.mux.stats.muxdatasdkformedia3"
-  compileSdk = 36
+  compileSdk = 37
 
   defaultConfig {
     applicationId = "com.example.muxdatasdkformedia3"
     //noinspection EditedTargetSdkVersion
-    targetSdk = 36
+    targetSdk = 37
     minSdk = 23
     versionCode = 1
     val commit = providers.exec { commandLine("git", "rev-parse", "--short", "HEAD") }
@@ -44,17 +43,17 @@ android {
   }
 
   sourceSets {
-    getByName("At_latest") { java.srcDir("src/compatFrom1_3/java") }
-    getByName("at_1_0") { java.srcDir("src/compatFrom1_0/java") }
-    getByName("at_1_1") { java.srcDir("src/compatFrom1_0/java") }
-    getByName("at_1_2") { java.srcDir("src/compatFrom1_0/java") }
-    getByName("at_1_3") { java.srcDir("src/compatFrom1_3/java") }
-    getByName("at_1_4") { java.srcDir("src/compatFrom1_3/java") }
-    getByName("at_1_5") { java.srcDir("src/compatFrom1_3/java") }
-    getByName("at_1_6") { java.srcDir("src/compatFrom1_3/java") }
-    getByName("at_1_8") { java.srcDir("src/compatFrom1_3/java") }
-    getByName("at_1_9") { java.srcDir("src/compatFrom1_3/java") }
-    getByName("at_1_10") { java.srcDir("src/compatFrom1_3/java") }
+    getByName("At_latest") { kotlin.directories += "src/compatFrom1_3/java" }
+    getByName("at_1_0") { kotlin.directories += "src/compatFrom1_0/java" }
+    getByName("at_1_1") { kotlin.directories += "src/compatFrom1_0/java" }
+    getByName("at_1_2") { kotlin.directories += "src/compatFrom1_0/java" }
+    getByName("at_1_3") { kotlin.directories += "src/compatFrom1_3/java" }
+    getByName("at_1_4") { kotlin.directories += "src/compatFrom1_3/java" }
+    getByName("at_1_5") { kotlin.directories += "src/compatFrom1_3/java" }
+    getByName("at_1_6") { kotlin.directories += "src/compatFrom1_3/java" }
+    getByName("at_1_8") { kotlin.directories += "src/compatFrom1_3/java" }
+    getByName("at_1_9") { kotlin.directories += "src/compatFrom1_3/java" }
+    getByName("at_1_10") { kotlin.directories += "src/compatFrom1_3/java" }
   }
 
   buildTypes {

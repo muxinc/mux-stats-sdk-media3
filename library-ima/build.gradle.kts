@@ -3,13 +3,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
   alias(libs.plugins.android.library)
-  alias(libs.plugins.kotlin.android)
   alias(libs.plugins.mux.android.distribution)
 }
 
 android {
   namespace = "com.mux.stats.sdk.media3_ima"
-  compileSdk = 36
+  compileSdk = 37
 
   buildFeatures {
     buildConfig = true
@@ -71,17 +70,17 @@ android {
   }
 
   sourceSets {
-    getByName("at_1_0") { java.srcDir("src/compatFrom_1_0/java") }
-    getByName("at_1_1") { java.srcDir("src/compatFrom_1_0/java") }
-    getByName("at_1_2") { java.srcDir("src/compatFrom_1_0/java") }
-    getByName("at_1_3") { java.srcDir("src/compatFrom_1_0/java") }
-    getByName("at_1_4") { java.srcDir("src/compatFrom_1_0/java") }
-    getByName("at_1_5") { java.srcDir("src/compatFrom_1_0/java") }
-    getByName("at_1_6") { java.srcDir("src/compatFrom_1_0/java") }
-    getByName("at_1_8") { java.srcDir("src/compatFrom_1_0/java") }
-    getByName("at_1_9") { java.srcDir("src/compatFrom_1_9/java") }
-    getByName("at_1_10") { java.srcDir("src/compatFrom_1_9/java") }
-    getByName("At_latest") { java.srcDir("src/compatFrom_1_9/java") }
+    getByName("at_1_0") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_1") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_2") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_3") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_4") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_5") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_6") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_8") { kotlin.directories += "src/compatFrom_1_0/java" }
+    getByName("at_1_9") { kotlin.directories += "src/compatFrom_1_9/java" }
+    getByName("at_1_10") { kotlin.directories += "src/compatFrom_1_9/java" }
+    getByName("At_latest") { kotlin.directories += "src/compatFrom_1_9/java" }
   }
 
   buildTypes {
@@ -107,7 +106,7 @@ muxDistribution {
   devVersion(versionFromCommitHash("dev-"))
   releaseVersion(versionFromTag())
   artifactIds { variant ->
-    val media3Variant = variant.productFlavors.first { it.dimension == "media3" }.name
+    val media3Variant = variant.productFlavors.first { it.first == "media3" }.second
     if (media3Variant.contains("at_latest", ignoreCase = true)) {
       "data-media3-ima"
     } else {
