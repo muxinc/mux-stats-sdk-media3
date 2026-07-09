@@ -54,6 +54,10 @@ fun catchUpPlayState(player: Player, collector: MuxStateCollector) {
   if (player.playbackState != Player.STATE_IDLE) {
     collector.handleExoPlaybackState(player.playbackState, player.playWhenReady)
   }
+  if (!player.currentTracks.isEmpty) {
+    // If caller registers after tracks loaded, we never get the playhead, some metrics will break
+    collector.watchPlayerPos(player) // any old position-watchers will be stopped and cleaned up
+  }
 }
 
 @JvmSynthetic
