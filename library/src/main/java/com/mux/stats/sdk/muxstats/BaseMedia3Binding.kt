@@ -44,6 +44,10 @@ private class MuxPlayerListener(player: Player, val collector: MuxStateCollector
     player?.let { collector.handleExoPlaybackState(playbackState, it.playWhenReady) }
   }
 
+  override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+    player?.let { collector.handlePlayWhenReady(playWhenReady, it.playbackState) }
+  }
+
   override fun onPositionDiscontinuity(
     oldPosition: Player.PositionInfo,
     newPosition: Player.PositionInfo,
