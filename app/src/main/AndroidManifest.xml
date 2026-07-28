@@ -56,6 +56,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".examples.basic.BasicPlayerActivity" />
+        <activity android:name=".examples.basic.NonExoPlayerActivity" />
 
     </application>
 
