@@ -27,7 +27,7 @@ fun Player.monitorWithMuxData(
   playerView: View? = null,
   customOptions: CustomOptions? = null,
   logLevel: MuxDataSdk.LogcatLevel = MuxDataSdk.LogcatLevel.NONE,
-): MuxStatsSdkMedia3<*> {
+): MuxStatsSdkMedia3<out Player> {
   return if (this is ExoPlayer) {
     MuxStatsSdkMedia3(
       context = context,
