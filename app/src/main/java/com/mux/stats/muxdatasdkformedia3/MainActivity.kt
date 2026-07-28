@@ -17,6 +17,7 @@ import com.mux.stats.muxdatasdkformedia3.databinding.ActivityMainBinding
 import com.mux.stats.muxdatasdkformedia3.databinding.ListitemExampleBinding
 import com.mux.stats.muxdatasdkformedia3.examples.basic.BasicPlayerActivity
 import com.mux.stats.muxdatasdkformedia3.examples.basic.ComposeUiExampleActivity
+import com.mux.stats.muxdatasdkformedia3.examples.basic.NonExoPlayerActivity
 import com.mux.stats.muxdatasdkformedia3.examples.basic.PlayerReuseActivity
 import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaClientAdsActivity
 import com.mux.stats.muxdatasdkformedia3.examples.ima.ImaServerAdsActivity
@@ -77,6 +78,10 @@ class MainActivity : AppCompatActivity() {
       title = "Reusing a Player for multiple MediaItems",
       destination = Intent(this, PlayerReuseActivity::class.java),
     ),
+    Example(
+      title = "Non-ExoPlayer media3 Player",
+      destination = Intent(this, NonExoPlayerActivity::class.java)
+    )
     // TODO: post-beta, add APIs for talking to a `MediaSessionService`
 //    Example(
 //      title = "Background playback",
