@@ -67,6 +67,9 @@ android {
     create("at_1_10") {
       dimension = "media3"
     }
+    create("at_1_11") {
+      dimension = "media3"
+    }
   }
 
   sourceSets {
@@ -80,6 +83,7 @@ android {
     getByName("at_1_8") { kotlin.directories += "src/compatFrom_1_0/java" }
     getByName("at_1_9") { kotlin.directories += "src/compatFrom_1_9/java" }
     getByName("at_1_10") { kotlin.directories += "src/compatFrom_1_9/java" }
+    getByName("at_1_11") { kotlin.directories += "src/compatFrom_1_9/java" }
     getByName("At_latest") { kotlin.directories += "src/compatFrom_1_9/java" }
   }
 
@@ -194,6 +198,10 @@ dependencies {
   "at_1_10Api"(libs.media3.exoplayer.at110)
   //noinspection GradleDependency
   "at_1_10Api"(libs.media3.exoplayerIma.at110)
+  //noinspection GradleDependency
+  "at_1_11Api"(libs.media3.exoplayer.at111)
+  //noinspection GradleDependency
+  "at_1_11Api"(libs.media3.exoplayerIma.at111)
 
   //noinspection GradleDependency
   "At_latestApi"(libs.media3.exoplayer.atLatest)
