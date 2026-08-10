@@ -32,7 +32,7 @@ media3-at16 = "1.6.0"
 media3-at18 = "1.8.0"
 media3-at19 = "1.9.0"
 media3-at110 = "1.10.0"
-media3-at111 = "1.10.0"
+media3-at111 = "1.11.0"
 media3-atLatest = "1.11.0"
 
 # AndroidX / Compose / Material
