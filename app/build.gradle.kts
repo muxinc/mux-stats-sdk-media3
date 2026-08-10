@@ -40,6 +40,7 @@ android {
     create("at_1_8") { dimension = "media3" }
     create("at_1_9") { dimension = "media3" }
     create("at_1_10") { dimension = "media3" }
+    create("at_1_11") { dimension = "media3" }
   }
 
   sourceSets {
@@ -54,6 +55,7 @@ android {
     getByName("at_1_8") { kotlin.directories += "src/compatFrom1_3/java" }
     getByName("at_1_9") { kotlin.directories += "src/compatFrom1_3/java" }
     getByName("at_1_10") { kotlin.directories += "src/compatFrom1_3/java" }
+    getByName("at_1_11") { kotlin.directories += "src/compatFrom1_3/java" }
   }
 
   buildTypes {
@@ -123,6 +125,7 @@ dependencies {
   "at_1_9Implementation"(libs.bundles.media3.app.at19)
   //noinspection GradleDependency
   "at_1_10Implementation"(libs.bundles.media3.app.at110)
+  "at_1_11Implementation"(libs.bundles.media3.app.at111)
   "At_latestImplementation"(libs.bundles.media3.app.atLatest)
 
   implementation(libs.androidx.core.ktx)

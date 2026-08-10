@@ -66,6 +66,9 @@ android {
     create("at_1_10") {
       dimension = "media3"
     }
+    create("at_1_11") {
+      dimension = "media3"
+    }
   }
 
   buildTypes {
@@ -157,6 +160,7 @@ dependencies {
   "at_1_9Api"(libs.media3.common.at19)
   //noinspection GradleDependency // benefit from optimistic matching
   "at_1_10Api"(libs.media3.common.at110)
+  "at_1_11Api"(libs.media3.common.at111)
   //noinspection GradleDependency // benefit from optimistic matching
   "At_latestApi"(libs.media3.common.atLatest)
 

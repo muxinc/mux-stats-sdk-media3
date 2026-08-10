@@ -67,6 +67,9 @@ android {
     create("at_1_10") {
       dimension = "media3"
     }
+    create("at_1_11") {
+      dimension = "media3"
+    }
   }
 
   buildTypes {
@@ -186,6 +189,11 @@ dependencies {
   "at_1_10Api"(libs.media3.exoplayer.at110)
   //noinspection GradleDependency
   "at_1_10CompileOnly"(libs.media3.exoplayerHls.at110)
+
+  //noinspection GradleDependency
+  "at_1_11Api"(libs.media3.exoplayer.at111)
+  //noinspection GradleDependency
+  "at_1_11CompileOnly"(libs.media3.exoplayerHls.at111)
 
   //noinspection GradleDependency
   "At_latestApi"(libs.media3.exoplayer.atLatest)
