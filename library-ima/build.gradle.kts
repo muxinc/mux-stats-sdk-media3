@@ -132,7 +132,7 @@ muxDistribution {
   dokkaConfig {
     moduleName = "Mux Data SDK for Media3, IMA with ExoPlayer"
     footer = "(c) " + Year.now().value + " Mux, Inc. Have questions or need help?" +
-            " Contact support@mux.com"
+            " Visit https://www.mux.com/support"
   }
 
   pom {
